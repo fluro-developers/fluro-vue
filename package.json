@@ -1,0 +1,41 @@
+{
+  "name": "fluro-vue",
+  "version": "1.0.0",
+  "description": "A package to make it easy to build Vue applications that interact with Fluro",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "webpack --mode=production && webpack --mode=production && npm run test",
+    "dev": "webpack --mode=development --progress --colors --watch",
+    "test": "mocha  --colors ./test/*.spec.js",
+    "test:watch": "mocha  --colors -w ./test/*.spec.js",
+    "document": "jsdoc -r  . -d docs -c jsdoc.conf README.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fluro-developers/fluro-vue.git"
+  },
+  "keywords": [
+    "fluro",
+    "vue",
+    "vuejs"
+  ],
+  "author": "Cade Embery",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fluro-developers/fluro-vue/issues"
+  },
+  "homepage": "https://github.com/fluro-developers/fluro-vue#readme",
+  "dependencies": {
+    "fluro": "^1.0.44"
+  },
+  "devDependencies": {
+    "babel-register": "^6.26.0",
+    "chai": "^4.2.0",
+    "docdash": "^1.1.0",
+    "jsdoc": "^3.5.5",
+    "jsdom": "^14.0.0",
+    "mocha": "^6.1.2",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  }
+}
