@@ -25,17 +25,23 @@ import Fluro from 'fluro';
 
 /////////////////////////////////////////////////////
 
-// //Import Components
-// import FluroAvatar from './components/FluroAvatar.vue';
+//Import Components
+import FluroAvatar from './components/FluroAvatar.vue';
+import FluroImage from './components/FluroImage.vue';
+import FluroVideo from './components/FluroVideo.vue';
+import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
 
 /////////////////////////////////////////////////////
 
 
 
 const FluroVue = {
-    install: function(Vue) {
+    install: function(Vue, options) {
 
-        console.log('VUEX STORE', Vue);
+
+        /////////////////////////////////////////////////////
+
+        var store = options.store;
 
         /////////////////////////////////////////////////////
 
@@ -137,6 +143,11 @@ const FluroVue = {
 
         function userUpdated(user) {
             store.commit('user', user);
+
+
+            //Update all of the stat stores
+            //as we are now a different user
+            fluro.stats.refresh();
         }
 
         /////////////////////////////////////////////////////
@@ -149,8 +160,12 @@ const FluroVue = {
         Vue.filter('comma', fluro.utils.comma);
 
         //Add Fluro Components Globally
-        // Vue.component('fluro-avatar', FluroAvatar);
+        Vue.component('fluro-avatar', FluroAvatar);
+        Vue.component('fluro-image', FluroImage);
+        Vue.component('fluro-video', FluroVideo);
+        Vue.component('fluro-video-thumbnail', FluroVideoThumbnail);
 
+        
         /////////////////////////////////////////////////////
 
         //Attach Fluro to the main Vue Instance
