@@ -3,7 +3,7 @@
 
 # Fluro Vue
 
-[Detailed Documentation](https://fluro-developers.github.io/fluro-vue/)
+[Click here for full Documentation](https://fluro-developers.github.io/fluro-vue/)
 
 
 # Quick Start
