@@ -20,6 +20,7 @@
 
 
 
+
 // import store from './store'
 import Fluro from 'fluro';
 
@@ -33,18 +34,56 @@ import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
 
 /////////////////////////////////////////////////////
 
+import { getField, updateField } from 'vuex-map-fields';
+
+var FluroStore = {
+    namespaced: true,
+    state: {
+        user: null, //The Current Fluro User
+        application: null, //The Current Fluro Application
+    },
+    mutations: {
+        updateField,
+        user(state, payload) {
+            state.user = payload;
+        },
+        application(state, payload) {
+            state.application = payload;
+        },
+    },
+    getters: {
+        getField,
+        user(state, getters) {
+            return state.user;
+        },
+        application(state, getters) {
+            return state.application;
+        },
+    },
+    actions: {
+
+    },
+}
+
+/////////////////////////////////////////////////////
+
 
 
 const FluroVue = {
     install: function(Vue, options) {
 
         if (!options || !options.store) {
-          throw new Error('Please initialise fluro-vue with a Vuex store.');
+            throw new Error('Please initialise fluro-vue with a Vuex store.');
         }
 
         /////////////////////////////////////////////////////
 
         var store = options.store;
+
+        //Register a new Vuex Module
+        store.registerModule('fluro', FluroStore);
+
+        console.log('Initialized Fluro Vuex Store', store)
 
         // Register modals vuex module 
         // store.registerModule('modals', module);
@@ -117,7 +156,6 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
-console.log('Woooo');
 
 
         //Create a new Fluro instance
@@ -171,7 +209,7 @@ console.log('Woooo');
         Vue.component('fluro-video', FluroVideo);
         Vue.component('fluro-video-thumbnail', FluroVideoThumbnail);
 
-        
+
         /////////////////////////////////////////////////////
 
         //Attach Fluro to the main Vue Instance
