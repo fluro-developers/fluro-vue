@@ -38,10 +38,16 @@ import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
 const FluroVue = {
     install: function(Vue, options) {
 
+        if (!options || !options.store) {
+          throw new Error('Please initialise fluro-vue with a Vuex store.');
+        }
 
         /////////////////////////////////////////////////////
 
         var store = options.store;
+
+        // Register modals vuex module 
+        // store.registerModule('modals', module);
 
         /////////////////////////////////////////////////////
 
@@ -97,8 +103,6 @@ const FluroVue = {
             if (environment == 'production') {
                 //Use the API Specified in the application
                 API_URL = FluroApplication.apipath || API_URL;
-
-
             }
 
             /////////////////////////////////////////////////////
@@ -106,9 +110,9 @@ const FluroVue = {
             //Set the default timezone from our application data
             DEFAULT_TIMEZONE = FluroApplication.timezone;
 
-            store.commit('application', FluroApplication);
+            store.commit('fluro/application', FluroApplication);
         } else {
-            store.commit('application', null);
+            store.commit('fluro/application', null);
         }
 
         /////////////////////////////////////////////////////
@@ -137,12 +141,12 @@ const FluroVue = {
         fluro.auth.addEventListener('change', userUpdated);
 
         //Set the user from the vuex store if we have it
-        fluro.auth.set(store.getters.user);
+        fluro.auth.set(store.getters('fluro/user'));
 
         /////////////////////////////////////////////////////
 
         function userUpdated(user) {
-            store.commit('user', user);
+            store.commit('fluro/user', user);
 
 
             //Update all of the stat stores
