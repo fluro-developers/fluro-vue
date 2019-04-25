@@ -82,12 +82,7 @@ const FluroVue = {
 
         //Register a new Vuex Module
         store.registerModule('fluro', FluroStore);
-
-        console.log('Initialized Fluro Vuex Store', store)
-
-        // Register modals vuex module 
-        // store.registerModule('modals', module);
-
+        
         /////////////////////////////////////////////////////
 
         let API_URL;
