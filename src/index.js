@@ -117,6 +117,8 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
+console.log('Woooo');
+
 
         //Create a new Fluro instance
         const fluro = new Fluro({
@@ -141,7 +143,7 @@ const FluroVue = {
         fluro.auth.addEventListener('change', userUpdated);
 
         //Set the user from the vuex store if we have it
-        fluro.auth.set(store.getters('fluro/user'));
+        fluro.auth.set(store.getters['fluro/user']);
 
         /////////////////////////////////////////////////////
 
