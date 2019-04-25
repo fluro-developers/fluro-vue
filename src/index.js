@@ -33,38 +33,16 @@ import FluroVideo from './components/FluroVideo.vue';
 import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
 
 /////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
 
 import { getField, updateField } from 'vuex-map-fields';
 
-var FluroStore = {
-    namespaced: true,
-    state: {
-        user: null, //The Current Fluro User
-        application: null, //The Current Fluro Application
-    },
-    mutations: {
-        updateField,
-        user(state, payload) {
-            state.user = payload;
-        },
-        application(state, payload) {
-            state.application = payload;
-        },
-    },
-    getters: {
-        getField,
-        user(state, getters) {
-            return state.user;
-        },
-        application(state, getters) {
-            return state.application;
-        },
-    },
-    actions: {
 
-    },
-}
 
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 
 
@@ -81,8 +59,33 @@ const FluroVue = {
         var store = options.store;
 
         //Register a new Vuex Module
-        store.registerModule('fluro', FluroStore);
-        
+        store.registerModule('fluro', {
+            namespaced: true,
+            state: {
+                user: null, //The Current Fluro User
+                application: null, //The Current Fluro Application
+            },
+            mutations: {
+                updateField,
+                user(state, payload) {
+                    state.user = payload;
+                },
+                application(state, payload) {
+                    state.application = payload;
+                },
+            },
+            getters: {
+                getField,
+                user(state, getters) {
+                    return state.user;
+                },
+                application(state, getters) {
+                    return state.application;
+                },
+            },
+        })
+        //, { preserveState: true });
+
         /////////////////////////////////////////////////////
 
         let API_URL;
@@ -144,9 +147,17 @@ const FluroVue = {
             //Set the default timezone from our application data
             DEFAULT_TIMEZONE = FluroApplication.timezone;
 
-            store.commit('fluro/application', FluroApplication);
+            //Need this workaround it seems otherwise the app doesn't get set
+            setTimeout(function() {
+                store.commit('fluro/application', FluroApplication);
+            })
+
+            console.log(store);
         } else {
-            store.commit('fluro/application', null);
+            //Need this workaround it seems otherwise the app doesn't get set
+            setTimeout(function() {
+                store.commit('fluro/application', null);
+            })
         }
 
         /////////////////////////////////////////////////////
@@ -214,6 +225,8 @@ const FluroVue = {
 
 }
 
+import Layout from './mixins/Layout';
 
 
+export { Layout as Layout };
 export default FluroVue;
