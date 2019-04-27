@@ -56,13 +56,32 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
+        var rememberedUser;
+
+        /////////////////////////////////////////////////////
+
+        //Check if our user has been saved to local storage
+        if(localStorage) {
+            var rememberedVuex = localStorage.getItem('vuex')
+            if(rememberedVuex) {
+                rememberedVuex = JSON.parse(rememberedVuex);
+            } 
+
+            if(rememberedVuex.fluro && rememberedVuex.fluro.user) {
+                rememberedUser = rememberedVuex.fluro.user;
+            }
+        }
+
+        /////////////////////////////////////////////////////
+
         var store = options.store;
+
 
         //Register a new Vuex Module
         store.registerModule('fluro', {
             namespaced: true,
             state: {
-                user: null, //The Current Fluro User
+                user: rememberedUser, //The Current Fluro User
                 application: null, //The Current Fluro Application
             },
             mutations: {
@@ -152,7 +171,6 @@ const FluroVue = {
                 store.commit('fluro/application', FluroApplication);
             })
 
-            console.log(store);
         } else {
             //Need this workaround it seems otherwise the app doesn't get set
             setTimeout(function() {
@@ -187,13 +205,14 @@ const FluroVue = {
         fluro.auth.addEventListener('change', userUpdated);
 
         //Set the user from the vuex store if we have it
+
+        console.log('Get our user from local storage!', store.getters['fluro/user'], store.getters)
         fluro.auth.set(store.getters['fluro/user']);
 
         /////////////////////////////////////////////////////
 
         function userUpdated(user) {
             store.commit('fluro/user', user);
-
 
             //Update all of the stat stores
             //as we are now a different user
