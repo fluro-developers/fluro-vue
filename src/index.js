@@ -43,8 +43,10 @@ import { getField, updateField } from 'vuex-map-fields';
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
 
+var LOCAL_STORAGE_KEY = 'fluro.user';
+
+/////////////////////////////////////////////////////
 
 
 const FluroVue = {
@@ -56,32 +58,48 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
-        var rememberedUser;
+        var storedUser;
 
         /////////////////////////////////////////////////////
 
         //Check if our user has been saved to local storage
-        if(localStorage) {
-            var rememberedVuex = localStorage.getItem('vuex')
-            if(rememberedVuex) {
-                rememberedVuex = JSON.parse(rememberedVuex);
-            } 
 
-            if(rememberedVuex.fluro && rememberedVuex.fluro.user) {
-                rememberedUser = rememberedVuex.fluro.user;
+
+
+        if(localStorage) {
+            var json = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if(json) {
+                try {
+                    storedUser = JSON.parse(json);
+                } catch(e) {
+                    // console.log('Error', e);
+                    storedUser = null;
+                    localStorage.removeItem(LOCAL_STORAGE_KEY);
+                } finally {
+                    // console.log('Stored user', storedUser);
+                }
+                
             }
+
+        //     // var rememberedVuex = localStorage.getItem('vuex')
+        //     // if(rememberedVuex) {
+        //     //     rememberedVuex = JSON.parse(rememberedVuex);
+        //     // } 
+
+        //     // if(rememberedVuex.fluro && rememberedVuex.fluro.user) {
+        //     //     rememberedUser = rememberedVuex.fluro.user;
+        //     // }
         }
 
         /////////////////////////////////////////////////////
 
         var store = options.store;
 
-
         //Register a new Vuex Module
         store.registerModule('fluro', {
             namespaced: true,
             state: {
-                user: rememberedUser, //The Current Fluro User
+                user: storedUser, //The Current Fluro User
                 application: null, //The Current Fluro Application
             },
             mutations: {
@@ -205,14 +223,25 @@ const FluroVue = {
         fluro.auth.addEventListener('change', userUpdated);
 
         //Set the user from the vuex store if we have it
-
-        console.log('Get our user from local storage!', store.getters['fluro/user'], store.getters)
         fluro.auth.set(store.getters['fluro/user']);
 
         /////////////////////////////////////////////////////
 
         function userUpdated(user) {
             store.commit('fluro/user', user);
+
+            if(localStorage) {
+                var json;
+                if(user) {
+                    json = JSON.stringify(user)
+                }
+                //Save to local storage
+                if(json) {
+                    localStorage.setItem(LOCAL_STORAGE_KEY, json);
+                } else {
+                    localStorage.removeItem(LOCAL_STORAGE_KEY);
+                }
+            }
 
             //Update all of the stat stores
             //as we are now a different user
