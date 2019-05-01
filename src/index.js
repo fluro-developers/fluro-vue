@@ -31,6 +31,10 @@ import FluroAvatar from './components/FluroAvatar.vue';
 import FluroImage from './components/FluroImage.vue';
 import FluroVideo from './components/FluroVideo.vue';
 import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
+import FluroDateTimePicker from './components/FluroDateTimePicker.vue';
+import FluroRealmSelect from './components/FluroRealmSelect.vue';
+
+
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -52,6 +56,8 @@ var LOCAL_STORAGE_KEY = 'fluro.user';
 const FluroVue = {
     install: function(Vue, options) {
 
+        /////////////////////////////////////////////////////
+
         if (!options || !options.store) {
             throw new Error('Please initialise fluro-vue with a Vuex store.');
         }
@@ -66,29 +72,29 @@ const FluroVue = {
 
 
 
-        if(localStorage) {
+        if (localStorage) {
             var json = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if(json) {
+            if (json) {
                 try {
                     storedUser = JSON.parse(json);
-                } catch(e) {
+                } catch (e) {
                     // console.log('Error', e);
                     storedUser = null;
                     localStorage.removeItem(LOCAL_STORAGE_KEY);
                 } finally {
                     // console.log('Stored user', storedUser);
                 }
-                
+
             }
 
-        //     // var rememberedVuex = localStorage.getItem('vuex')
-        //     // if(rememberedVuex) {
-        //     //     rememberedVuex = JSON.parse(rememberedVuex);
-        //     // } 
+            //     // var rememberedVuex = localStorage.getItem('vuex')
+            //     // if(rememberedVuex) {
+            //     //     rememberedVuex = JSON.parse(rememberedVuex);
+            //     // } 
 
-        //     // if(rememberedVuex.fluro && rememberedVuex.fluro.user) {
-        //     //     rememberedUser = rememberedVuex.fluro.user;
-        //     // }
+            //     // if(rememberedVuex.fluro && rememberedVuex.fluro.user) {
+            //     //     rememberedUser = rememberedVuex.fluro.user;
+            //     // }
         }
 
         /////////////////////////////////////////////////////
@@ -101,6 +107,8 @@ const FluroVue = {
             state: {
                 user: storedUser, //The Current Fluro User
                 application: null, //The Current Fluro Application
+                realmSelectFullScreen: false, //Realm Select Widget
+
             },
             mutations: {
                 updateField,
@@ -110,6 +118,9 @@ const FluroVue = {
                 application(state, payload) {
                     state.application = payload;
                 },
+                realmSelectFullScreen(state, payload) {
+                    state.realmSelectFullScreen = payload;
+                },
             },
             getters: {
                 getField,
@@ -118,6 +129,9 @@ const FluroVue = {
                 },
                 application(state, getters) {
                     return state.application;
+                },
+                realmSelectFullScreen(state, getters) {
+                    return state.realmSelectFullScreen;
                 },
             },
         })
@@ -230,13 +244,13 @@ const FluroVue = {
         function userUpdated(user) {
             store.commit('fluro/user', user);
 
-            if(localStorage) {
+            if (localStorage) {
                 var json;
-                if(user) {
+                if (user) {
                     json = JSON.stringify(user)
                 }
                 //Save to local storage
-                if(json) {
+                if (json) {
                     localStorage.setItem(LOCAL_STORAGE_KEY, json);
                 } else {
                     localStorage.removeItem(LOCAL_STORAGE_KEY);
@@ -262,6 +276,10 @@ const FluroVue = {
         Vue.component('fluro-image', FluroImage);
         Vue.component('fluro-video', FluroVideo);
         Vue.component('fluro-video-thumbnail', FluroVideoThumbnail);
+        Vue.component('fluro-datetime-picker', FluroDateTimePicker);
+        Vue.component('fluro-realm-select', FluroRealmSelect);
+
+
 
 
         /////////////////////////////////////////////////////
@@ -273,8 +291,16 @@ const FluroVue = {
 
 }
 
+
+
+//Mixins
 import Layout from './mixins/Layout';
-
-
 export { Layout as Layout };
+
+//Components
+import FluroContentForm from './components/form/FluroContentForm.vue';
+export { FluroContentForm as FluroContentForm };
+
+
+
 export default FluroVue;

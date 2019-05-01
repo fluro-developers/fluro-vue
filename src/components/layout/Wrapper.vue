@@ -18,19 +18,19 @@ section {
     padding: $wrapper-padding 0;
 
     &[xs] {
-    	padding: floor($wrapper-padding / 3);
+    	padding: floor($wrapper-padding / 3) 0;
     }
 
     &[sm] {
-    	padding: floor($wrapper-padding / 2);
+    	padding: floor($wrapper-padding / 2) 0;
     }
 
     &[lg] {
-    	padding: floor($wrapper-padding * 2);
+    	padding: floor($wrapper-padding * 2) 0;
     }
 
     &[xl] {
-    	padding: floor($wrapper-padding * 3);
+    	padding: floor($wrapper-padding * 3) 0;
     }
 }
 

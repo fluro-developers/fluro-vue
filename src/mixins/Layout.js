@@ -1,7 +1,7 @@
 
 
-import Wrapper from '../layout/Wrapper.vue';
-import Constrain from '../layout/Constrain.vue';
+import Wrapper from '../components/layout/Wrapper.vue';
+import Constrain from '../components/layout/Constrain.vue';
 
 export default {
     components: {

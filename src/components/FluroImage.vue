@@ -36,7 +36,7 @@ export default {
     methods: {
         load() {
 
-            console.log('Start Loading')
+            //console.log('Start Loading')
             var self = this;
             self.loaded = false;
 
