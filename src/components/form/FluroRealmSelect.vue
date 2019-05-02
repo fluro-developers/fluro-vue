@@ -32,19 +32,36 @@
                         </v-list>
                     </v-menu> -->
                 </v-toolbar>
-                <v-tabs class="flex-tabs" :show-arrows="true" dark :centered="true" :grow="true" v-model="active">
-                    <v-tab v-for="type in tree" :key="type.definitionName" ripple>
-                        {{type.plural}}
-                    </v-tab>
-                    <v-tab-item v-for="type in tree" :key="type.definitionName">
-                        <!-- <wrapper xs style="background: #eee;"> -->
+                <template v-if="tree.length == 1">
+                    <div class="flex-fill">
                         <constrain gutterless sm :class="{'has-selection':model.length}">
-                            <v-card flat class="tab-content">
-                                <div class="realm-select-item-outer">
-                                    <v-list dense class="children">
-                                        <template v-for="realm in type.realms">
-                                            <fluro-realm-select-item :item="realm" :check="isSelected" :callback="toggle" />
-                                            <!-- <v-list-tile @click="toggle(realm)">
+                            <!-- <v-card flat class="tab-content"> -->
+                            <div class="realm-select-item-outer">
+                                <v-list dense class="children">
+                                    <template v-for="realm in tree[0].realms">
+                                        <fluro-realm-select-item :item="realm" :check="isSelected" :callback="toggle" />
+                                    </template>
+                                </v-list>
+                            </div>
+                            <!-- -->
+                            <!-- </v-card> -->
+                        </constrain>
+                    </div>
+                </template>
+                <template v-if="tree.length > 1">
+                    <v-tabs class="flex-tabs" :show-arrows="true" dark :centered="true" :grow="true" v-model="active">
+                        <v-tab v-for="type in tree" :key="type.definitionName" ripple>
+                            {{type.plural}}
+                        </v-tab>
+                        <v-tab-item v-for="type in tree" :key="type.definitionName">
+                            <!-- <wrapper xs style="background: #eee;"> -->
+                            <constrain gutterless sm :class="{'has-selection':model.length}">
+                                <v-card flat class="tab-content">
+                                    <div class="realm-select-item-outer">
+                                        <v-list dense class="children">
+                                            <template v-for="realm in type.realms">
+                                                <fluro-realm-select-item :item="realm" :check="isSelected" :callback="toggle" />
+                                                <!-- <v-list-tile @click="toggle(realm)">
                                         <v-list-tile-action>
                                             <v-checkbox v-model="realm.selected"></v-checkbox>
                                         </v-list-tile-action>
@@ -53,15 +70,16 @@
                                             <v-list-tile-title>{{realm.title}}</v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile> -->
-                                        </template>
-                                    </v-list>
-                                </div>
-                                <!-- -->
-                            </v-card>
-                        </constrain>
-                        <!-- </wrapper> -->
-                    </v-tab-item>
-                </v-tabs>
+                                            </template>
+                                        </v-list>
+                                    </div>
+                                    <!-- -->
+                                </v-card>
+                            </constrain>
+                            <!-- </wrapper> -->
+                        </v-tab-item>
+                    </v-tabs>
+                </template>
             </v-card>
         </v-dialog>
     </div>
@@ -69,8 +87,8 @@
 <script>
 import Vue from 'vue';
 import FluroRealmSelectItem from './FluroRealmSelectItem.vue';
-import Constrain from './layout/Constrain.vue';
-import Wrapper from './layout/Wrapper.vue';
+import Constrain from '../layout/Constrain.vue';
+import Wrapper from '../layout/Wrapper.vue';
 import { mapFields } from 'vuex-map-fields';
 
 export default {
@@ -208,8 +226,18 @@ $line-color: darken($bg-color, 10%);
 .realm-dialog {
     background: $bg-color;
     max-width: 500px;
+    width: auto;
     @include flex-column;
 
+
+
+    .flex-fill {
+        background: $bg-color;
+        flex:1;
+        display: flex;
+        overflow:auto;
+        padding: 25px 0;
+    }
 
     &>.v-card {
         @include flex-column;
@@ -218,7 +246,7 @@ $line-color: darken($bg-color, 10%);
             @include flex-column;
 
             &>.v-window {
-              
+
                 @include flex-column;
                 overflow: auto;
             }

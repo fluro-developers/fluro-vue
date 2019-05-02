@@ -16,11 +16,6 @@
 
 // export default FluroVue;
 
-
-
-
-
-
 // import store from './store'
 import Fluro from 'fluro';
 
@@ -31,14 +26,38 @@ import FluroAvatar from './components/FluroAvatar.vue';
 import FluroImage from './components/FluroImage.vue';
 import FluroVideo from './components/FluroVideo.vue';
 import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
-import FluroDateTimePicker from './components/FluroDateTimePicker.vue';
-import FluroRealmSelect from './components/FluroRealmSelect.vue';
+
+
+////////////////////////////////////////////////////////////////////
+
+//Form Components
+import FluroRealmSelect from './components/form/FluroRealmSelect.vue';
+export { FluroRealmSelect as FluroRealmSelect };
+
+import FluroEditor from './components/form/FluroEditor.vue';
+export { FluroEditor as FluroEditor };
+
+import FluroCodeEditor from './components/form/FluroCodeEditor.vue';
+export { FluroCodeEditor as FluroCodeEditor };
+
+import FluroContentForm from './components/form/FluroContentForm.vue';
+export { FluroContentForm as FluroContentForm };
+
+import FluroContentField from './components/form/FluroContentField.vue';
+export { FluroContentField as FluroContentField };
+
+import FluroDateTimePicker from './components/form/FluroDateTimePicker.vue';
+export { FluroDateTimePicker as FluroDateTimePicker };
+
+
+////////////////////////////////////////////////////////////////////
+
+//Mixins
+import Layout from './mixins/Layout';
+export { Layout as Layout };
 
 
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 
 import { getField, updateField } from 'vuex-map-fields';
@@ -69,9 +88,6 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         //Check if our user has been saved to local storage
-
-
-
         if (localStorage) {
             var json = localStorage.getItem(LOCAL_STORAGE_KEY);
             if (json) {
@@ -276,10 +292,12 @@ const FluroVue = {
         Vue.component('fluro-image', FluroImage);
         Vue.component('fluro-video', FluroVideo);
         Vue.component('fluro-video-thumbnail', FluroVideoThumbnail);
-        Vue.component('fluro-datetime-picker', FluroDateTimePicker);
-        Vue.component('fluro-realm-select', FluroRealmSelect);
 
 
+        /////////////////////////////////////////////////////
+
+        //Dependencies
+        // Vue.use(VueSignature);
 
 
         /////////////////////////////////////////////////////
@@ -293,13 +311,8 @@ const FluroVue = {
 
 
 
-//Mixins
-import Layout from './mixins/Layout';
-export { Layout as Layout };
+////////////////////////////////////////////////////////////////////
 
-//Components
-import FluroContentForm from './components/form/FluroContentForm.vue';
-export { FluroContentForm as FluroContentForm };
 
 
 

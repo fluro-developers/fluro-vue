@@ -1,13 +1,9 @@
 <template>
     <div class="fluro-content-field" v-bind="attributes" :class="fieldClass">
-        <!-- <pre>{{field.className}}</pre> -->
         <template v-if="officeUseOnly">
         </template>
-        <!--  -->
         <template v-else-if="renderer == 'custom'">
             <fluro-compile-html :template="customTemplate" :context="customContext" />
-            <!-- CUSTOM INPUT -->
-            <!-- <pre>{{field}}</pre> -->
         </template>
         <template v-else-if="renderer == 'embedded'">
             <template v-if="field.maximum == 1">
@@ -39,7 +35,6 @@
         <template v-else-if="renderer == 'group'">
             <template v-if="asObject">
                 <template v-if="field.maximum == 1">
-                    <!-- v-model="model[field.key]" -->
                     <fluro-content-form v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
                 </template>
                 <template v-if="field.maximum != 1">
@@ -66,6 +61,8 @@
                 </template>
             </template>
             <template v-else>
+                <!-- <pre style="background: #ff0066; padding: 10px;">{{fields}}</pre> -->
+                <!-- <pre>{{model}}</pre> -->
                 <template v-for="field in fields">
                     <fluro-content-field class="flex" :field="field" @input="valueChange" v-model="model"></fluro-content-field>
                 </template>
@@ -82,17 +79,6 @@
         </template>
         <template v-else-if="renderer == 'number'">
             <v-text-field :required="required" type="number" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
-        </template>
-        <template v-else-if="renderer == 'wysiwyg'">
-            <!-- <pre>{{fieldModel}}</pre> -->
-            <v-input class="no-flex" :label="label">
-                <fluro-editor v-model="fieldModel"></fluro-editor>
-            </v-input>
-
-
-            <hr/>
-            <pre>{{fieldModel}}</pre>
-            <!-- <v-text-field :required="required" type="number" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" /> -->
         </template>
         <template v-else-if="renderer == 'datepicker'">
             <v-dialog ref="dialog" v-model="modal" persistent :return-value.sync="fieldModel" lazy full-width width="290px">
@@ -129,7 +115,7 @@
             </v-dialog>
         </template>
         <template v-else-if="renderer == 'datetimepicker'">
-            <fluro-datetime-picker format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="fieldModel" @focus="modal = true" />
+            <fluro-date-time-picker format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="fieldModel" @focus="modal = true" />
         </template>
         <template v-else-if="renderer == 'textarea'">
             <v-textarea :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
@@ -138,13 +124,13 @@
             <v-select :required="required" :return-object="type == 'reference'" :label="label" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="options" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'search-select'">
-            <v-autocomplete prepend-inner-icon="search" :error-messages="errorMessages" :cache-items="!defaultReferences.length" :chips="multipleInput" :clearable="!required" :return-object="true" item-text="title" v-model="fieldModel" @blur="touch()" @change="valueChange" :multiple="multipleInput" :loading="loading" :items="searchResults" :search-input.sync="keywords" flat hide-no-data :label="label">
-                <template v-slot:selection="{ item, selected }">
-                    <v-chip :selected="selected" color="blue-grey" class="white--text">
-                        <!-- <v-icon left>mdi-coin</v-icon> -->
+            <v-autocomplete :deletable-chips="true" :hide-selected="true" prepend-inner-icon="search" :error-messages="errorMessages" :cache-items="!defaultReferences.length" :chips="multipleInput" :clearable="!required" :return-object="true" item-text="title" v-model="fieldModel" @blur="touch()" @change="valueChange" :multiple="multipleInput" :loading="loading" :items="searchResults" :search-input.sync="keywords" flat hide-no-data :label="label">
+                <!-- <template v-slot:selection="{ item, selected }">
+                    <v-chip close @input="removeValue(index)" :selected="selected" color="blue-grey" class="white--text">
+                       
                         <span v-text="item.title"></span>
                     </v-chip>
-                </template>
+                </template>  -->
                 <template v-slot:item="{ item }">
                     <fluro-avatar class="xs" :id="item._id" type="contact"></fluro-avatar>    
                     <!-- <v-list-tile-avatar color="indigo" class="headline font-weight-light white--text"> -->
@@ -156,29 +142,62 @@
                 </template>
             </v-autocomplete>
         </template>
+        <template v-else-if="renderer == 'signature'">
+            <fluro-signature-field :label="label" v-model="fieldModel" :required="required" :error-messages="errorMessages" :hint="field.description"/>
+            <!-- <v-input class="no-flex" >
+                <div class="signature-wrap">
+                    <vue-signature-pad class="pad" ref="pad" width="100%" height="300px" />
+                    <v-btn small icon @click="fieldModel = '';">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                </div>
+            </v-input> -->
+        </template>
         <template v-else-if="renderer == 'code'">
             <v-card class="no-flex">
                 <v-toolbar dark>
                     <v-toolbar-title>{{label}}</v-toolbar-title>
                 </v-toolbar>
-                <codeeditor v-model="fieldModel" @init="editorInit" :lang="syntax" theme="tomorrow_night_eighties" height="300"></codeeditor>
+                <fluro-code-editor v-model="fieldModel" :lang="syntax" :height="200"></fluro-code-editor>
             </v-card>
-            <!-- <v-select :required="required" :return-object="type == 'reference'" :label="label" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="options" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" /> -->
+        </template>
+        <template v-else-if="renderer == 'wysiwyg'">
+            <v-input class="no-flex" :required="required" :error-messages="errorMessages" :hint="field.description" />
+            <template v-if="multipleInput">
+                <template v-if="fieldModel.length">
+                    <template v-for="(entry, index) in fieldModel">
+                        <!-- <v-input class="no-flex" :label="groupTitle(entry, index)" /> -->
+                        <v-layout>
+                            <div class="vertical-center">
+                                <v-label>{{groupTitle(entry, index)}}</v-label>
+                            </div>
+                            <v-spacer></v-spacer>
+                            <v-btn icon flat color="error" v-if="canRemoveValue" @click="removeValue(index, true)">
+                                <v-icon>close</v-icon>
+                            </v-btn>
+                        </v-layout>
+                        <fluro-editor v-model="fieldModel[index]" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+                        <!-- </v-input> -->
+                    </template>
+                </template>
+                <template v-if="canAddValue">
+                    <v-btn color="primary" @click="addValue('')">
+                        {{multiLabel}} <v-icon>add</v-icon>
+                    </v-btn>
+                </template>
+            </template>
+            <template v-if="!multipleInput">
+                <fluro-editor v-model="fieldModel" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+            </template>
+            </v-input>
         </template>
         <template v-else>
             <template v-if="multipleInput">
-                <!-- <pre>{{fieldModel}} {{canAddValue}}</pre> -->
-                <!-- <v-text-field v-for="(entry, index) in fieldModel" :append-icon="'minus'" :required="required" v-model="fieldModel[index]" @input="valueChange()" @blur="touch()" :error-messages="errorMessages" :placeholder="field.placeholder" /> -->
                 <template v-if="fieldModel.length">
-                    <!-- :messages="errorMessages" -->
                     <v-input class="no-flex" :label="label">
-                        <!-- <v-layout xs12 wrap> -->
-                        <!-- <v-flex xs12> -->
                         <div v-for="(entry, index) in fieldModel">
                             <v-chip close @input="removeValue(index, true)">{{entry}}</v-chip>
                         </div>
-                        <!-- </v-flex> -->
-                        <!-- </v-layout> -->
                     </v-input>
                 </template>
                 <template v-if="canAddValue">
@@ -199,8 +218,9 @@ import _ from 'lodash';
 import Vue from 'vue';
 import FluroCompileHtml from '../FluroCompileHtml.vue';
 import FluroEditor from './FluroEditor.vue';
-
-
+import FluroCodeEditor from './FluroCodeEditor.vue';
+import FluroSignatureField from './FluroSignatureField.vue';
+import FluroDateTimePicker from './FluroDateTimePicker.vue';
 //Allow custom html to be injected at runtime
 
 
@@ -210,7 +230,9 @@ export default {
     components: {
         FluroEditor,
         FluroCompileHtml,
-        codeeditor: require('vue2-ace-editor'),
+        FluroCodeEditor,
+        FluroSignatureField,
+        FluroDateTimePicker,
     },
     data() {
         return {
@@ -248,7 +270,7 @@ export default {
 
             // var search = self.photographerSearch;
             self.loading = true;
-            console.log('Searching', keywords);
+            //console.log('Searching', keywords);
 
 
 
@@ -293,12 +315,14 @@ export default {
         },
         syntax() {
             //Code entries
-            return _.get(this.field, 'syntax');
+            return _.get(this.field, 'params.syntax');
         },
         multiLabel() {
             if (this.multipleInput) {
-                if (this.total) {
+                if (!this.total) {
                     return `Add ${this.title}`;
+                } else {
+                    return `Add another ${this.title}`;
                 }
             }
             return this.label
@@ -338,6 +362,29 @@ export default {
         customTemplate() {
             return this.field.template;
         },
+        // filteredSearchResults() {
+
+        //     var self = this;
+
+        //     if (self.type == 'reference') {
+
+        //         var fastLookup = _.reduce(self.$fluro.utils.arrayIDs(self.fieldModel), function(set, id) {
+        //             set[id] = true;
+        //             return set;
+        //         }, {});
+
+        //         return _.filter(self.searchResults, function(value) {
+        //             var id = self.$fluro.utils.getStringID(value);
+        //             return !fastLookup[id];
+        //         })
+
+        //     } else {
+        //         return _.difference(self.fieldModel, self.searchResults);
+        //     }
+
+
+
+        // },
         searchResults() {
 
             if (this.allowedReferences && this.allowedReferences.length) {
@@ -357,14 +404,16 @@ export default {
                 return true;
             }
 
-            // //console.log('SUB OBJECTS?', this.fieldModel, this.minimum, this.maximum)
             //We are under the maximum
-            if (this.fieldModel.length < this.maximum) {
+            if (this.total < this.maximum) {
+                // //console.log(this.title, 'is under',this.total, this.maximum)
                 return true;
             }
+
+            return false;
         },
         canRemoveValue() {
-            if (this.fieldModel.length > this.minimum) {
+            if (this.total > this.minimum) {
                 return true;
             }
         },
@@ -418,16 +467,19 @@ export default {
                 return `${this.field.className}`;
             }
         },
+
         fieldModel: {
             get() {
                 return this.model[this.key]
             },
             set(value) {
                 this.model[this.key] = value;
+                // Vue.set(this.model, this.key, value);
+                this.valueChange();
             }
         },
         addLabel() {
-            if (this.fieldModel.length) {
+            if (this.total) {
                 return `Add another ${this.title}`
             } else {
                 return `Add ${this.title}`
@@ -459,7 +511,7 @@ export default {
             return this.minimum;
         },
         multipleInput() {
-            return this.maximum != 1;
+            return this.maximum === 0 || this.maximum > 1;
         },
         options() {
 
@@ -505,7 +557,14 @@ export default {
             return parseInt(this.field.maximum);
         },
         total() {
-            return this.fieldModel.length;
+            if (this.multipleInput && this.fieldModel) {
+                var total = _.get(this.fieldModel, 'length');
+                // //console.log('COUNT>', this.title, total);
+                return total
+            }
+        },
+        askCount() {
+            return Math.max(this.minimum, this.field.askCount);
         },
         errorMessages() {
 
@@ -516,9 +575,6 @@ export default {
             if (!this.$v.model.$dirty) {
                 return errors;
             }
-
-
-
 
             ////////////////////////////////////////////
 
@@ -628,7 +684,6 @@ export default {
                 case 'datetime-select':
                     directive = 'datetimepicker';
                     break;
-                    // case 'wysiwyg':
                 case 'textarea':
                     directive = 'textarea';
                     break;
@@ -655,22 +710,15 @@ export default {
         }
     },
     methods: {
-        editorInit: function(editor) {
-            console.log('Editor', editor);
-            require('brace/ext/language_tools') //language extension prerequsite...
-            require('brace/mode/html')
-            require('brace/mode/javascript') //language
-            require('brace/mode/less')
-            require('brace/theme/tomorrow_night_eighties')
-            require('brace/snippets/javascript') //snippet
-        },
         groupTitle(object, index) {
-            if (object.title && object.title.length) {
-                return object.title;
-            }
+            if (object) {
+                if (object.title && object.title.length) {
+                    return object.title;
+                }
 
-            if (object.name && object.name.length) {
-                return object.name;
+                if (object.name && object.name.length) {
+                    return object.name;
+                }
             }
 
             return `${this.title} ${index+1}`
@@ -699,7 +747,7 @@ export default {
             //Check to see if the input is valid
             var errors = checkValidInput(self, proposedValue)
             if (errors.length) {
-                console.log('Bad Data!', errors)
+                //console.log('Bad Data!', errors)
                 return;
             }
 
@@ -713,8 +761,23 @@ export default {
 
         },
         addValue(value) {
-            if (this.canAddValue && this.fieldModel) {
+
+
+            // this.fieldModel.push(value);
+            // //console.log('Add', this.fieldModel, this.maximum);
+            // 
+            //THIS WORKS BUT COMPUTED PROPERTIES BELOW DONT
+            // if(this.fieldModel.length >= this.maximum) {
+            //     return;
+            // }
+            // this.$set(this.model, this.field.key, [value]);
+
+
+            // if (this.total < this.maximum) {
+            if (this.canAddValue) {
                 this.fieldModel.push(value);
+                //console.log('ADD VALUE NOW', this.fieldModel)
+                // Vue.set(this.fieldModel, this.total, value);
                 this.valueChange();
             }
         },
@@ -726,26 +789,44 @@ export default {
         },
         touch() {
 
-            console.log('touched!');
+            //console.log('touched!');
             this.$v.model.$touch()
         },
         valueChange(event, setTouched) {
+            this.valueChange(event, setTouched)
+        },
+        valueChange(event, setTouched) {
 
-            var field = this.field;
+            var self = this;
 
             if (setTouched) {
-                this.touch()
+                self.touch()
             }
-            console.log('changed');
-            this.$emit('input', this.model); //[this.key])
 
-            // this.$forceUpdate();
+            // if(self.multipleInput) {
+            //     //We need to update reactivity
+            //     _.each(self.fieldModel, function(entry, index) {
+            //         Vue.set(self.model, `${this.key}[${index}]`, entry);
+            //     });
+            // }
 
-
+            self.$emit('input', self.model); //[self.key])
+            // self.$forceUpdate();
         }
     },
+    created() {
 
-    // props: ['field', 'value'],
+        if (this.multipleInput) {
+            switch (this.type) {
+                case 'reference':
+                    this.results = this.defaultReferences.slice();
+                    break;
+                default:
+                    this.results = this.defaultValues.slice();
+                    break;
+            }
+        }
+    },
     props: {
         'field': {
             type: Object,
@@ -759,104 +840,6 @@ export default {
     beforeCreate: function() {
         this.$options.components.FluroContentForm = require('./FluroContentForm.vue').default;
         this.$options.components.FluroContentField = require('./FluroContentField.vue').default;
-    },
-    created() {
-
-        //Get the field
-        var field = this.field;
-
-        /////////////////////////////////////////////////////////
-
-        var defaultValue;
-
-        /////////////////////////////////////////////////////////
-
-        //Check what type it is
-        switch (this.renderer) {
-
-            case 'group':
-            case 'embedded':
-
-                //If it requires sub objects
-                if (field.asObject || this.renderer == 'embedded') {
-
-                    if (field.maximum == 1) {
-                        defaultValue = {}
-                    } else {
-
-                        //Use an array as it's default value
-                        defaultValue = [];
-
-                        //Create an object for either the minimum required entries
-                        //or the askCount if it's greater than the minimum
-                        var startingFields = Math.max(field.minimum, field.askCount);
-
-                        _.times(startingFields, function(i) {
-                            defaultValue.push({})
-                        })
-                    }
-                }
-
-                break;
-            default:
-                if (this.multipleInput) {
-                    defaultValue = [];
-                }
-
-
-                function getDefaultValue(renderer) {
-                    switch (renderer) {
-                        case 'code':
-                            return '';
-                            break;
-                    }
-                }
-
-                //////////////////////////////////////////////////
-
-                if (this.type == 'reference') {
-                    if (this.defaultReferences && this.defaultReferences.length) {
-
-                        if (this.multipleInput) {
-                            defaultValue = defaultValue.concat(this.defaultReferences);
-
-                        } else {
-                            defaultValue = _.first(this.defaultReferences);
-                        }
-
-                        this.results = this.results.concat(this.defaultReferences);
-                    }
-                } else {
-
-                    if (this.defaultValues && this.defaultValues.length) {
-
-                        if (this.multipleInput) {
-                            defaultValue = defaultValue.concat(this.defaultValues);
-
-                        } else {
-                            defaultValue = _.first(this.defaultValues);
-                        }
-
-                        this.results = this.results.concat(this.defaultValues);
-                    } else {
-                        if (this.multipleInput) {
-                            defaultValue = [getDefaultValue(this.renderer)];
-                        } else {
-                            defaultValue = getDefaultValue(this.renderer);
-                        }
-                    }
-                }
-                break;
-        }
-
-        //////////////////////////////////////
-
-        // console.log('SET DEFAULT', field.key, defaultValue);
-        //Set the default value and it's reactivity
-        Vue.set(this.model, field.key, defaultValue);
-
-
-
     },
     validations: {
         model: {
@@ -933,7 +916,7 @@ function validateInput(source, vm) {
 
     //There is no minimum
     if (!minimum && !value) {
-        //console.log('No minimum!')
+        ////console.log('No minimum!')
         return true;
     }
 
@@ -945,10 +928,10 @@ function validateInput(source, vm) {
     if (maximum == 1) {
 
         if (value) {
-            //console.log(`Required answer was provided`)
+            ////console.log(`Required answer was provided`)
             return !checkValidInput(vm, value).length;
         } else {
-            //console.log('Requires an answer but none provided');
+            ////console.log('Requires an answer but none provided');
             return false;
         }
     }
@@ -957,7 +940,7 @@ function validateInput(source, vm) {
 
     //We need value to be an array at this point
     if (!isArray) {
-        //console.log(`Requires ${minimum} answer but value is not an array`)
+        ////console.log(`Requires ${minimum} answer but value is not an array`)
         return false;
     }
 
@@ -1059,6 +1042,13 @@ function checkValidInput(self, input) {
 <style lang="scss">
 .fluro-content-field {
 
+
+    .vertical-center {
+        display: flex;
+        align-items: center;
+        min-height: 36px;
+    }
+
     &.fluro-content-field-group.multiple-input {
         margin-bottom: 50px;
     }
@@ -1081,6 +1071,10 @@ function checkValidInput(self, input) {
 
     .v-toolbar__title {
         letter-spacing: -0.03em;
+    }
+
+    .fluro-editor .fluro-editor-textarea>div {
+        min-height: 200px;
     }
 
     .terms {

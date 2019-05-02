@@ -1,12 +1,14 @@
 <template>
-    <div class="fluro-image" :class="{loaded:loaded}" :style="{backgroundImage:backgroundImage}">
-        <div :style="spacer"></div>
-        <!-- <transition name="fade"> -->
-        <div class="placeholder" v-if="!loaded" :style="{backgroundImage:placeholderImage}"></div>
-        <!-- </transition> -->
-        <v-progress-circular v-if="!loaded && spinner" indeterminate color="rgba(180,180,180,0.5)"></v-progress-circular>
-        <slot></slot>
-    </div>
+        <div class="fluro-image" :class="{loaded:loaded}" :style="{backgroundImage:backgroundImage}">
+            <div :style="spacer"></div>
+            <!-- <transition name="fade"> -->
+            <div class="placeholder" v-if="!loaded" :style="{backgroundImage:placeholderImage}"></div>
+            <!-- </transition> -->
+            <v-progress-circular v-if="!loaded && spinner" indeterminate color="rgba(180,180,180,0.5)"></v-progress-circular>
+            <slot></slot>
+
+        </div>
+        <!-- <pre>{{url}}</pre> -->
 </template>
 <script>
 export default {
@@ -24,6 +26,8 @@ export default {
     },
     data() {
         return {
+            imageWidth: 0,
+            imageHeight: 0,
             loaded: false,
         }
     },
@@ -54,6 +58,11 @@ export default {
             img.onload = function($event) {
                 self.loaded = true;
                 self.$emit('load', $event);
+
+
+                self.imageWidth = img.width;
+                self.imageHeight = img.height;
+
             }
 
             //Once the image has loaded
@@ -66,10 +75,10 @@ export default {
     },
     computed: {
         computedWidth() {
-            return _.get(this.item, 'width') || this.width || 0;
+            return _.get(this.item, 'width') || this.width || this.imageWidth || 0;
         },
         computedHeight() {
-            return _.get(this.item, 'height') || this.height || 0;
+            return _.get(this.item, 'height') || this.height || this.imageHeight || 0;
         },
         aspectRatio() {
             return (this.computedHeight / this.computedWidth * 100);
@@ -91,17 +100,15 @@ export default {
         },
         url() {
             if (this.imageID) {
-
-
                 //Allow the Fluro API to decide the best dimensions based on screensize
-                return this.$fluro.asset.imageUrl(this.imageID, this.width, this.height);
+                return this.$fluro.asset.imageUrl(this.imageID, this.width, this.height, { includePublic: true });
             } else {
                 return;
             }
         },
         placeholderImage() {
             if (this.imageID) {
-                var placeholderUrl = this.$fluro.asset.imageUrl(this.imageID, 50);
+                var placeholderUrl = this.$fluro.asset.imageUrl(this.imageID, 50, null, { includePublic: true });
                 return `url(${placeholderUrl})`;
             } else {
                 return;
