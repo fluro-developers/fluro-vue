@@ -559,7 +559,7 @@ $color-white: #fff;
 .fluro-editor-textarea {
     display: flex;
     flex-direction: column;
-    height:200px;
+    min-height:200px;
     overflow:hidden;
 
     &>div {

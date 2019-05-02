@@ -89,10 +89,10 @@
                     <v-toolbar color="primary" dark>
                         <v-toolbar-title>{{label}}</v-toolbar-title>
                     </v-toolbar>
-                    <v-date-picker v-model="fieldModel" scrollable>
+                    <v-date-picker v-model="sudoModel" scrollable>
                         <v-spacer></v-spacer>
                         <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="$refs.dialog.save(fieldModel)">OK</v-btn>
+                        <v-btn flat color="primary" @click="$refs.dialog.save(sudoModel)">OK</v-btn>
                     </v-date-picker>
                 </v-card>
             </v-dialog>
@@ -106,10 +106,10 @@
                     <v-toolbar color="primary" dark>
                         <v-toolbar-title>{{label}}</v-toolbar-title>
                     </v-toolbar>
-                    <v-time-picker v-model="fieldModel" full-width>
+                    <v-time-picker v-model="sudoModel" full-width>
                         <v-spacer></v-spacer>
                         <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="$refs.dialog.save(fieldModel)">OK</v-btn>
+                        <v-btn flat color="primary" @click="$refs.dialog.save(sudoModel)">OK</v-btn>
                     </v-time-picker>
                 </v-card>
             </v-dialog>
@@ -239,6 +239,7 @@ export default {
             modal: false,
             model: this.value,
             proposedValue: null,
+            sudoModel:null,
 
             //Async searching
             keywords: '',
