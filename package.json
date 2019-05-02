@@ -7,8 +7,7 @@
     "build": "webpack --mode=production && webpack --mode=production && npm run test",
     "dev": "webpack --mode=development --progress --colors --watch",
     "test": "mocha  --colors ./test/*.spec.js",
-    "test:watch": "mocha  --colors -w ./test/*.spec.js",
-    "document": "jsdoc -r  . -d docs -c jsdoc.conf README.md"
+    "test:watch": "mocha  --colors -w ./test/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -57,8 +56,6 @@
     "babel-register": "^6.26.0",
     "chai": "^4.2.0",
     "css-loader": "^2.1.1",
-    "docdash": "^1.1.0",
-    "jsdoc": "^3.5.5",
     "jsdom": "^14.0.0",
     "mocha": "^6.1.2",
     "scss-loader": "0.0.1",
