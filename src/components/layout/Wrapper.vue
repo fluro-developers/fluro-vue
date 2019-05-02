@@ -46,49 +46,58 @@ $title-fraction-xl: $title-fraction / 3;
 
 section.wrapper {
 
+    &[bottom] {
+        padding-top:0 !important;
+    }
+
+    &[top] {
+        padding-top:0 !important;
+    }
+   
     /////////////////////////////////////////
 
     padding: $wrapper-padding 0;
 
-    [title] {
-        padding-bottom: floor($wrapper-padding) * $title-fraction;
+    [wrapper-title] {
+        margin-bottom: floor($wrapper-padding) * $title-fraction;
     }
-
 
     [centered] {
         text-align: center;
     }
 
 
+
+
     &[xs] {
         padding: floor($wrapper-padding / 3) 0;
 
-        [title] {
-            padding-bottom: floor($wrapper-padding / 3) * $title-fraction-xs;
+        [wrapper-title] {
+            margin-bottom: floor($wrapper-padding / 3) * $title-fraction-xs;
         }
     }
 
     &[sm] {
         padding: floor($wrapper-padding / 2) 0;
 
-        [title] {
-            padding-bottom: floor($wrapper-padding / 2) * $title-fraction-sm;
+        [wrapper-title] {
+            margin-bottom: floor($wrapper-padding / 2) * $title-fraction-sm;
         }
     }
 
     &[lg] {
         padding: floor($wrapper-padding * 2) 0;
 
-        [title] {
-            padding-bottom: floor($wrapper-padding * 2) * $title-fraction-lg;
+        [wrapper-title] {
+            margin-bottom: floor($wrapper-padding * 2) * $title-fraction-lg;
         }
     }
 
     &[xl] {
         padding: floor($wrapper-padding * 3) 0;
 
-        [title] {
-            padding-bottom: floor($wrapper-padding * 3) * $title-fraction-xl;
+        [wrapper-title] {
+            margin-bottom: floor($wrapper-padding * 3) * $title-fraction-xl;
         }
     }
 
@@ -97,39 +106,39 @@ section.wrapper {
     @media(max-width: 1024px) {
         padding: $tablet-wrapper-padding 0;
 
-        [title] {
-            padding-bottom: floor($tablet-wrapper-padding) * $title-fraction;
+        [wrapper-title] {
+            margin-bottom: floor($tablet-wrapper-padding) * $title-fraction;
         }
 
         &[xs] {
             padding: floor($tablet-wrapper-padding / 3) 0;
 
-            [title] {
-                padding-bottom: floor($tablet-wrapper-padding / 3) * $title-fraction-xs;
+            [wrapper-title] {
+                margin-bottom: floor($tablet-wrapper-padding / 3) * $title-fraction-xs;
             }
         }
 
         &[sm] {
             padding: floor($tablet-wrapper-padding / 2) 0;
 
-            [title] {
-                padding-bottom: floor($tablet-wrapper-padding / 2) * $title-fraction-sm;
+            [wrapper-title] {
+                margin-bottom: floor($tablet-wrapper-padding / 2) * $title-fraction-sm;
             }
         }
 
         &[lg] {
             padding: floor($tablet-wrapper-padding * 2) 0;
 
-            [title] {
-                padding-bottom: floor($tablet-wrapper-padding * 2) * $title-fraction-lg;
+            [wrapper-title] {
+                margin-bottom: floor($tablet-wrapper-padding * 2) * $title-fraction-lg;
             }
         }
 
         &[xl] {
             padding: floor($tablet-wrapper-padding * 3) 0;
 
-            [title] {
-                padding-bottom: floor($tablet-wrapper-padding * 3) * $title-fraction-xl;
+            [wrapper-title] {
+                margin-bottom: floor($tablet-wrapper-padding * 3) * $title-fraction-xl;
             }
         }
     }
@@ -137,39 +146,39 @@ section.wrapper {
     @media(max-width: 768px) {
         padding: $mobile-wrapper-padding 0;
 
-        [title] {
-            padding-bottom: floor($mobile-wrapper-padding) * $title-fraction;
+        [wrapper-title] {
+            margin-bottom: floor($mobile-wrapper-padding) * $title-fraction;
         }
 
         &[xs] {
             padding: floor($mobile-wrapper-padding / 3) 0;
 
-            [title] {
-                padding-bottom: floor($mobile-wrapper-padding / 3) * $title-fraction-xs;
+            [wrapper-title] {
+                margin-bottom: floor($mobile-wrapper-padding / 3) * $title-fraction-xs;
             }
         }
 
         &[sm] {
             padding: floor($mobile-wrapper-padding / 2) 0;
 
-            [title] {
-                padding-bottom: floor($mobile-wrapper-padding / 2) * $title-fraction-sm;
+            [wrapper-title] {
+                margin-bottom: floor($mobile-wrapper-padding / 2) * $title-fraction-sm;
             }
         }
 
         &[lg] {
             padding: floor($mobile-wrapper-padding * 2) 0;
 
-            [title] {
-                padding-bottom: floor($mobile-wrapper-padding * 2) * $title-fraction-lg;
+            [wrapper-title] {
+                margin-bottom: floor($mobile-wrapper-padding * 2) * $title-fraction-lg;
             }
         }
 
         &[xl] {
             padding: floor($mobile-wrapper-padding * 3) 0;
 
-            [title] {
-                padding-bottom: floor($mobile-wrapper-padding * 3) * $title-fraction-xl;
+            [wrapper-title] {
+                margin-bottom: floor($mobile-wrapper-padding * 3) * $title-fraction-xl;
             }
         }
     }

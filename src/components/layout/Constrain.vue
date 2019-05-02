@@ -16,7 +16,6 @@ export default {
 .constrain {
     margin:auto;
     max-width: 1200px;
-    padding: 0 15px;
 
     &[gutterless] {
         padding:0;
