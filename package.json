@@ -7,7 +7,8 @@
     "build": "webpack --mode=production && webpack --mode=production && npm run test",
     "dev": "webpack --mode=development --progress --colors --watch",
     "test": "mocha  --colors ./test/*.spec.js",
-    "test:watch": "mocha  --colors -w ./test/*.spec.js"
+    "test:watch": "mocha  --colors -w ./test/*.spec.js",
+    "document":"docsify init ./docs"
   },
   "repository": {
     "type": "git",
