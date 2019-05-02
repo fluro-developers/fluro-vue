@@ -191,7 +191,6 @@ A component that makes it quick and easy to show an avatar for a Fluro user, per
 <!-- Show the avatar for a Fluro persona -->
 <fluro-avatar class="xl" :id="user.persona" type="persona"></fluro-avatar>
 
-
 ```
 
 
@@ -266,5 +265,244 @@ A component that makes it easy to render a thumbnail image of a video from Fluro
 
 
 ```
+## Fluro WYSIWYG Editor
+A component that makes it quick and easy to show render a rich text editor, complete with code beautifying, the ability to
+mention other users by typing in @their.name and fits in and inherits the styles of the rest of your app
+
+| Props | Description |
+| ----------- | ----------- |
+| `v-model` | Bind the html string to edit|
+| `placeholder` | Add a placeholder|
+
+> Example Usage
+
+```html
+<fluro-editor v-model="html" placeholder="Type your text in here"></fluro-editor>
+```
+
+```js
+
+import FluroEditor from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroEditor,
+    },
+    data() {
+    	return {
+    		html:'',
+    	}
+    }
+}
+
+
+```
+
+## Fluro Code Editor
+An inline code editor, capable of inputting, rendering, beautifying your JSON, Javascript, HTML or SCSS/CSS code input
+
+| Props | Description |
+| ----------- | ----------- |
+| `v-model` | Bind the string to edit|
+| `lang` | Select the language/syntax format, Can be `json` `html` `js` or `css`|
+| `height` | The starting height for the editor|
+
+> Example Usage
+```js
+
+import FluroCodeEditor from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroCodeEditor,
+    },
+    data() {
+    	return {
+    		script:'',
+    	}
+    }
+}
+```
+
+```html
+<fluro-code-editor v-model="script" lang="json" :height="200"></fluro-code-editor>
+```
+
+
+
+
+## Fluro Content Form
+Renders a selection of form fields from your types, queries, components or definitions in Fluro. 
+It will automatically render all of the fields, using the Fluro Content Field component.
+
+| Props | Type | Description |
+| ----------- | ----------- | | ----------- |
+| `v-model` | Object | The model to edit |
+| `fields` | Array | The array of fields to render, (Usually the array from a definition) |
+
+> Example Usage
+```js
+
+import FluroContentForm from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentForm,
+    },
+    data() {
+    	return {
+    		model:{},
+    	}
+    }
+}
+```
+
+```html
+<fluro-content-form v-model="model" :fields="definition.fields"></fluro-content-form>
+```
+
+
+
+
+
+
+## Fluro Content Field
+Renders a form field as defined within Fluro
+It will render all nested children and embedded fields recursively. This is mainly used 
+within the Fluro Content Form Component
+
+| Props | Type | Description |
+| ----------- | ----------- | | ----------- |
+| `v-model` | Object | The model to edit |
+| `field` | Object | The field description object from fluro |
+
+> Example Usage
+```js
+
+import FluroContentField from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentField,
+    },
+    data() {
+    	return {
+    		model:{},
+    		field:{
+    			minimum:1,
+    			maximum:3,
+    			type:'string',
+    			directive:'select',
+    			defaultValues:[]
+    			allowedValues:[],
+    			options:[{
+    				name:'Option 1',
+    				value:'one',
+    			}]
+    		}
+    	}
+    }
+}
+```
+
+```html
+<fluro-content-field :field="field" v-model="model"></fluro-content-field>
+```
+
+
+
+
+
+## Fluro Signature Field
+Renders a signature input that allows a user to add their signature for a form
+
+| Props | Type | Description |
+| ----------- | ----------- | | ----------- |
+| `v-model` | Object | The model to edit |
+| `label` | String | The label to show above the signature |
+| `required` | Boolean | Whether or not this field should show an error if no input is added |
+| `errorMessages` | Array | An array of error messages to display to the user |
+| `hint` | String | Hint or descriptive text to show below the field |
+
+> Example Usage
+```js
+
+import FluroContentField from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentField,
+    },
+    data() {
+    	return {
+    		model:{},
+    		field:{
+    			minimum:1,
+    			maximum:3,
+    			type:'string',
+    			directive:'select',
+    			defaultValues:[]
+    			allowedValues:[],
+    			options:[{
+    				name:'Option 1',
+    				value:'one',
+    			}]
+    		}
+    	}
+    }
+}
+```
+
+```html
+<fluro-signature-field :label="label" v-model="fieldModel" :required="required" :error-messages="errorMessages" :hint="field.description"/>
+```
+
+
+
+
+## Fluro Date+Time Picker
+Renders an input that allows a user to quickly select a time and date.
+Allows for data entry of a full Javascript date timestamp as a string or date
+
+| Props | Type | Description |
+| ----------- | ----------- | | ----------- |
+| `v-model` | Object | The date to edit |
+| `label` | String | The label to show above the signature |
+| `format` | String | The format to display for the date when rendered in the text input |
+
+> Example Usage
+```js
+
+import FluroDateTimePicker from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroDateTimePicker,
+    },
+    data() {
+    	return {
+    		date:'2016-04-03T07:10:11.004Z',
+    	}
+    }
+}
+```
+
+```html
+<fluro-date-time-picker format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="date" />
+```
+
+
 
 

@@ -1,14 +1,37 @@
 <template>
-    <section>
+    <section class="wrapper">
         <slot></slot>
     </section>
 </template>
 <script>
-export default {
 
+export default {
+    // props:{
+    //     'color':{
+    //         type:String,
+    //     }
+    // },
+    // data() {
+
+    // },
+    // computed:{
+    //     styles() {
+
+    //         var style = {};
+
+    //         if(this.color && this.color.length) {
+    //             style.backgroundColor = this.color;
+    //         }
+    //         return style;
+    //     }
+    // }
 }
+
+
 </script>
-<style scoped lang="scss">
+<style lang="scss">
+
+
 //Use 100px by default
 $wrapper-padding: 70px;
 $tablet-wrapper-padding: 50px;
@@ -21,11 +44,19 @@ $title-fraction-sm: $title-fraction;
 $title-fraction-lg: $title-fraction / 3;
 $title-fraction-xl: $title-fraction / 3;
 
-section {
+section.wrapper {
+
+    /////////////////////////////////////////
+
     padding: $wrapper-padding 0;
 
     [title] {
         padding-bottom: floor($wrapper-padding) * $title-fraction;
+    }
+
+
+    [centered] {
+        text-align: center;
     }
 
 

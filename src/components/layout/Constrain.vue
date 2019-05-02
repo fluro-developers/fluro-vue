@@ -29,6 +29,22 @@ export default {
     &[sm] {
         max-width: 740px;
     }
+
+    &[md] {
+        max-width: 1200px;
+    }
+
+    &[lg] {
+        max-width: 1600px;
+    }
+
+    &[left] {
+        margin:0;
+    }
+
+    &[centered] {
+        text-align:center;
+    }
 }
 
 
