@@ -38,7 +38,7 @@ $tablet-wrapper-padding: 50px;
 $mobile-wrapper-padding: 30px;
 
 //Titles shouldn't have the exact same padding
-$title-fraction: 0.5;
+$title-fraction: 0.8;
 $title-fraction-xs: $title-fraction;
 $title-fraction-sm: $title-fraction;
 $title-fraction-lg: $title-fraction / 3;

@@ -4,13 +4,19 @@
         <template v-for="field in fields">
             <!-- <pre>{{model[field.key]}}</pre> -->
             <!-- <fluro-code-editor v-model="model[field.key]" @input="valueChange" :height="200"></fluro-code-editor> -->
-            <fluro-content-field :field="field" @input="update" v-model="model"></fluro-content-field>
+            <v-container class="grid-list-xl" pa-0>
+                <!-- <pre>{{field}}</pre> -->
+            <fluro-content-form-field :field="field" @input="update" v-model="model"></fluro-content-form-field>
+            </v-container>
+
         </template>
+
     </div>
 </template>
 <script>
-import FluroContentField from './FluroContentField.vue';
+import FluroContentFormField from './FluroContentFormField.vue';
 import _ from 'lodash';
+import Vue from 'vue';
 
 
 
@@ -57,7 +63,7 @@ function getDefaultValueForField(field) {
 
     ///////////////////////////////////////
 
-    
+
     if (multiple) {
 
         var askCount = Math.max(field.askCount, field.minimum);
@@ -76,18 +82,18 @@ function getDefaultValueForField(field) {
                     break;
                 default:
                     //We need to add objects
-                    if(nested) {
+                    if (nested) {
                         _.times(additionalRequired, function() {
                             blankValue.push({});
                         })
                     }
-                break;
+                    break;
             }
 
         }
     } else {
 
-        if(!blankValue) {
+        if (!blankValue) {
             switch (field.directive) {
                 case 'wysiwyg':
                 case 'textarea':
@@ -96,10 +102,10 @@ function getDefaultValueForField(field) {
                     break;
                 default:
                     //We need to add objects
-                    if(nested) {
+                    if (nested) {
                         blankValue = {};
                     }
-                break;
+                    break;
             }
         }
     }
@@ -126,21 +132,43 @@ export default {
             model: this.value,
         }
     },
-    created() {
-        var self = this;
-
-        //Loop through each field and create a key on the object
-        //so we can listen to it's changes
-        self.fields.forEach(function(field) {
-            var blankValue = getDefaultValueForField(field);
-            self.$set(self.model, field.key, blankValue);
-        });
-
-    },
+    
     components: {
-        FluroContentField,
+        FluroContentFormField,
+    },
+    watch: {
+        'value': function(val) {
+            return this.reset();
+        },
+        'fields': function(val) {
+            return this.reset();
+        }
+    },
+    created() {
+        this.reset();
     },
     methods: {
+        reset: function() {
+            var self = this;
+            self.model = {};
+            //Loop through each field and create a key on the object
+            //so we can listen to it's changes
+            (self.fields || []).forEach(createDefaults);
+
+
+            //Recursively create all the default keys for nested fields
+            function createDefaults(field) {
+                var blankValue = getDefaultValueForField(field);
+
+                //Check if it's just a display group
+                if(field.type == 'group' && !field.asObject) {
+                    (field.fields || []).forEach(createDefaults);
+                }
+
+                // console.log('SET', field.key, blankValue);
+                Vue.set(self.model, field.key, blankValue);
+            }
+        },
         update: function(input) {
 
             // console.log('Field was updated', input);

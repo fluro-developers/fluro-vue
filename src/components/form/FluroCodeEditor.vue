@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="fluro-code-editor">
         <!-- <pre>{{model}}</pre> -->
-        <code-editor v-model="model" @init="editorInit" :lang="syntax" theme="tomorrow_night_eighties" :height="height"></code-editor>
+        <code-editor v-model="model" @init="editorInit" :lang="syntax" theme="tomorrow_night_eighties" :height="100"></code-editor>
     </div>
 </template>
 <script>
@@ -15,9 +15,11 @@ export default {
     props: {
         'value': {
             type: String,
+            default:'',
         },
         'lang': {
             type: String,
+            default:'html',
         },
         'height': {
             default: 300,
@@ -56,7 +58,7 @@ export default {
 
 
             //Get the current string
-            var input = this.editor.session.getValue();
+            var input = this.editor.session.getValue() || '';
 
             //Remove leading spaces
             var array = input.split(/\n/);
@@ -123,6 +125,8 @@ export default {
         this.editor.off('blur', self.beautify);
     },
     mounted() {
+
+
         //Beautify when we first mount
         this.beautify();
     },
@@ -133,6 +137,8 @@ export default {
         value(value) {
 
             var self = this;
+
+            console.log('NEW CODE', value);
 
             // so cursor doesn't jump to start on typing
             if (value !== this.model) {
@@ -152,5 +158,17 @@ export default {
     },
 }
 </script>
-<style lang="scss">
+<style scoped lang="scss">
+
+.fluro-code-editor {
+
+    // border: 10px solid #ff0066;
+    min-height:200px;
+    display: flex;
+    flex-direction: column;
+
+    & > div {
+        flex:1
+    }
+}
 </style>

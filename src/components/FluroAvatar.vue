@@ -28,17 +28,24 @@ export default {
 	display:inline-block;
 	width: 24px;
 	vertical-align: middle;
-	margin-right: 10px;
 
-	&.md {
+	&[left] {
+		margin-right: 10px;
+	}
+
+	&[right] {
+		margin-left: 10px;
+	}
+
+	&[md] {
 		width:36px;
 	}
 
-	&.lg {
+	&[lg] {
 		width:48px;
 	}
 
-	&.xl {
+	&[xl] {
 		width:64px;
 	}
 }

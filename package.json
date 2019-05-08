@@ -1,6 +1,6 @@
 {
   "name": "fluro-vue",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "A package to make it easy to build Vue applications that interact with Fluro",
   "main": "src/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev": "webpack --mode=development --progress --colors --watch",
     "test": "mocha  --colors ./test/*.spec.js",
     "test:watch": "mocha  --colors -w ./test/*.spec.js",
-    "document":"docsify init ./docs"
+    "document": "docsify init ./docs"
   },
   "repository": {
     "type": "git",

@@ -1,13 +1,11 @@
 <template>
     <div class="realm-select">
+        <!-- {{type}} {{definition}} -->
         <v-btn color="primary" dark @click="dialog = true">{{model.length}} Realms Selected</v-btn>
         <v-dialog content-class="realm-dialog" :fullscreen="realmSelectFullScreen" v-model="dialog">
             <!-- fullscreen hide-overlay transition="dialog-bottom-transition" scrollable -->
             <v-card tile>
                 <v-toolbar card dark color="primary">
-                    <v-btn icon dark @click="dialog = false">
-                        <v-icon>close</v-icon>
-                    </v-btn>
                     <v-toolbar-title>{{model.length}} Realms</v-toolbar-title>
                     <!-- <v-spacer></v-spacer>
                     <v-flex>
@@ -17,6 +15,10 @@
                     <v-toolbar-items>
                         <v-btn dark icon flat @click="realmSelectFullScreen = !realmSelectFullScreen">
                             <v-icon>{{ realmSelectFullScreen ? 'fullscreen_exit' :'fullscreen'}}</v-icon>
+                        </v-btn>
+                        <v-btn dark @click="dialog = false">
+                            Done
+                            <v-icon right>check</v-icon>
                         </v-btn>
                     </v-toolbar-items>
                     <!-- <v-menu bottom right offset-y>
@@ -105,7 +107,16 @@ export default {
     props: {
         'value': {
             type: Array,
+            default: function() {
+                return [];
+            },
         },
+        'type': {
+            type: String,
+        },
+        'definition': {
+            type: String,
+        }
     },
     data() {
         return {
@@ -233,9 +244,9 @@ $line-color: darken($bg-color, 10%);
 
     .flex-fill {
         background: $bg-color;
-        flex:1;
+        flex: 1;
         display: flex;
-        overflow:auto;
+        overflow: auto;
         padding: 25px 0;
     }
 

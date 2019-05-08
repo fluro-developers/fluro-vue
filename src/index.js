@@ -24,6 +24,8 @@ import Fluro from 'fluro';
 //Import Components
 import FluroAvatar from './components/FluroAvatar.vue';
 import FluroImage from './components/FluroImage.vue';
+import FluroIcon from './components/FluroIcon.vue';
+import FluroListItem from './components/FluroListItem.vue';
 import FluroVideo from './components/FluroVideo.vue';
 import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
 
@@ -43,11 +45,44 @@ export { FluroCodeEditor as FluroCodeEditor };
 import FluroContentForm from './components/form/FluroContentForm.vue';
 export { FluroContentForm as FluroContentForm };
 
-import FluroContentField from './components/form/FluroContentField.vue';
-export { FluroContentField as FluroContentField };
+import FluroContentFormField from './components/form/FluroContentFormField.vue';
+export { FluroContentFormField as FluroContentFormField };
+
+
+import FluroContentRender from './components/FluroContentRender.vue';
+export { FluroContentRender as FluroContentRender };
+
+import FluroContentRenderField from './components/FluroContentRenderField.vue';
+export { FluroContentRenderField as FluroContentRenderField };
 
 import FluroDateTimePicker from './components/form/FluroDateTimePicker.vue';
 export { FluroDateTimePicker as FluroDateTimePicker };
+
+
+import FluroSignatureField from './components/form/FluroSignatureField.vue';
+export { FluroSignatureField as FluroSignatureField };
+
+
+import FluroPostForm from './components/form/FluroPostForm.vue';
+export { FluroPostForm as FluroPostForm };
+
+import FluroInteractionForm from './components/form/FluroInteractionForm.vue';
+export { FluroInteractionForm as FluroInteractionForm };
+
+
+
+
+
+import FluroPostThread from './components/form/FluroPostThread.vue';
+export { FluroPostThread as FluroPostThread };
+
+
+import FluroStatToggle from './components/FluroStatToggle.vue';
+export { FluroStatToggle as FluroStatToggle };
+
+
+import FluroStatTotal from './components/FluroStatTotal.vue';
+export { FluroStatTotal as FluroStatTotal };
 
 
 ////////////////////////////////////////////////////////////////////
@@ -285,13 +320,16 @@ const FluroVue = {
         //Add Fluro Filters Globally 
         Vue.filter('dateFromID', fluro.date.dateFromID);
         Vue.filter('formatDate', fluro.date.formatDate);
+        Vue.filter('timeago', fluro.date.timeago);
         Vue.filter('readableEventDate', fluro.date.readableEventDate);
         Vue.filter('filesize', fluro.asset.filesize);
         Vue.filter('comma', fluro.utils.comma);
 
         //Add Fluro Components Globally
+        Vue.component('fluro-icon', FluroIcon);
         Vue.component('fluro-avatar', FluroAvatar);
         Vue.component('fluro-image', FluroImage);
+        Vue.component('fluro-list-item', FluroListItem);
         Vue.component('fluro-video', FluroVideo);
         Vue.component('fluro-video-thumbnail', FluroVideoThumbnail);
 

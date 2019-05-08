@@ -1,20 +1,24 @@
 <template>
-    <div class="fluro-video" :class="classes" :style="style">
-        <div class="fluro-video-embed" v-if="provider == 'youtube'">
-            <youtube-embed :video-id="mediaID"></youtube-embed>
+    <div>
+        <div class="fluro-video" :class="classes" :style="style">
+            <div class="fluro-video-embed" v-if="provider == 'youtube'">
+                <youtube-embed :video-id="mediaID"></youtube-embed>
+            </div>
+            <div class="fluro-video-embed" v-if="provider == 'upload'">
+                <video class="embed-responsive-item" :poster="posterUrl" controls>
+                    <source :src="assetUrl" :type="item.mimetype">
+                </video>
+            </div>
+            <div class="fluro-video-embed" v-if="provider == 'embed'" v-html="item.external.embed">
+            </div>
+            <div class="fluro-video-embed" v-if="provider == 'vimeo'">
+                <vimeo-player :video-id='mediaID'></vimeo-player>
+            </div>
+            <!-- <pre>{{item}}</pre> -->
+            <slot></slot>
         </div>
-        <div class="fluro-video-embed" v-if="provider == 'upload'">
-            <video class="embed-responsive-item" :poster="posterUrl" controls>
-                <source :src="assetUrl"  :type="item.mimetype">
-            </video>
-        </div>
-        <div class="fluro-video-embed" v-if="provider == 'embed'" v-html="item.external.embed">
-        </div>
-        <div class="fluro-video-embed" v-if="provider == 'vimeo'">
-            <vimeo-player :video-id='mediaID'></vimeo-player>
-        </div>
+        <!-- <pre>{{mediaID}}</pre> -->
         <!-- <pre>{{item}}</pre> -->
-        <slot></slot>
     </div>
 </template>
 <script>
@@ -48,7 +52,20 @@ export default {
         },
         mediaID() {
             if (this.item) {
-                return this.item.assetMediaID;
+
+                if (this.item.assetMediaID) {
+                    return this.item.assetMediaID;
+                }
+
+                if (this.item.external) {
+                    if (this.item.external.youtube) {
+                        return this.item.external.youtube
+                    }
+
+                    if (this.item.external.vimeo) {
+                        return this.item.external.vimeo
+                    }
+                }
             }
         },
         classes() {
@@ -98,12 +115,12 @@ export default {
             return this.$fluro.utils.getStringID(this.item);
         },
         posterUrl() {
-            return this.$fluro.asset.posterUrl(this.item, null, null, {extension:'jpg'}) ;
+            return this.$fluro.asset.posterUrl(this.item, null, null, { extension: 'jpg' });
         },
         assetUrl() {
             return this.$fluro.asset.getUrl(this.item);
         },
-        
+
         backgroundImage() {
             if (this.posterUrl) {
                 return `url(${this.posterUrl})`;

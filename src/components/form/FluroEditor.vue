@@ -1,23 +1,10 @@
 <template>
     <div class="fluro-editor">
-        <editor-menu-bar :editor="editor">
-            <div class="fluro-editor-toolbar" slot-scope="{ commands, isActive }">
-                <v-btn icon small flat :class="{ 'is-active':showSource }" @click="showSource = !showSource">
-                    <v-icon>{{showSource ? 'edit':'code'}}</v-icon>
-                </v-btn>
-                <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.bold() }" @click="commands.bold">
-                    <v-icon>format_bold</v-icon>
-                </v-btn>
-                <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.italic() }" @click="commands.italic">
-                    <v-icon>format_italic</v-icon>
-                </v-btn>
-                <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.underline() }" @click="commands.underline">
-                    <v-icon>format_underline</v-icon>
-                </v-btn>
-                <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.strike() }" @click="commands.strike">
-                    <v-icon>format_strikethrough</v-icon>
-                </v-btn>
 
+
+        <!-- <pre>{{model}}</pre> -->
+        <!-- <editor-floating-menu :editor="editor">
+            <div slot-scope="{ commands, isActive, menu }" class="editor__floating-menu" :class="{ 'is-active': menu.isActive }" :style="`top: ${menu.top}px`">
                 <v-menu :fixed="true" transition="slide-y-transition" offset-y>
                     <template v-slot:activator="{ on }">
                         <v-btn small icon :disabled="showSource" v-on="on">
@@ -42,9 +29,62 @@
                         </v-list-tile>
                     </v-list>
                 </v-menu>
-
-
-<!-- 
+                <button class="menubar__button" :class="{ 'is-active': isActive.bullet_list() }" @click="commands.bullet_list">
+                    <icon name="ul" />
+                </button>
+                <button class="menubar__button" :class="{ 'is-active': isActive.ordered_list() }" @click="commands.ordered_list">
+                    <icon name="ol" />
+                </button>
+                <button class="menubar__button" :class="{ 'is-active': isActive.blockquote() }" @click="commands.blockquote">
+                    <icon name="quote" />
+                </button>
+                <button class="menubar__button" :class="{ 'is-active': isActive.code_block() }" @click="commands.code_block">
+                    <icon name="code" />
+                </button>
+            </div>
+        </editor-floating-menu> -->
+        <editor-menu-bar :editor="editor">
+            <div class="fluro-editor-toolbar" slot-scope="{ commands, isActive }">
+                <v-btn icon small flat class="hidden-xs-only" :class="{ 'is-active':showSource }" @click="showSource = !showSource">
+                    <v-icon>{{showSource ? 'edit':'code'}}</v-icon>
+                </v-btn>
+                <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.bold() }" @click="commands.bold">
+                    <v-icon>format_bold</v-icon>
+                </v-btn>
+                <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.italic() }" @click="commands.italic">
+                    <v-icon>format_italic</v-icon>
+                </v-btn>
+                <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.underline() }" @click="commands.underline">
+                    <v-icon>format_underline</v-icon>
+                </v-btn>
+                <!-- <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.strike() }" @click="commands.strike">
+                    <v-icon>format_strikethrough</v-icon>
+                </v-btn> -->
+                <v-menu :fixed="true" transition="slide-y-transition" offset-y>
+                    <template v-slot:activator="{ on }">
+                        <v-btn small icon :disabled="showSource" v-on="on">
+                            H1
+                        </v-btn>
+                    </template>
+                    <v-list>
+                        <v-list-tile :class="{ 'active': isActive.heading({ level: 1 }) }" @click="commands.heading({ level: 1 })">
+                            <v-list-tile-content><span style="margin:0 !important" class="h1">Heading 1</span></v-list-tile-content>
+                        </v-list-tile>
+                        <v-list-tile :class="{ 'active': isActive.heading({ level: 2 }) }" @click="commands.heading({ level: 2 })">
+                            <v-list-tile-content><span style="margin:0 !important" class="h2">Heading 2</span></v-list-tile-content>
+                        </v-list-tile>
+                        <v-list-tile :class="{ 'active': isActive.heading({ level: 3 }) }" @click="commands.heading({ level: 3 })">
+                            <v-list-tile-content><span style="margin:0 !important" class="h3">Heading 3</span></v-list-tile-content>
+                        </v-list-tile>
+                        <v-list-tile :class="{ 'active': isActive.heading({ level: 4 }) }" @click="commands.heading({ level: 4 })">
+                            <v-list-tile-content><span style="margin:0 !important" class="h4">Heading 4</span></v-list-tile-content>
+                        </v-list-tile>
+                        <v-list-tile :class="{ 'active': isActive.heading({ level: 5 }) }" @click="commands.heading({ level: 5 })">
+                            <v-list-tile-content><span style="margin:0 !important" class="h5">Heading 5</span></v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
+                </v-menu>
+                <!-- 
                 <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.heading({ level: 1 }) }" @click="commands.heading({ level: 1 })">
                     H1
                 </v-btn>
@@ -87,15 +127,15 @@
                     <v-icon>minimize</v-icon>
                 </v-btn>
                 <!--  -->
-                <v-btn icon :disabled="showSource" small flat @click="commands.undo">
+               <!--  <v-btn icon class="hidden-xs-only" :disabled="showSource" small flat @click="commands.undo">
                     <v-icon>undo</v-icon>
                 </v-btn>
-                <v-btn icon :disabled="showSource" small flat @click="commands.redo">
+                <v-btn icon class="hidden-xs-only" :disabled="showSource" small flat @click="commands.redo">
                     <v-icon>redo</v-icon>
-                </v-btn>
+                </v-btn> -->
                 <v-menu :fixed="true" transition="slide-y-transition" offset-y>
                     <template v-slot:activator="{ on }">
-                        <v-btn small icon :disabled="showSource" v-on="on">
+                        <v-btn small class="hidden-xs-only" icon :disabled="showSource" v-on="on">
                             <v-icon>grid_on</v-icon>
                         </v-btn>
                     </template>
@@ -156,9 +196,9 @@
             </div>
         </editor-menu-bar>
         <template v-if="showSource">
-            <div >
-            <fluro-code-editor class="fluro-editor-textarea" @input="sourceChange" v-model="model" lang="html" :height="300"></fluro-code-editor>
-        </div>
+            <div>
+                <fluro-code-editor class="fluro-editor-textarea" @input="sourceChange" v-model="model" lang="html" :height="300"></fluro-code-editor>
+            </div>
         </template>
         <template v-if="!showSource">
             <editor-content class="fluro-editor-textarea" :editor="editor" />
@@ -175,6 +215,7 @@
                 </div>
             </div>
         </template>
+        <!-- <pre>{{model}}</pre> -->
         <!-- <v-btn small @click="showSource = !showSource">
             View Source <v-icon>code</v-icon>
         </v-btn> -->
@@ -186,10 +227,8 @@
 import tippy from 'tippy.js';
 import Fuse from 'fuse.js';
 import FluroCodeEditor from './FluroCodeEditor.vue';
-
-
-import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
-
+import Mention from './tiptap/mentions';
+import { Editor, EditorContent, EditorMenuBar, EditorFloatingMenu } from 'tiptap'
 import {
     Blockquote,
     CodeBlock,
@@ -209,14 +248,11 @@ import {
     Underline,
     History,
     Table,
-    Mention,
     TableHeader,
     TableCell,
     TableRow,
     Placeholder,
 } from 'tiptap-extensions';
-
-// import Alignment from './tiptap/alignment.js';
 
 
 export default {
@@ -225,7 +261,6 @@ export default {
             showSource: false,
             model: this.value,
             editor: null,
-
             //Mentions
             query: null,
             suggestionRange: null,
@@ -233,33 +268,16 @@ export default {
             navigatedUserIndex: 0,
             insertMention: () => {},
             observer: null,
-
         }
     },
-    // asyncComputed: {
-    //     filteredUsers: {
-    //         default: [],
-    //         get() {
-
-    //             var name = this.query;
-
-    //             console.log('SEARCH FOR MENTION ID', name);
-    //             return this.$fluro.content.mention(name);
-    //         }
-    //     }
-    // },
     computed: {
         showSuggestions() {
             return this.query || this.hasResults
         },
     },
-
     methods: {
-
-
         sourceChange(input) {
             this.model = input;
-            // this.$forceUpdate();
         },
         // navigate to the previous item
         // if it's the first item, navigate to the last one
@@ -281,7 +299,7 @@ export default {
         // so it's important to pass also the position of your suggestion text
         selectUser(user) {
 
-            console.log('SELECT USER', user);
+            //console.log('SELECT USER', user);
 
             this.insertMention({
                 range: this.suggestionRange,
@@ -335,6 +353,7 @@ export default {
     },
     props: {
         'value': {
+            default: '',
             type: String,
         },
         'placeholder': {
@@ -345,6 +364,7 @@ export default {
         EditorMenuBar,
         EditorContent,
         FluroCodeEditor,
+        EditorFloatingMenu,
     },
     created() {
 
@@ -355,6 +375,12 @@ export default {
 
         //Create and set the editor
         this.editor = new Editor({
+            // editorProps:[{
+            //     transformPastedHTML:function(string) {
+            //         //console.log('FUNNEL', string)
+            //         return string;
+            //     }
+            // }],
             extensions: [
                 // new Alignment(),
                 new Placeholder({
@@ -391,13 +417,13 @@ export default {
 
                         // return self.$fluro.content.mention(query);
 
-
-                        return [
-                            { id: 1, name: 'Philipp Kühn' },
-                            { id: 2, name: 'Hans Pagel' },
-                            { id: 3, name: 'Kris Siepert' },
-                            { id: 4, name: 'Justin Schueler' },
-                        ]
+                        return [];
+                        // return [
+                        //     { id: 1, name: 'Philipp Kühn' },
+                        //     { id: 2, name: 'Hans Pagel' },
+                        //     { id: 3, name: 'Kris Siepert' },
+                        //     { id: 4, name: 'Justin Schueler' },
+                        // ]
                     },
                     // is called when a suggestion starts
                     onEnter: ({
@@ -434,7 +460,7 @@ export default {
                                 mentionInstance.renderPopup(virtualNode)
                             })
                             .catch(function(err) {
-                                console.log('Error', err);
+                                //console.log('Error', err);
                                 // this.query = query
                                 // this.filteredUsers = items
                                 // this.suggestionRange = range
@@ -476,7 +502,7 @@ export default {
                     // in this example we use fuse.js with support for fuzzy search
                     // onFilter: (items, query) => {
 
-                    //     console.log('SEARCH', items, query);
+                    //     //console.log('SEARCH', items, query);
 
                     //     if (!query) {
                     //         return items
@@ -494,7 +520,6 @@ export default {
 
                 var HTML = getHTML();
 
-                // console.log('EDITOR CHANGE', HTML);
                 self.model = HTML;
 
 
@@ -502,20 +527,24 @@ export default {
             },
         })
 
+
         //Add the model by default
-        this.editor.setContent(this.model)
+        self.editor.setContent(self.model)
     },
-    
+
     watch: {
+        value(val) {
+            this.model = val;
+        },
         placeholder(newValue) {
             this.editor.extensions.options.placeholder.emptyNodeText = newValue
         },
         model(value) {
-            // console.log('MODEL CHANGE', value);
 
             // so cursor doesn't jump to start on typing
             if (value !== this.editor.getHTML()) {
-                this.editor.setContent(this.model)
+                //console.log('SET CONTENT TO', this.model)
+                this.editor.setContent(value)
             }
 
             this.$emit('input', value);
@@ -534,9 +563,27 @@ $color-white: #fff;
 
 .fluro-editor {
     margin-bottom: 15px;
+
     .ace_editor {
         border-radius: 5px;
         overflow: hidden;
+    }
+
+
+
+
+
+    .floating-menu {
+        position: absolute;
+        margin-top: -0.25rem;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s, visibility 0.2s;
+
+        &.is-active {
+            opacity: 1;
+            visibility: visible;
+        }
     }
 }
 
@@ -544,7 +591,7 @@ $color-white: #fff;
     margin-bottom: 10px;
 
     .v-menu {
-        display:inline;
+        display: inline;
     }
 
     // .active {
@@ -559,16 +606,16 @@ $color-white: #fff;
 .fluro-editor-textarea {
     display: flex;
     flex-direction: column;
-    min-height:200px;
-    overflow:hidden;
+    min-height: 200px;
+    overflow: hidden;
 
     &>div {
-        flex:1;
+        flex: 1;
         padding: 15px;
         outline: none;
         border: 1px solid rgba(#000, 0.1);
         border-radius: 5px;
-        overflow:auto;
+        overflow: auto;
 
         &:focus {
             // background: #fff;
@@ -660,13 +707,14 @@ $color-white: #fff;
     }
 
 
-    .mention {
+    mention {
+        display: inline;
         background: rgba($color-black, 0.1);
         color: rgba($color-black, 0.6);
-        font-size: 0.8rem;
-        font-weight: bold;
-        border-radius: 5px;
-        padding: 0.2rem 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border-radius: 9px;
+        padding: 0.3rem 0.5rem;
         white-space: nowrap;
     }
 
@@ -674,9 +722,15 @@ $color-white: #fff;
 }
 
 
+
+
+
 .mention-suggestion {
     color: rgba($color-black, 0.6);
 }
+
+
+
 
 .suggestion-list {
     font-family: 'font-proxima';

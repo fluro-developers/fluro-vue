@@ -1,14 +1,16 @@
 <template>
-    <v-input class="no-flex" :label="label" :persistent-hint="true" :required="required" :error-messages="errorMessages" :hint="hint">
-        <div class="signature-pad-wrap">
-            <canvas id="signature-pad" class="signature-pad" ref="canvas"></canvas>
-            <!-- <vue-signature-pad class="pad" ref="pad" :options="options" :width="width" :height="height" /> -->
-            <v-btn class="clear" @click="clear()">
-                Clear
-                <v-icon right>close</v-icon>
-            </v-btn>
-        </div>
-    </v-input>
+    <div class="fluro-signature-field">
+        <v-input class="no-flex" :label="label" :persistent-hint="true" :required="required" :error-messages="errorMessages" :hint="hint">
+            <div class="signature-pad-wrap">
+                <canvas id="signature-pad" class="signature-pad" ref="canvas"></canvas>
+                <!-- <vue-signature-pad class="pad" ref="pad" :options="options" :width="width" :height="height" /> -->
+                <v-btn class="clear" @click="clear()">
+                    Clear
+                    <v-icon right>close</v-icon>
+                </v-btn>
+            </div>
+        </v-input>
+    </div>
 </template>
 <script>
 /////////////////////////////////////////////////////
@@ -71,9 +73,9 @@ export default {
             console.log('End!')
         }
         console.log('Mounted', canvas, this.pad);
-        // window.addEventListener("resize", this.resizeCanvas);
+        window.addEventListener("resize", this.resizeCanvas);
 
-        // this.resizeCanvas();
+        this.resizeCanvas();
     },
 
     data() {
@@ -88,16 +90,29 @@ export default {
     },
     methods: {
         resizeCanvas() {
-            const canvas = this.$refs.canvas;
-            const data = this.pad.toData();
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            var ratio = Math.max(window.devicePixelRatio || 1, 1);
+            var canvas = this.$refs.canvas;
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext('2d').scale(ratio, ratio);
-            this.pad.clear();
-            // this.signatureData = TRANSPARENT_PNG;
-            this.pad.fromData(data);
+            canvas.getContext("2d").scale(ratio, ratio);
+            this.pad.clear(); // otherwise isEmpty() might return incorrect value
         },
+
+        // resizeCanvas() {
+        //     const canvas = this.$refs.canvas;
+        //     const data = this.pad.toData();
+
+
+        //     const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        //     canvas.width = canvas.offsetWidth * ratio;
+        //     canvas.height = canvas.offsetHeight * ratio;
+        //     canvas.getContext('2d').scale(ratio, ratio);
+        //     this.pad.clear();
+
+
+        //     // this.signatureData = TRANSPARENT_PNG;
+        //     this.pad.fromData(data);
+        // },
         clear() {
             return this.pad.clear();
         },
@@ -124,8 +139,18 @@ export default {
     },
 }
 </script>
+<style lang="scss">
+
+.fluro-signature-field {
+    .v-input__slot {
+        display: block !important;
+    }
+}
+</style>
 <style scoped lang="scss">
+
 .signature-pad-wrap {
+    flex: 1;
     position: relative;
     height: 0;
     padding-bottom: 50%;
@@ -142,11 +167,13 @@ export default {
     canvas {
         display: block;
         width: 100%;
+        height: 100%;
         position: absolute;
         left: 0;
         right: 0;
         bottom: 0;
         top: 0;
+        cursor: pointer;
     }
 
     .clear {
