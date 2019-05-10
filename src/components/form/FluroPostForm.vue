@@ -27,7 +27,7 @@
                         </template>
                         <template v-else>
 
-                           TESTING AND STUFF {{errorMessages}} {{hasErrors}}.
+                           <!-- TESTING AND STUFF {{errorMessages}} {{hasErrors}}. -->
 
                            <!-- <pre>{{form.fields}}</pre> -->
 

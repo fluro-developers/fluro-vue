@@ -173,7 +173,7 @@
                                 <v-icon>close</v-icon>
                             </v-btn>
                         </v-layout>
-                        <fluro-editor  v-model="fieldModel[index]" :options="editorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+                        <fluro-editor v-model="fieldModel[index]" :options="editorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
                     </template>
                 </template>
                 <template v-if="canAddValue">
@@ -183,7 +183,7 @@
                 </template>
             </template>
             <template v-if="!multipleInput">
-                <fluro-editor  v-model="fieldModel" @input="valueChange" :options="editorOptions" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+                <fluro-editor v-model="fieldModel" @input="valueChange" :options="editorOptions" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
             </template>
             </v-input>
         </template>
@@ -205,7 +205,7 @@
             </template>
         </template>
         <!-- <pre>{{}}</pre> -->
-       <!--  <div v-if="field.expressions">
+        <!--  <div v-if="field.expressions">
             <pre>{{field.expressions}}</pre>
             <pre>{{model}}</pre>
         </div> -->
@@ -316,13 +316,13 @@ export default {
 
             //If the user has entered data into here
             //Don't make any change
-            if(this.$v.model.$dirty) {
+            if (this.$v.model.$dirty) {
                 //console.log('Field is dirty')
                 return;
             }
 
             //If there is a default value expression
-            if(this.expressions && this.expressions.defaultValue) {
+            if (this.expressions && this.expressions.defaultValue) {
                 this.fieldModel = v;
                 //console.log('Updated default value according to expression!', this.expressions.defaultValue, v);
             }
@@ -330,7 +330,7 @@ export default {
         expressionValue(v) {
 
 
-            if(this.expressions && this.expressions.value) {
+            if (this.expressions && this.expressions.value) {
                 this.fieldModel = v;
             }
 
@@ -741,9 +741,12 @@ export default {
                 data: self.model,
                 interaction: self.model,
                 model: self.parent,
-                Math:Math,
-                String:String,
-                Array:Array,
+                Math: Math,
+                String: String,
+                Array: Array,
+                //Include helper function
+                matchInArray:this.$fluro.matchInArray,
+
             }
 
             var ast = Expressions.parse(expression);
