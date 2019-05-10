@@ -1,5 +1,5 @@
 <template>
-    <div :data-field-key="key" class="fluro-content-form-field" v-bind="attributes" :class="fieldClass">
+    <div :data-field-key="key" class="fluro-content-form-field" v-if="isVisible" v-bind="attributes" :class="fieldClass">
         <template v-if="officeUseOnly">
         </template>
         <template v-else-if="renderer == 'custom'">
@@ -61,7 +61,6 @@
                 </template>
             </template>
             <template v-else>
-                <!-- <pre style="background: #ff0066; padding: 10px;">{{fields}}</pre> -->
                 <template v-for="field in fields">
                     <fluro-content-form-field :options="options" class="flex" :field="field" @input="valueChange" v-model="model"></fluro-content-form-field>
                 </template>
@@ -69,20 +68,20 @@
         </template>
         <template v-else-if="renderer == 'checkbox'">
             <div class="terms" :class="{'has-error':errorMessages.length}" v-if="savedTerms">
-                <v-checkbox :mandatory="required" :persistent-hint="true" :label="label" v-model="fieldModel" @change="valueChange($event, true)" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+                <v-checkbox :success="success" :mandatory="required" :persistent-hint="true" :label="label" v-model="fieldModel" @change="valueChange($event, true)" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
                 <div class="conditions">{{field.params.storeData}}</div>
             </div>
             <template v-else>
-                <v-checkbox :mandatory="required" :persistent-hint="true" :label="label" v-model="fieldModel" @change="valueChange($event, true)" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+                <v-checkbox :success="success" :mandatory="required" :persistent-hint="true" :label="label" v-model="fieldModel" @change="valueChange($event, true)" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
             </template>
         </template>
         <template v-else-if="renderer == 'number'">
-            <v-text-field :required="required" type="number" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+            <v-text-field :success="success" :required="required" type="number" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'datepicker'">
             <v-dialog ref="dialog" v-model="modal" persistent :return-value.sync="fieldModel" lazy full-width width="290px">
                 <template v-slot:activator="{ on }">
-                    <v-text-field v-model="fieldModel" :label="label" prepend-inner-icon="event" readonly v-on="on" @focus="modal = true"></v-text-field>
+                    <v-text-field :success="success" v-model="fieldModel" :label="label" prepend-inner-icon="event" readonly v-on="on" @focus="modal = true"></v-text-field>
                 </template>
                 <v-card v-if="modal">
                     <v-toolbar color="primary" dark>
@@ -99,7 +98,7 @@
         <template v-else-if="renderer == 'timepicker'">
             <v-dialog ref="dialog" v-model="modal" persistent :return-value.sync="fieldModel" lazy full-width width="290px">
                 <template v-slot:activator="{ on }">
-                    <v-text-field v-model="fieldModel" :label="label" prepend-inner-icon="access_time" readonly v-on="on" @focus="modal = true"></v-text-field>
+                    <v-text-field :success="success" v-model="fieldModel" :label="label" prepend-inner-icon="access_time" readonly v-on="on" @focus="modal = true"></v-text-field>
                 </template>
                 <v-card v-if="modal">
                     <v-toolbar color="primary" dark>
@@ -114,16 +113,16 @@
             </v-dialog>
         </template>
         <template v-else-if="renderer == 'datetimepicker'">
-            <fluro-date-time-picker format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="fieldModel" @focus="modal = true" />
+            <fluro-date-time-picker :success="success" format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="fieldModel" @focus="modal = true" />
         </template>
         <template v-else-if="renderer == 'textarea'">
-            <v-textarea :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+            <v-textarea :success="success" :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'select'">
-            <v-select :required="required" :return-object="type == 'reference'" :label="label" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="selectOptions"  @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+            <v-select :success="success" :required="required" :return-object="type == 'reference'" :label="label" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="selectOptions" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'search-select'">
-            <v-autocomplete :deletable-chips="true" :hide-selected="true" prepend-inner-icon="search" :error-messages="errorMessages" :cache-items="!defaultReferences.length" :chips="multipleInput" :clearable="!required" :return-object="true" item-text="title" v-model="fieldModel" @blur="touch()" @change="valueChange" :multiple="multipleInput" :loading="loading" :items="searchResults" :search-input.sync="keywords" flat hide-no-data :label="label">
+            <v-autocomplete :success="success" :deletable-chips="true" :hide-selected="true" prepend-inner-icon="search" :error-messages="errorMessages" :cache-items="!defaultReferences.length" :chips="multipleInput" :clearable="!required" :return-object="true" item-text="title" v-model="fieldModel" @blur="touch()" @change="valueChange" :multiple="multipleInput" :loading="loading" :items="searchResults" :search-input.sync="keywords" flat hide-no-data :label="label">
                 <!-- <template v-slot:selection="{ item, selected }">
                     <v-chip close @input="removeValue(index)" :selected="selected" color="blue-grey" class="white--text">
                        
@@ -142,7 +141,7 @@
             </v-autocomplete>
         </template>
         <template v-else-if="renderer == 'signature'">
-            <fluro-signature-field :label="label" v-model="fieldModel" :required="required" :error-messages="errorMessages" :hint="field.description" />
+            <fluro-signature-field :success="success" :label="label" v-model="fieldModel" :required="required" :error-messages="errorMessages" :hint="field.description" />
             <!-- <v-input class="no-flex" >
                 <div class="signature-wrap">
                     <vue-signature-pad class="pad" ref="pad" width="100%" height="300px" />
@@ -157,60 +156,59 @@
                 <v-toolbar dark>
                     <v-toolbar-title>{{label}}</v-toolbar-title>
                 </v-toolbar>
-                <fluro-code-editor v-model="fieldModel" :lang="syntax" :height="200"></fluro-code-editor>
+                <fluro-code-editor :success="success" v-model="fieldModel" :lang="syntax" :height="200"></fluro-code-editor>
             </v-card>
         </template>
         <template v-else-if="renderer == 'wysiwyg'">
-            <v-input class="no-flex" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description" />
-            
-                <template v-if="multipleInput">
-                    <template v-if="fieldModel.length">
-                        <template v-for="(entry, index) in fieldModel">
-                            <!-- <v-input class="no-flex" :label="groupTitle(entry, index)" /> -->
-                            <v-layout>
-                                <div class="vertical-center">
-                                    <v-label>{{groupTitle(entry, index)}}</v-label>
-                                </div>
-                                <v-spacer></v-spacer>
-                                <v-btn icon flat color="error" v-if="canRemoveValue" @click="removeValue(index, true)">
-                                    <v-icon>close</v-icon>
-                                </v-btn>
-                            </v-layout>
-                            <!-- <pre>BOOOLM: {{fieldModel[index]}}</pre> -->
-                            <!-- <v-text-field v-model="fieldModel[index]"></v-text-field> -->
-                            <fluro-editor v-model="fieldModel[index]" :options="editorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
-                            <!-- </v-input> -->
-                        </template>
-                    </template>
-                    <template v-if="canAddValue">
-                        <v-btn color="primary" @click="addValue('')">
-                            {{multiLabel}} <v-icon>add</v-icon>
-                        </v-btn>
+            <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description" />
+            <template v-if="multipleInput">
+                <template v-if="fieldModel.length">
+                    <template v-for="(entry, index) in fieldModel">
+                        <v-layout>
+                            <div class="vertical-center">
+                                <v-label>{{groupTitle(entry, index)}}</v-label>
+                            </div>
+                            <v-spacer></v-spacer>
+                            <v-btn icon flat color="error" v-if="canRemoveValue" @click="removeValue(index, true)">
+                                <v-icon>close</v-icon>
+                            </v-btn>
+                        </v-layout>
+                        <fluro-editor  v-model="fieldModel[index]" :options="editorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
                     </template>
                 </template>
-                <template v-if="!multipleInput">
-                    <fluro-editor v-model="fieldModel" @input="valueChange" :options="editorOptions" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+                <template v-if="canAddValue">
+                    <v-btn color="primary" @click="addValue('')">
+                        {{multiLabel}} <v-icon>add</v-icon>
+                    </v-btn>
                 </template>
-            
+            </template>
+            <template v-if="!multipleInput">
+                <fluro-editor  v-model="fieldModel" @input="valueChange" :options="editorOptions" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+            </template>
             </v-input>
         </template>
         <template v-else>
             <template v-if="multipleInput">
                 <template v-if="fieldModel.length">
-                    <v-input class="no-flex" :label="label">
+                    <v-input :success="success" class="no-flex" :label="label">
                         <div v-for="(entry, index) in fieldModel">
                             <v-chip close @input="removeValue(index, true)">{{entry}}</v-chip>
                         </div>
                     </v-input>
                 </template>
                 <template v-if="canAddValue">
-                    <v-text-field browser-autocomplete="off" :append-icon="canAddValue ? 'plus' : 'plus'" :required="required" :label="multiLabel" v-model="proposedValue" @keyup.enter.native.stop="addProposedValue()" @blur="addProposedValue()" :error-messages="errorMessages" :hint="hint" :placeholder="field.placeholder" />
+                    <v-text-field :success="success" browser-autocomplete="off" :append-icon="canAddValue ? 'plus' : 'plus'" :required="required" :label="multiLabel" v-model="proposedValue" @keyup.enter.native.stop="addProposedValue()" @blur="addProposedValue()" :error-messages="errorMessages" :hint="hint" :placeholder="field.placeholder" />
                 </template>
             </template>
             <template v-if="!multipleInput">
-                <v-text-field browser-autocomplete="off" :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+                <v-text-field :success="success" browser-autocomplete="off" :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
             </template>
         </template>
+        <!-- <pre>{{}}</pre> -->
+       <!--  <div v-if="field.expressions">
+            <pre>{{field.expressions}}</pre>
+            <pre>{{model}}</pre>
+        </div> -->
     </div>
 </template>
 <script>
@@ -226,6 +224,7 @@ import FluroSignatureField from './FluroSignatureField.vue';
 import FluroDateTimePicker from './FluroDateTimePicker.vue';
 //Allow custom html to be injected at runtime
 
+import Expressions from 'expression-eval';
 
 ////////////////////////////////////////////////////////
 
@@ -239,7 +238,7 @@ export default {
     },
     data() {
         return {
-            test:null,
+            test: null,
             modal: false,
             model: this.value,
             proposedValue: null,
@@ -275,7 +274,7 @@ export default {
 
             // var search = self.photographerSearch;
             self.loading = true;
-            //console.log('Searching', keywords);
+            ////console.log('Searching', keywords);
 
 
 
@@ -313,12 +312,37 @@ export default {
 
 
         }, 500),
-        value(v) {
-            //Update this field to reconnect with the new model
-            this.model[this.key] = v[this.key];
+        expressionDefaultValue(v) {
+
+            //If the user has entered data into here
+            //Don't make any change
+            if(this.$v.model.$dirty) {
+                //console.log('Field is dirty')
+                return;
+            }
+
+            //If there is a default value expression
+            if(this.expressions && this.expressions.defaultValue) {
+                this.fieldModel = v;
+                //console.log('Updated default value according to expression!', this.expressions.defaultValue, v);
+            }
+        },
+        expressionValue(v) {
+
+
+            if(this.expressions && this.expressions.value) {
+                this.fieldModel = v;
+            }
+
+            // //console.log('Updated value')
+            // //Update this field to reconnect with the new model
+            // this.model[this.key] = v[this.key];
         }
     },
     computed: {
+        success() {
+            return (this.$v.$dirty && !this.$v.$invalid);
+        },
         editorOptions() {
             return this.options.editor;
         },
@@ -343,8 +367,8 @@ export default {
         label() {
             var title = this.title || '';
 
-            if(this.title.length) {
-                if (this.minimum) {
+            if (this.title.length) {
+                if (this.required) {
                     return `${title} *`;
                 } else {
                     return title;
@@ -398,7 +422,7 @@ export default {
 
             //We are under the maximum
             if (this.total < this.maximum) {
-                // //console.log(this.title, 'is under',this.total, this.maximum)
+                // ////console.log(this.title, 'is under',this.total, this.maximum)
                 return true;
             }
 
@@ -493,21 +517,20 @@ export default {
         type() {
             return this.field.type;
         },
+        expressions() {
+            return this.field.expressions;
+        },
         title() {
 
 
             //Check if 
-            if(this.options.labels && this.options.labels.hasOwnProperty(this.key)) {
+            if (this.options.labels && this.options.labels.hasOwnProperty(this.key)) {
                 return this.options.labels[this.key];
             }
 
 
             return this.field.title;
 
-        },
-
-        required() {
-            return this.minimum;
         },
         multipleInput() {
             return this.maximum === 0 || this.maximum > 1;
@@ -558,7 +581,7 @@ export default {
         total() {
             if (this.multipleInput && this.fieldModel) {
                 var total = _.get(this.fieldModel, 'length');
-                // //console.log('COUNT>', this.title, total);
+                // ////console.log('COUNT>', this.title, total);
                 return total
             }
         },
@@ -709,6 +732,27 @@ export default {
         }
     },
     methods: {
+        resolveExpression(expression) {
+
+            var self = this;
+
+            //Create a context model
+            var context = {
+                data: self.model,
+                interaction: self.model,
+                model: self.parent,
+                Math:Math,
+                String:String,
+                Array:Array,
+            }
+
+            var ast = Expressions.parse(expression);
+            var result = Expressions.eval(ast, context);
+
+            //console.log('Expression?', expression, result);
+
+            return result;
+        },
         groupTitle(object, index) {
             if (object) {
                 if (object.title && object.title.length) {
@@ -746,7 +790,7 @@ export default {
             //Check to see if the input is valid
             var errors = checkValidInput(self, proposedValue)
             if (errors.length) {
-                //console.log('Bad Data!', errors)
+                ////console.log('Bad Data!', errors)
                 return;
             }
 
@@ -763,7 +807,7 @@ export default {
 
 
             // this.fieldModel.push(value);
-            // //console.log('Add', this.fieldModel, this.maximum);
+            // ////console.log('Add', this.fieldModel, this.maximum);
             // 
             //THIS WORKS BUT COMPUTED PROPERTIES BELOW DONT
             // if(this.fieldModel.length >= this.maximum) {
@@ -775,7 +819,7 @@ export default {
             // if (this.total < this.maximum) {
             if (this.canAddValue) {
                 this.fieldModel.push(value);
-                //console.log('ADD VALUE NOW', this.fieldModel)
+                ////console.log('ADD VALUE NOW', this.fieldModel)
                 // Vue.set(this.fieldModel, this.total, value);
                 this.valueChange();
             }
@@ -788,7 +832,7 @@ export default {
         },
         touch() {
 
-            //console.log('touched!');
+            ////console.log('touched!');
             this.$v.model.$touch()
         },
         valueChange(event, setTouched) {
@@ -811,7 +855,6 @@ export default {
             //     self.fieldModel = event;
             // }
 
-            console.log('UPDATED VALUE', event, self.model)
             self.$emit('input', self.model); //[self.key])
             // self.$forceUpdate();
         }
@@ -830,6 +873,9 @@ export default {
         }
     },
     props: {
+        // 'parent':{
+        //     type:Object,
+        // },
         'field': {
             type: Object,
         },
@@ -841,6 +887,107 @@ export default {
                 return {}
             },
             type: Object,
+        },
+    },
+
+    asyncComputed: {
+        required: {
+            default: false,
+            get() {
+                var self = this;
+                var value = false;
+
+                //If there is a minimum
+                if (self.minimum) {
+                    return Promise.resolve(true);
+                }
+
+                if (this.expressionRequired) {
+
+                    return Promise.resolve(true);
+                }
+
+                return Promise.resolve(false);
+
+            }
+        },
+        isVisible: {
+            get() {
+                var isHidden = this.expressionHideGroup || this.expressionHide;
+                return Promise.resolve(!isHidden);
+            }
+        },
+        expressionValue: {
+            get() {
+                var self = this;
+                //There is no hidden expression
+                if (!self.expressions || !self.expressions.value || !self.expressions.value.length) {
+                    return Promise.resolve();
+                }
+
+                var value = this.resolveExpression(self.expressions.value);
+                return Promise.resolve(value);
+            }
+
+        },
+
+        expressionDefaultValue: {
+            get() {
+                var self = this;
+                //There is no hidden expression
+                if (!self.expressions || !self.expressions.defaultValue || !self.expressions.defaultValue.length) {
+                    return Promise.resolve();
+                }
+
+                var value = this.resolveExpression(self.expressions.defaultValue);
+                return Promise.resolve(value);
+            }
+
+        },
+        expressionRequired: {
+            default: false,
+            get() {
+                var self = this;
+                var value = false;
+
+                //There is no hidden expression
+                if (!self.expressions || !self.expressions.required || !self.expressions.required.length) {
+                    return Promise.resolve(false);
+                }
+                value = this.resolveExpression(self.expressions.required);
+                return Promise.resolve(value);
+            }
+
+        },
+        expressionHide: {
+            default: false,
+            get() {
+                var self = this;
+                var value = false;
+
+                //There is no hidden expression
+                if (!self.expressions || !self.expressions.hide || !self.expressions.hide.length) {
+                    return Promise.resolve(false);
+                }
+                value = this.resolveExpression(self.expressions.hide);
+                return Promise.resolve(value);
+            }
+
+        },
+        expressionHideGroup: {
+            default: false,
+            get() {
+
+                var self = this;
+                var value = false;
+
+                if (!self.field.hideExpression || !self.field.hideExpression.length) {
+                    return value;
+                }
+
+                value = this.resolveExpression(self.field.hideExpression);
+                return Promise.resolve(value);
+            },
         },
     },
 
@@ -924,7 +1071,7 @@ function validateInput(source, vm) {
 
     //There is no minimum
     if (!minimum && !value) {
-        ////console.log('No minimum!')
+        //////console.log('No minimum!')
         return true;
     }
 
@@ -936,10 +1083,10 @@ function validateInput(source, vm) {
     if (maximum == 1) {
 
         if (value) {
-            ////console.log(`Required answer was provided`)
+            //////console.log(`Required answer was provided`)
             return !checkValidInput(vm, value).length;
         } else {
-            ////console.log('Requires an answer but none provided');
+            //////console.log('Requires an answer but none provided');
             return false;
         }
     }
@@ -948,7 +1095,7 @@ function validateInput(source, vm) {
 
     //We need value to be an array at this point
     if (!isArray) {
-        ////console.log(`Requires ${minimum} answer but value is not an array`)
+        //////console.log(`Requires ${minimum} answer but value is not an array`)
         return false;
     }
 

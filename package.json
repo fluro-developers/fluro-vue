@@ -1,6 +1,6 @@
 {
   "name": "fluro-vue",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "A package to make it easy to build Vue applications that interact with Fluro",
   "main": "src/index.js",
   "scripts": {
@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/fluro-developers/fluro-vue#readme",
   "dependencies": {
+    "expression-eval": "^2.0.0",
     "fluro": "^1.0.51",
     "js-beautify": "^1.9.1",
     "signature_pad": "^3.0.0-beta.3",
