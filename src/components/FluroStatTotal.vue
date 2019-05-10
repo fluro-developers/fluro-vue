@@ -53,8 +53,6 @@ export default {
                 self.store.removeEventListener('change', self.update);
             }
 
-            
-            
             self.store = self.$fluro.stats.getStore(self.stat, self.targetID, self.unique);
 
             //Stat Store

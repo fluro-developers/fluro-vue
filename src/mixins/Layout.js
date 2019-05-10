@@ -1,11 +1,13 @@
 
 
-import Wrapper from '../components/layout/Wrapper.vue';
-import Constrain from '../components/layout/Constrain.vue';
+import FluroWrapper from '../components/ui/FluroWrapper.vue';
+import FluroConstrain from '../components/ui/FluroConstrain.vue';
+import FluroRealmBar from '../components/ui/FluroRealmBar.vue';
 
 export default {
     components: {
-        Wrapper,
-        Constrain,
+        'wrapper':FluroWrapper,
+        'constrain':FluroConstrain,
+        'realmBar':FluroRealmBar,
     }
 }

@@ -1,6 +1,5 @@
 <template>
-    <div class="fluro-content-form-field" v-bind="attributes" :class="fieldClass">
-
+    <div :data-field-key="key" class="fluro-content-form-field" v-bind="attributes" :class="fieldClass">
         <template v-if="officeUseOnly">
         </template>
         <template v-else-if="renderer == 'custom'">
@@ -8,7 +7,7 @@
         </template>
         <template v-else-if="renderer == 'embedded'">
             <template v-if="field.maximum == 1">
-                <fluro-content-form v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
+                <fluro-content-form :options="options" v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
             </template>
             <template v-if="field.maximum != 1">
                 <template v-for="(object, index) in fieldModel">
@@ -24,7 +23,7 @@
                         </v-toolbar>
                         </v-toolbar>
                         <v-card-text>
-                            <fluro-content-form v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form>
+                            <fluro-content-form :options="options" v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form>
                         </v-card-text>
                     </v-card>
                 </template>
@@ -36,7 +35,7 @@
         <template v-else-if="renderer == 'group'">
             <template v-if="asObject">
                 <template v-if="field.maximum == 1">
-                    <fluro-content-form v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
+                    <fluro-content-form :options="options" v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
                 </template>
                 <template v-if="field.maximum != 1">
                     <template v-for="(object, index) in fieldModel">
@@ -52,7 +51,7 @@
                             </v-toolbar>
                             </v-toolbar>
                             <v-card-text>
-                                <fluro-content-form v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form>
+                                <fluro-content-form :options="options" v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form>
                             </v-card-text>
                         </v-card>
                     </template>
@@ -63,10 +62,8 @@
             </template>
             <template v-else>
                 <!-- <pre style="background: #ff0066; padding: 10px;">{{fields}}</pre> -->
-                
                 <template v-for="field in fields">
-                    
-                    <fluro-content-form-field class="flex" :field="field" @input="valueChange" v-model="model"></fluro-content-form-field>
+                    <fluro-content-form-field :options="options" class="flex" :field="field" @input="valueChange" v-model="model"></fluro-content-form-field>
                 </template>
             </template>
         </template>
@@ -123,7 +120,7 @@
             <v-textarea :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'select'">
-            <v-select :required="required" :return-object="type == 'reference'" :label="label" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="options" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+            <v-select :required="required" :return-object="type == 'reference'" :label="label" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="selectOptions"  @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'search-select'">
             <v-autocomplete :deletable-chips="true" :hide-selected="true" prepend-inner-icon="search" :error-messages="errorMessages" :cache-items="!defaultReferences.length" :chips="multipleInput" :clearable="!required" :return-object="true" item-text="title" v-model="fieldModel" @blur="touch()" @change="valueChange" :multiple="multipleInput" :loading="loading" :items="searchResults" :search-input.sync="keywords" flat hide-no-data :label="label">
@@ -164,36 +161,37 @@
             </v-card>
         </template>
         <template v-else-if="renderer == 'wysiwyg'">
-            <v-input class="no-flex" :required="required" :error-messages="errorMessages" :hint="field.description" />
-            <template v-if="multipleInput">
-                <template v-if="fieldModel.length">
-                    <template v-for="(entry, index) in fieldModel">
-                        <!-- <v-input class="no-flex" :label="groupTitle(entry, index)" /> -->
-                        <v-layout>
-                            <div class="vertical-center">
-                                <v-label>{{groupTitle(entry, index)}}</v-label>
-                            </div>
-                            <v-spacer></v-spacer>
-                            <v-btn icon flat color="error" v-if="canRemoveValue" @click="removeValue(index, true)">
-                                <v-icon>close</v-icon>
-                            </v-btn>
-                        </v-layout>
-                        <!-- <pre>BOOOLM: {{fieldModel[index]}}</pre> -->
-                        <v-text-field v-model="fieldModel[index]"></v-text-field>
-                        <fluro-editor v-model="fieldModel[index]" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
-                        <!-- </v-input> -->
+            <v-input class="no-flex" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description" />
+            
+                <template v-if="multipleInput">
+                    <template v-if="fieldModel.length">
+                        <template v-for="(entry, index) in fieldModel">
+                            <!-- <v-input class="no-flex" :label="groupTitle(entry, index)" /> -->
+                            <v-layout>
+                                <div class="vertical-center">
+                                    <v-label>{{groupTitle(entry, index)}}</v-label>
+                                </div>
+                                <v-spacer></v-spacer>
+                                <v-btn icon flat color="error" v-if="canRemoveValue" @click="removeValue(index, true)">
+                                    <v-icon>close</v-icon>
+                                </v-btn>
+                            </v-layout>
+                            <!-- <pre>BOOOLM: {{fieldModel[index]}}</pre> -->
+                            <!-- <v-text-field v-model="fieldModel[index]"></v-text-field> -->
+                            <fluro-editor v-model="fieldModel[index]" :options="editorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+                            <!-- </v-input> -->
+                        </template>
+                    </template>
+                    <template v-if="canAddValue">
+                        <v-btn color="primary" @click="addValue('')">
+                            {{multiLabel}} <v-icon>add</v-icon>
+                        </v-btn>
                     </template>
                 </template>
-                <template v-if="canAddValue">
-                    <v-btn color="primary" @click="addValue('')">
-                        {{multiLabel}} <v-icon>add</v-icon>
-                    </v-btn>
+                <template v-if="!multipleInput">
+                    <fluro-editor v-model="fieldModel" @input="valueChange" :options="editorOptions" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
                 </template>
-            </template>
-            <template v-if="!multipleInput">
-                <!-- <pre>TESTING: {{fieldModel}}</pre> -->
-                <fluro-editor v-model="fieldModel" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
-            </template>
+            
             </v-input>
         </template>
         <template v-else>
@@ -241,6 +239,7 @@ export default {
     },
     data() {
         return {
+            test:null,
             modal: false,
             model: this.value,
             proposedValue: null,
@@ -320,6 +319,9 @@ export default {
         }
     },
     computed: {
+        editorOptions() {
+            return this.options.editor;
+        },
         savedTerms() {
             return _.get(this.field, 'params.storeCopy');
         },
@@ -339,11 +341,14 @@ export default {
 
         },
         label() {
-            var title = this.title;
-            if (this.minimum) {
-                return `${title} *`;
-            } else {
-                return title;
+            var title = this.title || '';
+
+            if(this.title.length) {
+                if (this.minimum) {
+                    return `${title} *`;
+                } else {
+                    return title;
+                }
             }
         },
 
@@ -490,6 +495,13 @@ export default {
         },
         title() {
 
+
+            //Check if 
+            if(this.options.labels && this.options.labels.hasOwnProperty(this.key)) {
+                return this.options.labels[this.key];
+            }
+
+
             return this.field.title;
 
         },
@@ -500,7 +512,7 @@ export default {
         multipleInput() {
             return this.maximum === 0 || this.maximum > 1;
         },
-        options() {
+        selectOptions() {
 
             var self = this;
 
@@ -787,6 +799,7 @@ export default {
                 self.touch()
             }
 
+
             // if(self.multipleInput) {
             //     //We need to update reactivity
             //     _.each(self.fieldModel, function(entry, index) {
@@ -794,6 +807,11 @@ export default {
             //     });
             // }
 
+            // if(event) {
+            //     self.fieldModel = event;
+            // }
+
+            console.log('UPDATED VALUE', event, self.model)
             self.$emit('input', self.model); //[self.key])
             // self.$forceUpdate();
         }
@@ -817,7 +835,13 @@ export default {
         },
         'value': {
             required: true,
-        }
+        },
+        'options': {
+            default: function() {
+                return {}
+            },
+            type: Object,
+        },
     },
 
     mixins: [validationMixin],

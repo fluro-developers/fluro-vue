@@ -369,15 +369,15 @@ export default {
 
 
 
-## Fluro Content Form Field
+## Fluro Content Field
 Renders a form field as defined within Fluro
-It will render all nested children and embedded fields recursively. This is usually only used 
+It will render all nested children and embedded fields recursively. This is mainly used 
 within the Fluro Content Form Component
 
 | Props | Type | Description |
 | ----------- | ----------- | ----------- |
 | `v-model` | Object | The model to edit |
-| `field` | Object | The field description object (Usually retrieved from the Fluro API, but you can create it manually) |
+| `field` | Object | The field description object from fluro |
 
 > Example Usage
 
@@ -411,12 +411,7 @@ export default {
 ```
 
 ```html
-
-<!-- Create the field from a 'field' descriptor from a Fluro definition -->
-<fluro-content-form-field v-model="model" :field="field"></fluro-content-form-field
-
-<!-- Manually create a field using the same syntax field descriptor as the Fluro API -->
-<fluro-content-form-field v-model="model" :field="{minimum:1, maximum:1, title:'Title', key:'title', type:'string'}"></fluro-content-form-field
+<fluro-content-field :field="field" v-model="model"></fluro-content-field>
 ```
 
 
@@ -437,13 +432,13 @@ Renders a signature input that allows a user to add their signature for a form
 > Example Usage
 
 ```javascript
-import FluroSignatureField from 'fluro-vue';
+import FluroContentField from 'fluro-vue';
 
 ////////////////////////////////////////////////////////
 
 export default {
     components: {
-        FluroSignatureField,
+        FluroContentField,
     },
     data() {
         return {

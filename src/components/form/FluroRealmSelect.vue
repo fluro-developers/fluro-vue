@@ -1,54 +1,35 @@
 <template>
     <div class="realm-select">
         <!-- {{type}} {{definition}} -->
-        <v-btn color="primary" dark @click="dialog = true">{{model.length}} Realms Selected</v-btn>
+        <v-btn color="primary" dark @click="dialog = true">{{model.length}} {{title}} Selected</v-btn>
         <v-dialog content-class="realm-dialog" :fullscreen="realmSelectFullScreen" v-model="dialog">
             <!-- fullscreen hide-overlay transition="dialog-bottom-transition" scrollable -->
             <v-card tile>
                 <v-toolbar card dark color="primary">
-                    <v-toolbar-title>{{model.length}} Realms</v-toolbar-title>
-                    <!-- <v-spacer></v-spacer>
-                    <v-flex>
-                        <v-text-field dark color="white" label="Search"></v-text-field>
-                    </v-flex> -->
+                    <v-toolbar-title>{{model.length}} {{title}}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-toolbar-items>
                         <v-btn dark icon flat @click="realmSelectFullScreen = !realmSelectFullScreen">
                             <v-icon>{{ realmSelectFullScreen ? 'fullscreen_exit' :'fullscreen'}}</v-icon>
                         </v-btn>
-                        <v-btn dark @click="dialog = false">
+                        <v-btn @click="dialog = false">
                             Done
                             <v-icon right>check</v-icon>
                         </v-btn>
                     </v-toolbar-items>
-                    <!-- <v-menu bottom right offset-y>
-                        <template v-slot:activator="{ on }">
-                            <v-btn dark icon v-on="on">
-                                <v-icon>more_vert</v-icon>
-                            </v-btn>
-                        </template>
-                        <v-list>
-                            <v-list-tile v-for="(item, i) in items" :key="i" @click="">
-                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                            </v-list-tile>
-                        </v-list>
-                    </v-menu> -->
                 </v-toolbar>
                 <template v-if="tree.length == 1">
-                    <div class="flex-fill">
-                        <constrain gutterless sm :class="{'has-selection':model.length}">
-                            <!-- <v-card flat class="tab-content"> -->
-                            <div class="realm-select-item-outer">
-                                <v-list dense class="children">
-                                    <template v-for="realm in tree[0].realms">
-                                        <fluro-realm-select-item :item="realm" :check="isSelected" :callback="toggle" />
-                                    </template>
-                                </v-list>
-                            </div>
-                            <!-- -->
-                            <!-- </v-card> -->
-                        </constrain>
-                    </div>
+                    <div class="flex-tabs">
+                    <constrain gutterless xs :class="{'has-selection':model.length}">
+                        <div class="realm-select-item-outer">
+                            <v-list dense class="children">
+                                <template v-for="realm in tree[0].realms">
+                                    <fluro-realm-select-item :item="realm" :check="isSelected" :callback="toggle" />
+                                </template>
+                            </v-list>
+                        </div>
+                    </constrain>
+                </div>
                 </template>
                 <template v-if="tree.length > 1">
                     <v-tabs class="flex-tabs" :show-arrows="true" dark :centered="true" :grow="true" v-model="active">
@@ -56,29 +37,17 @@
                             {{type.plural}}
                         </v-tab>
                         <v-tab-item v-for="type in tree" :key="type.definitionName">
-                            <!-- <wrapper xs style="background: #eee;"> -->
-                            <constrain gutterless sm :class="{'has-selection':model.length}">
+                            <constrain gutterless xs :class="{'has-selection':model.length}">
                                 <v-card flat class="tab-content">
                                     <div class="realm-select-item-outer">
                                         <v-list dense class="children">
                                             <template v-for="realm in type.realms">
                                                 <fluro-realm-select-item :item="realm" :check="isSelected" :callback="toggle" />
-                                                <!-- <v-list-tile @click="toggle(realm)">
-                                        <v-list-tile-action>
-                                            <v-checkbox v-model="realm.selected"></v-checkbox>
-                                        </v-list-tile-action>
-                                        <v-list-tile-content>
-                                            
-                                            <v-list-tile-title>{{realm.title}}</v-list-tile-title>
-                                        </v-list-tile-content>
-                                    </v-list-tile> -->
                                             </template>
                                         </v-list>
                                     </div>
-                                    <!-- -->
                                 </v-card>
                             </constrain>
-                            <!-- </wrapper> -->
                         </v-tab-item>
                     </v-tabs>
                 </template>
@@ -89,8 +58,7 @@
 <script>
 import Vue from 'vue';
 import FluroRealmSelectItem from './FluroRealmSelectItem.vue';
-import Constrain from '../layout/Constrain.vue';
-import Wrapper from '../layout/Wrapper.vue';
+import Layout from '../../mixins/Layout';
 import { mapFields } from 'vuex-map-fields';
 
 export default {
@@ -98,12 +66,23 @@ export default {
         ...mapFields('fluro', [
             'realmSelectFullScreen', //The authenticated user if they log in
         ]),
+        title() {
+
+            var tree = this.tree;
+
+            console.log('TREE', tree);
+
+            if(tree.length == 1) {
+                return _.first(tree).plural;
+            } else {
+                return 'Realms';
+            }
+        }
     },
     components: {
         FluroRealmSelectItem,
-        Constrain,
-        Wrapper,
     },
+    mixins: [Layout],
     props: {
         'value': {
             type: Array,
@@ -142,8 +121,9 @@ export default {
 
 
                 // return new Promise(function(resolve, reject) {
+                // service.retrieveSelectableRealms = function(action, type, parentType, options) {
 
-                return self.$fluro.access.retrieveSelectableRealms()
+                return self.$fluro.access.retrieveSelectableRealms('create', this.definition, this.type)
                 //   .then(
                 //     function(res) {
 
@@ -232,7 +212,9 @@ $line-color: darken($bg-color, 10%);
     flex-direction: column;
 }
 
-
+.flex-tabs {
+    background: #eaedf2;
+}
 
 .realm-dialog {
     background: $bg-color;
@@ -364,7 +346,7 @@ $line-color: darken($bg-color, 10%);
     }
 
     .children {
-        padding: 0 0 15px;
+        padding: 25px 0 15px;
         margin-left: 21px;
         border-left: 1px solid $line-color;
         position: relative;

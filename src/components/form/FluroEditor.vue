@@ -197,17 +197,17 @@
         </editor-menu-bar>
         <template v-if="showSource">
             <div>
-                <fluro-code-editor class="fluro-editor-textarea" @input="sourceChange" v-model="model" lang="html" :height="300"></fluro-code-editor>
+                <fluro-code-editor @blur="blur" @focus="focus" class="fluro-editor-textarea" @input="sourceChange" v-model="model" lang="html" :height="300"></fluro-code-editor>
             </div>
         </template>
         <template v-if="!showSource">
-            <editor-content class="fluro-editor-textarea" :editor="editor" />
+            <editor-content @blur="blur" @focus="focus" class="fluro-editor-textarea" :editor="editor" />
             <!-- Suggestions -->
             <div class="suggestion-list" v-show="showSuggestions" ref="suggestions">
                 <template v-if="filteredUsers.length">
                     <!-- <pre>{{filteredUsers}}</pre> -->
                     <div v-for="(persona, index) in filteredUsers" :key="persona._id" class="suggestion-list__item" :class="{ 'is-selected': navigatedUserIndex === index }" @click="selectUser(persona)">
-                        {{ persona.title }}
+                        <fluro-avatar left :id="persona" type="persona"/>{{ persona.title }}
                     </div>
                 </template>
                 <div v-else class="suggestion-list__item is-empty">
@@ -276,6 +276,12 @@ export default {
         },
     },
     methods: {
+        blur($event) {
+            this.$emit('blur', $event);
+        },
+        focus($event) {
+            this.$emit('focus', $event);
+        },
         sourceChange(input) {
             this.model = input;
         },
@@ -304,7 +310,7 @@ export default {
             this.insertMention({
                 range: this.suggestionRange,
                 attrs: {
-                    id: user.mentionID,
+                    id: user._id,
                     mentionID: user.mentionID,
                     label: user.title,
                 },
@@ -359,6 +365,12 @@ export default {
         'placeholder': {
             type: String,
         },
+        'options': {
+            default:function() {
+                return {}
+            },
+            type: Object,
+        },
     },
     components: {
         EditorMenuBar,
@@ -367,8 +379,6 @@ export default {
         EditorFloatingMenu,
     },
     created() {
-
-
         var self = this;
         var placeholderText = self.placeholder;
 
@@ -452,7 +462,8 @@ export default {
 
                         var mentionInstance = this;
 
-                        self.$fluro.content.mention(query).then(function(personas) {
+
+                        self.$fluro.content.mention(query, self.options.mentions).then(function(personas) {
                                 mentionInstance.query = query
                                 mentionInstance.filteredUsers = personas
                                 mentionInstance.suggestionRange = range
@@ -525,6 +536,8 @@ export default {
 
                 // self.$emit('input', HTML);
             },
+            onBlur:self.blur,
+            onFocus:self.focus,
         })
 
 

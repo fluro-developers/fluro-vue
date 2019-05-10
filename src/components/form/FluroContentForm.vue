@@ -6,11 +6,9 @@
             <!-- <fluro-code-editor v-model="model[field.key]" @input="valueChange" :height="200"></fluro-code-editor> -->
             <v-container class="grid-list-xl" pa-0>
                 <!-- <pre>{{field}}</pre> -->
-            <fluro-content-form-field :field="field" @input="update" v-model="model"></fluro-content-form-field>
+                <fluro-content-form-field :options="options" :field="field" @input="update" v-model="model"></fluro-content-form-field>
             </v-container>
-
         </template>
-
     </div>
 </template>
 <script>
@@ -98,6 +96,7 @@ function getDefaultValueForField(field) {
                 case 'wysiwyg':
                 case 'textarea':
                 case 'code':
+                // case 'select':
                     blankValue = '';
                     break;
                 default:
@@ -105,6 +104,9 @@ function getDefaultValueForField(field) {
                     if (nested) {
                         blankValue = {};
                     }
+                    //  else {
+                    //     blankValue =  null;
+                    // }
                     break;
             }
         }
@@ -126,13 +128,46 @@ export default {
         'value': {
             type: Object,
         },
+        'options': {
+            default: function() {
+                return {}
+            },
+            type: Object,
+        },
     },
     data() {
         return {
             model: this.value,
         }
     },
-    
+    computed: {
+        errorMessages() {
+
+            function mapRecursiveFieldMessage(component, trail) {
+                if (component.$v && component.errorMessages && component.errorMessages.length) {
+                    trail.push({field:component.field, messages:component.errorMessages});
+                }
+
+                if (component.$children) {
+                    _.each(component.$children, function(child) {
+                        mapRecursiveFieldMessage(child, trail);
+                    })
+                }
+            }
+
+            ////////////////////////////////
+
+            var trail = [];
+            mapRecursiveFieldMessage(this, trail)
+
+            ////////////////////////////////
+
+            return trail;
+
+
+
+        }
+    },
     components: {
         FluroContentFormField,
     },
@@ -150,7 +185,7 @@ export default {
     methods: {
         reset: function() {
             var self = this;
-            self.model = {};
+            // self.model = {};
             //Loop through each field and create a key on the object
             //so we can listen to it's changes
             (self.fields || []).forEach(createDefaults);
@@ -161,7 +196,7 @@ export default {
                 var blankValue = getDefaultValueForField(field);
 
                 //Check if it's just a display group
-                if(field.type == 'group' && !field.asObject) {
+                if (field.type == 'group' && !field.asObject) {
                     (field.fields || []).forEach(createDefaults);
                 }
 

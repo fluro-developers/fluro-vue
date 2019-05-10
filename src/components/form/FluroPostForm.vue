@@ -12,22 +12,33 @@
             <template v-if="allowed">
                 <div class="fluro-post-form">
                     <v-layout>
-                        <fluro-avatar left :id="user.persona" type="persona"></fluro-avatar>    
-                        <v-flex>
-                           
-                            <h2>{{displayTitle}}</h2>
+                        <fluro-avatar left md :id="user.persona" type="persona"></fluro-avatar>    
+                        <v-flex d-flex>
+                            <h3 title>{{displayTitle}}</h3>
                         </v-flex>
                     </v-layout>
                     <form @submit.prevent="submit" :disabled="state == 'processing'">
-                        <fluro-content-form v-model="model.data" :fields="form.fields" />
+                        <fluro-content-form ref="form" v-model="model.data" :options="options" :fields="form.fields" />
                         <template v-if="state == 'processing'">
-                            <v-btn :disabled="true">
+                            <v-btn class="mx-0"  :disabled="true">
                                 Processing
                                 <v-progress-circular indeterminate></v-progress-circular>
                             </v-btn>
                         </template>
                         <template v-else>
-                            <v-btn type="submit" color="primary">
+
+                           TESTING AND STUFF {{errorMessages}} {{hasErrors}}.
+
+                           <!-- <pre>{{form.fields}}</pre> -->
+
+
+                            <v-alert :value="true" type="error" outline v-if="hasErrors">
+                                Please check the following messages before submitting
+                                <div v-for="error in errorMessages">
+                                    <strong>{{error.field.title}}</strong>: {{error.messages[0]}}
+                                </div>
+                            </v-alert>
+                            <v-btn class="mx-0" :disabled="hasErrors" type="submit" color="primary">
                                 Submit
                             </v-btn>
                         </template>
@@ -51,8 +62,8 @@ import { mapFields } from 'vuex-map-fields';
 
 export default {
     props: {
-        'title':{
-            type:String,
+        'title': {
+            type: String,
         },
         'type': {
             type: String,
@@ -60,12 +71,20 @@ export default {
         'target': {
             type: [Object, String],
         },
+        'options': {
+            default:function() {
+                return {}
+            },
+            type: Object,
+        },
     },
     data() {
         return {
             model: {
                 data: {},
             },
+            serverErrors: '',
+            errorMessages: [],
             thread: [],
             state: 'ready',
         }
@@ -73,10 +92,22 @@ export default {
     created() {
 
     },
+    mounted() {
+        var self = this;
+        self.$watch(function() {
+            return _.get(self.$refs, 'form.errorMessages');
+        }, self.validate);
+
+
+         self.validate();
+    },
     computed: {
+        hasErrors() {
+            return this.errorMessages.length ? true : false;
+        },
         displayTitle() {
 
-            if(this.title) {
+            if (this.title) {
                 return this.title;
             }
             return `Add ${this.form.title}`;
@@ -105,6 +136,12 @@ export default {
         }
     },
     methods: {
+        validate() {
+            
+            this.errorMessages = _.get(this.$refs, 'form.errorMessages');
+
+            console.log('VALIDATE ERROR MESSAGES', this.$refs,  this.errorMessages)
+        },
         reset() {
             var self = this;
             //Reset the model

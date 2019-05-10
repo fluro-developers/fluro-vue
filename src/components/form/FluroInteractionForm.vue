@@ -16,31 +16,42 @@
         <template v-if="allowed">
             <slot name="success" :reset="reset" :result="result" v-if="state == 'success'">
                 Success!
-                <v-btn @click="reset()">
+                <v-btn class="mx-0" @click="reset()">
                     Back to form
                 </v-btn>
             </slot>
             <template v-else>
                 <slot name="info"></slot>
                 <form @submit.prevent="submit" :disabled="state == 'processing'">
-
-                  
-                    <fluro-content-form v-model="model" :fields="fields" />
-                    <template v-if="state == 'processing'">
-                        <v-btn :disabled="true">
-                            Processing
-                            <v-progress-circular indeterminate></v-progress-circular>
-                        </v-btn>
-                    </template>
-                    <template v-else>
-                        <v-btn type="submit" color="primary">
-                            Submit
-                        </v-btn>
-                    </template>
+                    <fluro-content-form ref="form" v-model="model" :fields="fields" />
+                    <div class="actions">
+                        <template v-if="state == 'processing'">
+                            <v-btn class="mx-0" :disabled="true">
+                                Processing
+                                <v-progress-circular indeterminate></v-progress-circular>
+                            </v-btn>
+                        </template>
+                        <template v-else-if="state == 'error'">
+                            <v-alert :value="true" type="error" outline>
+                                {{serverErrors}}
+                            </v-alert>
+                            <v-btn class="mx-0" color="primary" @click.prevent.native="state = 'ready'">
+                                Try Again
+                            </v-btn>
+                        </template>
+                        <template v-else>
+                            <v-alert :value="true" type="error" outline v-if="hasErrors">
+                                Please check the following issues before submitting
+                                <div v-for="error in errorMessages">
+                                    <strong>{{error.field.title}}</strong>: {{error.messages[0]}}
+                                </div>
+                            </v-alert>
+                            <v-btn class="mx-0" :disabled="hasErrors" type="submit" color="primary">
+                                Submit
+                            </v-btn>
+                        </template>
+                    </div>
                 </form>
-                <slot name="error" v-if="state == 'error'">
-                    Error!
-                </slot>
             </template>
         </template>
     </div>
@@ -79,14 +90,33 @@ export default {
             model: {
                 data: {},
             },
+            serverErrors: '',
+            errorMessages: [],
             result: null,
             state: 'ready',
         }
     },
     created() {
+        console.log('Got the form!')
         this.reset();
     },
+    mounted() {
+       
+        var self = this;
+        self.$watch(function() {
+            return _.get(self.$refs, 'form.errorMessages');
+        }, self.validate);
+
+
+         self.validate();
+    },
     computed: {
+        formErrors() {
+            
+        },
+        hasErrors() {
+            return this.errorMessages.length ? true : false;
+        },
         formOptions() {
             return this.definition.data;
         },
@@ -209,6 +239,7 @@ export default {
             return this.formOptions.identifier;
         },
 
+
         ////////////////////////////////
 
         askFirstName() {
@@ -286,6 +317,13 @@ export default {
             return `${this.definition.title}`;
         },
         allowed() {
+
+            console.log('TESTING', this.definition)
+            //If it's public
+            if(this.definition.privacy == 'public') {
+                return true;
+            }
+
             var canCreate = this.$fluro.access.can('create', this.definedName, 'interaction');
             var canSubmit = this.$fluro.access.can('submit', this.definedName, 'interaction');
             return canCreate || canSubmit;
@@ -299,6 +337,10 @@ export default {
         FluroContentForm,
     },
     methods: {
+        validate() {
+            this.errorMessages = _.get(this.$refs, 'form.errorMessages');
+        },
+
         defaultUserValue(key) {
 
             if (!this.user) {
@@ -367,9 +409,14 @@ export default {
 
                 }, function(err) {
                     //Dispatch an error
+                    var humanMessage = self.$fluro.utils.errorMessage(err);
                     self.$fluro.error(err);
+                    self.serverErrors = humanMessage;
                     self.state = 'error';
                     self.$emit('error', err);
+
+
+                    console.log('SWITCH STATE TO', err, self)
 
                 })
 
