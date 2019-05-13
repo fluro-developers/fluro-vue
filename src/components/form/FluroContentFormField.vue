@@ -7,7 +7,7 @@
         </template>
         <template v-else-if="renderer == 'embedded'">
             <template v-if="field.maximum == 1">
-                <fluro-content-form :options="options" v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
+                <fluro-content-form :form-fields="formFields" :options="options" v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
             </template>
             <template v-if="field.maximum != 1">
                 <template v-for="(object, index) in fieldModel">
@@ -23,7 +23,7 @@
                         </v-toolbar>
                         </v-toolbar>
                         <v-card-text>
-                            <fluro-content-form :options="options" v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form>
+                            <fluro-content-form :form-fields="formFields" :options="options" v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form>
                         </v-card-text>
                     </v-card>
                 </template>
@@ -35,7 +35,7 @@
         <template v-else-if="renderer == 'group'">
             <template v-if="asObject">
                 <template v-if="field.maximum == 1">
-                    <fluro-content-form :options="options" v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
+                    <fluro-content-form :form-fields="formFields" :options="options" v-model="fieldModel" @input="valueChange" :fields="fields"></fluro-content-form>
                 </template>
                 <template v-if="field.maximum != 1">
                     <template v-for="(object, index) in fieldModel">
@@ -51,7 +51,7 @@
                             </v-toolbar>
                             </v-toolbar>
                             <v-card-text>
-                                <fluro-content-form :options="options" v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form>
+                                <fluro-content-form :form-fields="formFields" :options="options" v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form>
                             </v-card-text>
                         </v-card>
                     </template>
@@ -61,8 +61,9 @@
                 </template>
             </template>
             <template v-else>
+                <!-- <fluro-content-form :options="options" v-model="fieldModel[index]" @input="valueChange" :fields="fields"></fluro-content-form> -->
                 <template v-for="field in fields">
-                    <fluro-content-form-field :options="options" class="flex" :field="field" @input="valueChange" v-model="model"></fluro-content-form-field>
+                    <fluro-content-form-field :form-fields="formFields" :options="options" class="flex" :field="field" @input="valueChange" v-model="model"></fluro-content-form-field>
                 </template>
             </template>
         </template>
@@ -160,8 +161,94 @@
             </v-card>
         </template>
         <template v-else-if="renderer == 'wysiwyg'">
-            <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description" />
-            <template v-if="multipleInput">
+            <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
+                <template v-if="multipleInput">
+                    <template v-if="fieldModel.length">
+                        <template v-for="(entry, index) in fieldModel">
+                            <v-layout>
+                                <div class="vertical-center">
+                                    <v-label>{{groupTitle(entry, index)}}</v-label>
+                                </div>
+                                <v-spacer></v-spacer>
+                                <v-btn icon flat color="error" v-if="canRemoveValue" @click="removeValue(index, true)">
+                                    <v-icon>close</v-icon>
+                                </v-btn>
+                            </v-layout>
+                            <fluro-editor v-model="fieldModel[index]" :options="editorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+                        </template>
+                    </template>
+                    <template v-if="canAddValue">
+                        <v-btn color="primary" @click="addValue('')">
+                            {{multiLabel}} <v-icon>add</v-icon>
+                        </v-btn>
+                    </template>
+                </template>
+                <template v-if="!multipleInput">
+                    <fluro-editor v-model="fieldModel" @input="valueChange" :options="editorOptions" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+                </template>
+            </v-input>
+        </template>
+        <template v-else-if="renderer == 'upload'">
+            <!-- Upload -->
+            <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :persistent-hint="true" :hint="fileHint">
+                <!-- <pre>{{canAddValue}}, {{canRemoveValue}}, Min: {{minimum}}, Max: {{maximum}}</pre> -->
+                <div class="file-items" v-if="files.length">
+                    <div class="file-item" v-for="file in files">
+                        <!-- <v-progress-linear v-model="file.progress"></v-progress-linear> -->
+                        <v-layout row wrap>
+                            <v-flex grow>
+                                <strong>{{file.name}}</strong>
+                                <div class="small"><span v-if="file.state == 'progress'">Uploaded {{file.progress}}% of </span><span class="muted">{{file.size | filesize}}</span></div>
+                                <!-- <pre>{{file.state}}</pre> -->
+                            </v-flex>
+                            <v-flex shrink>
+                                <template v-if="file.state == 'error'">
+                                    <v-btn icon>
+                                        <v-icon>exclamation</v-icon>
+                                    </v-btn>
+                                </template>
+                                <template v-else-if="file.state == 'complete'">
+                                    <v-hover>
+                                        <v-btn icon @click="removeFile(file)" slot-scope="{ hover }">
+                                            <v-icon color="success" v-if="!hover">check</v-icon>
+                                            <v-icon color="error" v-if="hover">close</v-icon>
+                                        </v-btn>
+                                    </v-hover>
+                                </template>
+                                <template v-else-if="file.state == 'uploading'">
+                                    <v-hover>
+                                        <v-btn icon @click="removeFile(file)" slot-scope="{ hover }">
+                                            <v-progress-circular v-if="!hover" :value="file.progress"></v-progress-circular>
+                                            <v-icon color="error" v-if="hover">close</v-icon>
+                                        </v-btn>
+                                    </v-hover>
+                                </template>
+                                <template v-else>
+                                    <v-btn icon @click="removeFile(file)">
+                                        <v-icon>close</v-icon>
+                                    </v-btn>
+                                </template>
+                            </v-flex>
+                        </v-layout>
+                    </div>
+                </div>
+                <!-- <pre>{{files}}</pre> -->
+                <!-- <v-progress-linear class="total-progress" color="primary" v-model="progress"></v-progress-linear> -->
+                <!-- <div class="dropbox" v-show="!files.length"> -->
+                <!-- accept="image/*" -->
+                <label class="file-drop" v-if="canAddValue">
+                    <input ref="file" type="file" :multiple="multipleInput" @change="filesSelected($event.target.files)">
+                    Drag and drop or click here to select files
+                </label>
+                <!-- <input type="file" multiple :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length" accept="image/*" class="input-file"> -->
+                <!--  <div>
+                    <font-awesome-icon right :icon="['far', 'file-download']" />
+                    <h1>{{event.title}}</h1>
+                    <h2>{{event | readableEventDate}}</h2>
+                    <p>Click or drop your photos here to continue</p>
+                </div> -->
+                <!-- </div> -->
+                <!-- <template v-if="multipleInput">
                 <template v-if="fieldModel.length">
                     <template v-for="(entry, index) in fieldModel">
                         <v-layout>
@@ -184,7 +271,7 @@
             </template>
             <template v-if="!multipleInput">
                 <fluro-editor v-model="fieldModel" @input="valueChange" :options="editorOptions" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
-            </template>
+            </template> -->
             </v-input>
         </template>
         <template v-else>
@@ -204,15 +291,17 @@
                 <v-text-field :success="success" browser-autocomplete="off" :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
             </template>
         </template>
-        <!-- <pre>{{}}</pre> -->
+        <!-- <pre>{{$v}}</pre> -->
         <!--  <div v-if="field.expressions">
             <pre>{{field.expressions}}</pre>
             <pre>{{model}}</pre>
         </div> -->
+        <!-- <pre>{{errorMessages}}</pre> -->
     </div>
 </template>
 <script>
 //Import validation options from vuelidate
+import axios from 'axios';
 import { validationMixin } from 'vuelidate';
 import { required, minLength, maxLength, email, url } from 'vuelidate/lib/validators';
 import _ from 'lodash';
@@ -248,6 +337,14 @@ export default {
             keywords: '',
             results: [],
             loading: false,
+
+            //File Uploads
+            files: [],
+            cancelTokens: [],
+            bytesLoaded: 0,
+            bytesTotal: 0,
+            uploadState: 'ready',
+
         }
     },
     watch: {
@@ -274,7 +371,7 @@ export default {
 
             // var search = self.photographerSearch;
             self.loading = true;
-            ////console.log('Searching', keywords);
+            //////console.log('Searching', keywords);
 
 
 
@@ -317,14 +414,14 @@ export default {
             //If the user has entered data into here
             //Don't make any change
             if (this.$v.model.$dirty) {
-                //console.log('Field is dirty')
+                ////console.log('Field is dirty')
                 return;
             }
 
             //If there is a default value expression
             if (this.expressions && this.expressions.defaultValue) {
                 this.fieldModel = v;
-                //console.log('Updated default value according to expression!', this.expressions.defaultValue, v);
+                ////console.log('Updated default value according to expression!', this.expressions.defaultValue, v);
             }
         },
         expressionValue(v) {
@@ -334,12 +431,22 @@ export default {
                 this.fieldModel = v;
             }
 
-            // //console.log('Updated value')
+            // ////console.log('Updated value')
             // //Update this field to reconnect with the new model
             // this.model[this.key] = v[this.key];
         }
     },
     computed: {
+        fileHint() {
+            switch (this.uploadState) {
+                case 'uploading':
+                    return `Uploading...`
+                    break;
+                default:
+                    return this.field.description;
+                    break;
+            }
+        },
         success() {
             return (this.$v.$dirty && !this.$v.$invalid);
         },
@@ -422,7 +529,7 @@ export default {
 
             //We are under the maximum
             if (this.total < this.maximum) {
-                // ////console.log(this.title, 'is under',this.total, this.maximum)
+                // //////console.log(this.title, 'is under',this.total, this.maximum)
                 return true;
             }
 
@@ -581,7 +688,7 @@ export default {
         total() {
             if (this.multipleInput && this.fieldModel) {
                 var total = _.get(this.fieldModel, 'length');
-                // ////console.log('COUNT>', this.title, total);
+                // //////console.log('COUNT>', this.title, total);
                 return total
             }
         },
@@ -590,12 +697,26 @@ export default {
         },
         errorMessages() {
 
+            // console.log('Compile errors', this.title, this.$v.model.$dirty);
             var self = this;
             const errors = []
 
+            // return ['Errors on purpose'];
+
+
             //Hasn't been touched yet
             if (!this.$v.model.$dirty) {
+                // console.log('Not dirty', this.title)
                 return errors;
+            }
+
+
+
+            if (!this.$v.uploading) {
+                if (self.uploadState == 'uploading') {
+                    errors.push('Waiting for files to upload');
+                    return errors;
+                }
             }
 
             ////////////////////////////////////////////
@@ -618,6 +739,14 @@ export default {
 
                 ///////////////////////////////////////////
 
+                var valueType = 'answer';
+
+                if (self.directive = 'upload') {
+                    valueType = 'file';
+                }
+
+                ///////////////////////////////////////////
+
                 //If we require a set amount of answers
                 if (this.minimum == this.maximum) {
 
@@ -629,13 +758,13 @@ export default {
                             errors.push('This field is required');
                         } else {
                             //If its more than 1
-                            errors.push(`Please provide ${this.minimum} answers`);
+                            errors.push(`Please provide ${this.minimum} ${valueType}s`);
                         }
                     }
 
                 } else {
 
-                    //We require one answer
+                    //We require one ${valueType}
                     if (this.maximum == 1) {
                         errors.push('This field is required');
                     } else {
@@ -643,10 +772,10 @@ export default {
                         var isArray = Array.isArray(this.model[this.key])
 
                         if (!isArray) {
-                            errors.push(`Requires at least ${this.minimum} answers`)
+                            errors.push(`Requires at least ${this.minimum} ${valueType}s`)
                         }
 
-                        //Get how many answers were provided
+                        //Get how many ${valueType}s were provided
                         var numberOfAnswersProvided = (this.model[this.key] || '').length;
 
                         //If not enough to meet the minimum were provided
@@ -654,16 +783,16 @@ export default {
 
                             //If the minimum required is 1
                             if (this.minimum == 1) {
-                                errors.push(`Requires at least 1 answer`)
+                                errors.push(`Requires at least 1 ${valueType}`)
                             } else {
-                                //Provide at least X answers
-                                errors.push(`Please provide at least ${this.minimum} answers`)
+                                //Provide at least X ${valueType}s
+                                errors.push(`Please provide at least ${this.minimum} ${valueType}s`)
                             }
                         }
 
                         //If we are over the maximum
                         if (numberOfAnswersProvided > this.maximum) {
-                            errors.push(`Maximum ${this.maximum} answers`);
+                            errors.push(`Maximum ${this.maximum} ${valueType}s`);
                         }
                     }
                 }
@@ -732,6 +861,252 @@ export default {
         }
     },
     methods: {
+        reset() {
+            //Clear files
+            this.files = [];
+            this.$v.$reset();
+        },
+        removeFile(file) {
+
+            var self = this;
+
+            //If the file is halfway through uploading
+            if (file.cancelToken) {
+                //Cancel the file
+                file.cancelToken.cancel('Operation canceled by the user.');
+            }
+
+            //////////////////////////////////
+
+            //Remove it from the list
+            self.files.splice(self.files.indexOf(file), 1);
+            self.mapFilesToValues();
+
+
+            //If it's currently uploading
+            if (file.state == 'uploading') {
+                self.uploadNextFile();
+            }
+
+
+        },
+        filesSelected(list) {
+
+            var self = this;
+
+            //Mark that we've touched the field
+            self.touch();
+
+            if (!list.length) return;
+
+
+
+            /////////////////////////////////////////
+
+            //Update our files list
+            var newFiles = _.map(list, function(file) {
+                return {
+                    file,
+                    data: {},
+                    name: file.name,
+                    size: file.size,
+                }
+            })
+
+
+            //Update the files
+            self.files = _.chain(self.files.concat(newFiles))
+                .compact()
+                .uniqBy(function(file) {
+                    return file.name;
+                })
+                .value();
+
+
+            if (self.maximum) {
+                self.files = self.files.slice(0, self.maximum);
+                //console.log('Cropped to', self.files.length);
+            }
+
+            //Clear out the files
+            this.$refs.file.value = null
+
+            return self.uploadNextFile();
+        },
+        upload(file) {
+
+            var self = this;
+
+            switch (file.state) {
+                case 'complete':
+                case 'uploading':
+                    //Stop here if it's already in uploading or complete
+                    return;
+                    break;
+                default:
+                    break;
+            }
+
+            /////////////////////////////////////////////
+
+            //Change the state to uploading
+            file.state = 'uploading';
+
+            //Create a new form object
+            var formData = new FormData();
+            var jsonData = {};
+
+            /////////////////////////////////////////////
+
+            //Include the tags
+            // jsonData.definition = 'photo';
+            // jsonData.tags = file.tags;
+
+            //Data
+            // var data = file.data || {}
+
+            //Link the photo to the event
+            // data.event = self.$route.params.id
+            // data.photographer = self.$fluro.utils.getStringID(data.photographer) || null;
+            // jsonData.data = data;
+
+
+            //Include the realms
+            // jsonData.realms = this.realms;
+
+            /////////////////////////////////////////////
+
+            //Add the JSON data and the binary file data
+            // formData.set('json', JSON.stringify(jsonData));
+            formData.append('file', file.file, file.name)
+
+            /////////////////////////////////////////////
+
+            self.$forceUpdate();
+
+            var body = formData;
+            var config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                onUploadProgress: progressEvent => {
+
+                    let percentCompleted = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
+                    // do whatever you like with the percentage complete
+                    // maybe dispatch an action that will update a progress bar or something
+                    file.progress = percentCompleted;
+                    file.bytesLoaded = progressEvent.loaded;
+                    file.bytesTotal = progressEvent.total;
+
+                    ///////////////////////////////////////////////////
+
+                    //Update the bytes loaded from all the files in the array
+                    self.bytesLoaded = _.reduce(self.files, function(set, file) {
+                        if (file.state == 'complete') {
+                            set += file.size || file.bytesTotal || 0;
+                        } else {
+                            set += file.bytesLoaded || 0;
+                        }
+                        return set;
+                    }, 0)
+
+                    ///////////////////////////////////////////////////
+
+                    self.$forceUpdate();
+                }
+            };
+
+            ///////////////////////////////////////////////////
+
+            const CancelToken = axios.CancelToken;
+            const source = CancelToken.source();
+            config.cancelToken = source.token;
+            file.cancelToken = source;
+
+            //Set headers to undefined content type
+            config.headers = {
+                'Content-Type': undefined
+            }
+
+
+
+            ///////////////////////////////////////////////////
+
+            //console.log('Get the upload realm id', self.field);
+            var uploadRealmID = _.chain(self.field)
+                .get('params.realm')
+                .first()
+                .value();
+
+            //If we can't upload to a realm
+            if (!uploadRealmID) {
+                //Then fail here
+                file.state = 'error';
+                self.uploadNextFile();
+            }
+
+            ///////////////////////////////////////////////////
+
+            return this.$fluro.api.post(`/file/attach/${uploadRealmID}`, body, config)
+                .then(function(res) {
+                    //console.log('UPLOAD RESPONSE', res);
+                    file.state = 'complete';
+                    file.result = res.data;
+                    file.attachmentID = res.data._id;
+                    file.cancelToken = null;
+                    self.uploadNextFile();
+                })
+                .catch(function(err) {
+                    //console.log('UPLOAD Error', err);
+                    file.state = 'error';
+                    file.cancelToken = null;
+                    self.uploadNextFile();
+                });
+
+        },
+        uploadNextFile() {
+
+            var self = this;
+            self.uploadState = 'uploading';
+
+            ///////////////////////////////////////////
+
+            //Find the next file that can be uploaded
+            var nextFile = _.find(self.files, function(file) {
+                switch (file.state) {
+                    case 'complete':
+                    case 'error':
+                        return;
+                        break;
+                    default:
+                        return true;
+                        break;
+                }
+            })
+
+            ///////////////////////////////////////////
+
+            if (nextFile) {
+                self.upload(nextFile);
+            } else {
+                self.uploadState = 'ready';
+            }
+
+            ///////////////////////////////////////////
+
+            self.mapFilesToValues();
+
+
+            ///////////////////////////////////////////
+
+        },
+        mapFilesToValues() {
+            var self = this;
+            self.fieldModel = _.map(self.files, 'attachmentID');
+            self.$forceUpdate();
+        },
+
+
         resolveExpression(expression) {
 
             var self = this;
@@ -745,14 +1120,14 @@ export default {
                 String: String,
                 Array: Array,
                 //Include helper function
-                matchInArray:this.$fluro.matchInArray,
+                matchInArray: this.$fluro.matchInArray,
 
             }
 
             var ast = Expressions.parse(expression);
             var result = Expressions.eval(ast, context);
 
-            //console.log('Expression?', expression, result);
+            ////console.log('Expression?', expression, result);
 
             return result;
         },
@@ -793,7 +1168,7 @@ export default {
             //Check to see if the input is valid
             var errors = checkValidInput(self, proposedValue)
             if (errors.length) {
-                ////console.log('Bad Data!', errors)
+                //////console.log('Bad Data!', errors)
                 return;
             }
 
@@ -810,7 +1185,7 @@ export default {
 
 
             // this.fieldModel.push(value);
-            // ////console.log('Add', this.fieldModel, this.maximum);
+            // //////console.log('Add', this.fieldModel, this.maximum);
             // 
             //THIS WORKS BUT COMPUTED PROPERTIES BELOW DONT
             // if(this.fieldModel.length >= this.maximum) {
@@ -822,7 +1197,7 @@ export default {
             // if (this.total < this.maximum) {
             if (this.canAddValue) {
                 this.fieldModel.push(value);
-                ////console.log('ADD VALUE NOW', this.fieldModel)
+                //////console.log('ADD VALUE NOW', this.fieldModel)
                 // Vue.set(this.fieldModel, this.total, value);
                 this.valueChange();
             }
@@ -835,7 +1210,7 @@ export default {
         },
         touch() {
 
-            ////console.log('touched!');
+            //////console.log('touched!');
             this.$v.model.$touch()
         },
         valueChange(event, setTouched) {
@@ -874,11 +1249,35 @@ export default {
                     break;
             }
         }
+
+        ////////////////////////////////////////////
+   
+        if (this.type == 'group' && !this.asObject) {
+            //Do nothing
+        } else {
+            if (this.formFields) {
+                this.$set(this.formFields, this.formFields.length, this);
+            }
+        }
+
+
+        ////////////////////////////////////////////
+
+        //Emit itself being created
+        this.$emit('created', this);
+    },
+    beforeDestroy() {
+        if (this.formFields) {
+            this.formFields.splice(this.formFields.indexOf(this), 1);
+        }
     },
     props: {
         // 'parent':{
         //     type:Object,
         // },
+        'formFields': {
+            type: Array,
+        },
         'field': {
             type: Object,
         },
@@ -1002,6 +1401,15 @@ export default {
     validations: {
         model: {
             validateInput,
+            uploading: function(source, vm) {
+
+                if (vm.uploadState == 'uploading') {
+                    return false;
+                }
+
+                //console.log('UPLOAD IS VALID', source, vm);
+                return true;
+            },
         }
     },
 
@@ -1055,6 +1463,7 @@ function checkNumericInputError(input, minimumValue, maximumValue, numberType) {
 
 ////////////////////////////////////////////////////////
 
+
 //Validate the amount of answers
 function validateInput(source, vm) {
 
@@ -1074,7 +1483,7 @@ function validateInput(source, vm) {
 
     //There is no minimum
     if (!minimum && !value) {
-        //////console.log('No minimum!')
+        ////////console.log('No minimum!')
         return true;
     }
 
@@ -1086,10 +1495,10 @@ function validateInput(source, vm) {
     if (maximum == 1) {
 
         if (value) {
-            //////console.log(`Required answer was provided`)
+            ////////console.log(`Required answer was provided`)
             return !checkValidInput(vm, value).length;
         } else {
-            //////console.log('Requires an answer but none provided');
+            ////////console.log('Requires an answer but none provided');
             return false;
         }
     }
@@ -1098,7 +1507,7 @@ function validateInput(source, vm) {
 
     //We need value to be an array at this point
     if (!isArray) {
-        //////console.log(`Requires ${minimum} answer but value is not an array`)
+        ////////console.log(`Requires ${minimum} answer but value is not an array`)
         return false;
     }
 
@@ -1200,6 +1609,72 @@ function checkValidInput(self, input) {
 <style lang="scss">
 .fluro-content-form-field {
 
+
+    .file-drop {
+        display: block;
+        position: relative;
+        border: 1px dashed rgba(#000, 0.2);
+        background: rgba(#000, 0.05);
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        min-height: 60px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8;
+        font-style: italic;
+        color: rgba(#000, 0.5);
+        margin-bottom: 5px;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background: #fff;
+        }
+
+
+        input {
+            display: block;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            opacity: 0; //.8; //.5;
+            // background: #000;
+            /* invisible but it's there! */
+            width: 100%;
+            height: 100%;
+            // height: 200px;
+            position: absolute;
+            cursor: pointer;
+        }
+
+    }
+
+    .file-items {
+
+        margin-bottom: 15px;
+
+        .file-item {
+            position: relative;
+            padding: 5px 5px 5px 15px;
+            border: 1px solid rgba(#000, 0.2);
+            border-bottom: none;
+            background: #fff;
+            font-size: 0.9em;
+
+            &:first-child {
+                border-radius: 5px 5px 0 0;
+            }
+
+            &:last-child {
+                border-bottom: 1px solid rgba(#000, 0.2);
+                border-radius: 0 0 5px 5px;
+            }
+        }
+    }
 
     .vertical-center {
         display: flex;

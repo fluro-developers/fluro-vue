@@ -1,5 +1,5 @@
 <template>
-        <div class="fluro-image" :class="{loaded:loaded}" :style="{backgroundImage:backgroundImage}">
+        <div class="fluro-image" :class="{loaded:loaded}" :style="style">
             <div :style="spacer"></div>
             <!-- <transition name="fade"> -->
             <div class="placeholder" v-if="!loaded" :style="{backgroundImage:placeholderImage}"></div>
@@ -74,6 +74,26 @@ export default {
         }
     },
     computed: {
+        style() {
+
+            var styles = {
+                backgroundImage:this.backgroundImage,
+            }
+
+            if(this.width) {
+                styles.width = `${this.width}px`;
+            } else {
+                styles.width = '100%';
+            }
+
+            if(this.height) {
+                styles.height = `${this.height}px`;
+            }
+
+
+
+            return styles;
+        },
         computedWidth() {
             return _.get(this.item, 'width') || this.width || this.imageWidth || 0;
         },

@@ -137,9 +137,6 @@ export default {
         value(value) {
 
             var self = this;
-
-            console.log('NEW CODE', value);
-
             // so cursor doesn't jump to start on typing
             if (value !== this.model) {
                 this.editor.session.setValue(value);

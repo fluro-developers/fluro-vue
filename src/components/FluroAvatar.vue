@@ -38,7 +38,7 @@ export default {
 	}
 
 	&[md] {
-		width:36px;
+		width:34px;
 	}
 
 	&[lg] {

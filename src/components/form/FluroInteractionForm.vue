@@ -1,6 +1,5 @@
 <template>
     <div class="fluro-interaction-form">
-        <!-- <pre>{{state}}</pre> -->
         <template v-if="!allowed">
             <template v-if="user">
                 <slot name="authenticated">
@@ -43,7 +42,7 @@
                             <v-alert :value="true" type="error" outline v-if="hasErrors">
                                 Please check the following issues before submitting
                                 <div v-for="error in errorMessages">
-                                    <strong>{{error.field.title}}</strong>: {{error.messages[0]}}
+                                    <strong>{{error.title}}</strong>: {{error.messages[0]}}
                                 </div>
                             </v-alert>
                             <v-btn class="mx-0" :disabled="hasErrors" type="submit" color="primary">
@@ -54,6 +53,7 @@
                 </form>
             </template>
         </template>
+        <!-- <pre>ERRORS {{errorMessages}}</pre> -->
     </div>
 </template>
 <script>
@@ -97,22 +97,19 @@ export default {
         }
     },
     created() {
-        console.log('Got the form!')
         this.reset();
     },
     mounted() {
-       
         var self = this;
         self.$watch(function() {
             return _.get(self.$refs, 'form.errorMessages');
         }, self.validate);
-
-
-         self.validate();
+        self.validate();
     },
     computed: {
+        
         formErrors() {
-            
+
         },
         hasErrors() {
             return this.errorMessages.length ? true : false;
@@ -320,7 +317,7 @@ export default {
 
             console.log('TESTING', this.definition)
             //If it's public
-            if(this.definition.privacy == 'public') {
+            if (this.definition.privacy == 'public') {
                 return true;
             }
 
@@ -338,7 +335,7 @@ export default {
     },
     methods: {
         validate() {
-            this.errorMessages = _.get(this.$refs, 'form.errorMessages');
+            this.errorMessages = _.get(this.$refs, 'form.errorMessages');        
         },
 
         defaultUserValue(key) {

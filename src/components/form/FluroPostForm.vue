@@ -18,30 +18,34 @@
                         </v-flex>
                     </v-layout>
                     <form @submit.prevent="submit" :disabled="state == 'processing'">
-                        <fluro-content-form ref="form" v-model="model.data" :options="options" :fields="form.fields" />
-                        <template v-if="state == 'processing'">
-                            <v-btn class="mx-0"  :disabled="true">
-                                Processing
-                                <v-progress-circular indeterminate></v-progress-circular>
-                            </v-btn>
-                        </template>
-                        <template v-else>
-
-                           <!-- TESTING AND STUFF {{errorMessages}} {{hasErrors}}. -->
-
-                           <!-- <pre>{{form.fields}}</pre> -->
-
-
-                            <v-alert :value="true" type="error" outline v-if="hasErrors">
-                                Please check the following messages before submitting
-                                <div v-for="error in errorMessages">
-                                    <strong>{{error.field.title}}</strong>: {{error.messages[0]}}
-                                </div>
-                            </v-alert>
-                            <v-btn class="mx-0" :disabled="hasErrors" type="submit" color="primary">
-                                Submit
-                            </v-btn>
-                        </template>
+                        <fluro-content-form ref="form" v-model="model.data" :fields="form.fields" />
+                        <div class="actions">
+                            <template v-if="state == 'processing'">
+                                <v-btn class="mx-0" :disabled="true">
+                                    Processing
+                                    <v-progress-circular indeterminate></v-progress-circular>
+                                </v-btn>
+                            </template>
+                            <template v-else-if="state == 'error'">
+                                <v-alert :value="true" type="error" outline>
+                                    {{serverErrors}}
+                                </v-alert>
+                                <v-btn class="mx-0" color="primary" @click.prevent.native="state = 'ready'">
+                                    Try Again
+                                </v-btn>
+                            </template>
+                            <template v-else>
+                                <v-alert :value="true" type="error" outline v-if="hasErrors">
+                                    Please check the following issues before submitting
+                                    <div v-for="error in errorMessages">
+                                        <strong>{{error.title}}</strong>: {{error.messages[0]}}
+                                    </div>
+                                </v-alert>
+                                <v-btn class="mx-0" :disabled="hasErrors" type="submit" color="primary">
+                                    Submit
+                                </v-btn>
+                            </template>
+                        </div>
                     </form>
                 </div>
             </template>
@@ -72,7 +76,7 @@ export default {
             type: [Object, String],
         },
         'options': {
-            default:function() {
+            default: function() {
                 return {}
             },
             type: Object,
@@ -97,14 +101,14 @@ export default {
         self.$watch(function() {
             return _.get(self.$refs, 'form.errorMessages');
         }, self.validate);
-
-
-         self.validate();
+        self.validate();
     },
     computed: {
         hasErrors() {
+            console.log('Has Errors?', this.errorMessages)
             return this.errorMessages.length ? true : false;
         },
+
         displayTitle() {
 
             if (this.title) {
@@ -137,10 +141,7 @@ export default {
     },
     methods: {
         validate() {
-            
-            this.errorMessages = _.get(this.$refs, 'form.errorMessages');
-
-            console.log('VALIDATE ERROR MESSAGES', this.$refs,  this.errorMessages)
+            this.errorMessages = _.get(this.$refs, 'form.errorMessages');        
         },
         reset() {
             var self = this;
@@ -154,10 +155,15 @@ export default {
             self.$emit('reset');
         },
         submit() {
+
+
             // console.log('SUBMIT NOW', this)
 
 
             var self = this;
+
+             self.validate();
+
 
             self.state = 'processing';
 

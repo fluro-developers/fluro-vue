@@ -6,11 +6,11 @@
             <!-- <fluro-code-editor v-model="model[field.key]" @input="valueChange" :height="200"></fluro-code-editor> -->
             <v-container class="grid-list-xl" pa-0>
                 <!-- <pre>{{field}}</pre> -->
-
                 <!-- :parent="model[key]"  -->
-                <fluro-content-form-field :options="options" :field="field" @input="update" v-model="model"></fluro-content-form-field>
+                <fluro-content-form-field :form-fields="formFields" :options="options" :field="field" @input="update" v-model="model"></fluro-content-form-field>
             </v-container>
         </template>
+        <!-- <pre v-for="field in formFields">{{field.title}} {{field.errorMessages.length}}</pre> -->
     </div>
 </template>
 <script>
@@ -98,7 +98,7 @@ function getDefaultValueForField(field) {
                 case 'wysiwyg':
                 case 'textarea':
                 case 'code':
-                // case 'select':
+                    // case 'select':
                     blankValue = '';
                     break;
                 default:
@@ -130,6 +130,12 @@ export default {
         'value': {
             type: Object,
         },
+        'formFields': {
+            default() {
+                return [];
+            },
+            type:Array,
+        },
         'options': {
             default: function() {
                 return {}
@@ -137,37 +143,25 @@ export default {
             type: Object,
         },
     },
+    computed:{
+        errorMessages() {
+            return _.chain(this.formFields)
+            .filter(function(field) {
+                return field.errorMessages.length;
+            })
+            .map(function(field) {
+                return {
+                    title:field.title,
+                    messages:field.errorMessages,
+                }
+            })
+            .value();
+        }
+    },
     data() {
         return {
             model: this.value,
-        }
-    },
-    computed: {
-        errorMessages() {
-
-            function mapRecursiveFieldMessage(component, trail) {
-                if (component.$v && component.errorMessages && component.errorMessages.length) {
-                    trail.push({field:component.field, messages:component.errorMessages});
-                }
-
-                if (component.$children) {
-                    _.each(component.$children, function(child) {
-                        mapRecursiveFieldMessage(child, trail);
-                    })
-                }
-            }
-
-            ////////////////////////////////
-
-            var trail = [];
-            mapRecursiveFieldMessage(this, trail)
-
-            ////////////////////////////////
-
-            return trail;
-
-
-
+            children:[],
         }
     },
     components: {
@@ -179,19 +173,34 @@ export default {
         },
         'fields': function(val) {
             return this.reset();
-        }
+        },
     },
     created() {
         this.reset();
     },
     methods: {
-        reset: function() {
+        created(child) {
+            this.$set(this.children, this.children.length, child);
+        },
+        destroyed(child) {
+            this.children.splice(this.children.indexOf(child), 1);
+        },
+        reset() {
             var self = this;
-            // self.model = {};
-            //Loop through each field and create a key on the object
-            //so we can listen to it's changes
+
+            /////////////////////////////////////////////////
+
+            //Reset the components too
+            this.formFields.forEach(function(component) {
+                component.reset();
+            });
+
+            /////////////////////////////////////////////////
+
+            //For each field reset the model
             (self.fields || []).forEach(createDefaults);
 
+            /////////////////////////////////////////////////
 
             //Recursively create all the default keys for nested fields
             function createDefaults(field) {
@@ -205,6 +214,8 @@ export default {
                 // console.log('SET', field.key, blankValue);
                 Vue.set(self.model, field.key, blankValue);
             }
+
+
         },
         update: function(input) {
 
@@ -216,6 +227,7 @@ export default {
 
 
             this.$emit('input', this.model);
+
             // this.$forceUpdate();
             // _.clone(this.model));//this.model);
             // this.$forceUpdate();
