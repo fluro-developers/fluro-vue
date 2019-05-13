@@ -161,7 +161,6 @@ export default {
     data() {
         return {
             model: this.value,
-            children:[],
         }
     },
     components: {
@@ -179,11 +178,10 @@ export default {
         this.reset();
     },
     methods: {
-        created(child) {
-            this.$set(this.children, this.children.length, child);
-        },
-        destroyed(child) {
-            this.children.splice(this.children.indexOf(child), 1);
+        touch() {
+            _.each(this.formFields, function(component) {
+                component.touch();
+            })
         },
         reset() {
             var self = this;

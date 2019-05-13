@@ -34,9 +34,12 @@
                             <v-alert :value="true" type="error" outline>
                                 {{serverErrors}}
                             </v-alert>
-                            <v-btn class="mx-0" color="primary" @click.prevent.native="state = 'ready'">
+                            <v-btn class="mx-0" @click.prevent.native="state = 'ready'">
                                 Try Again
                             </v-btn>
+                            <!-- <v-btn class="mx-0" :disabled="hasErrors" type="submit" color="primary">
+                                Try Again
+                            </v-btn> -->
                         </template>
                         <template v-else>
                             <v-alert :value="true" type="error" outline v-if="hasErrors">
@@ -335,7 +338,16 @@ export default {
     },
     methods: {
         validate() {
-            this.errorMessages = _.get(this.$refs, 'form.errorMessages');        
+            var form = this.$refs.form;
+            if(!form) {
+                return [];
+            }
+            this.errorMessages = form.errorMessages || [];        
+        },
+        validateAllFields() {
+            var form = this.$refs.form;
+            form.touch();
+            this.validate();
         },
 
         defaultUserValue(key) {
@@ -360,8 +372,15 @@ export default {
         },
         submit() {
             var self = this;
+            self.validateAllFields();
 
+            if(self.hasErrors) {
+                //Gotta finish the stuff first!
+                return;
+            }
+            
             self.state = 'processing';
+
 
             /////////////////////////////////
 

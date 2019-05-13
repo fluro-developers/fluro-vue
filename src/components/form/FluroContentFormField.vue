@@ -189,9 +189,8 @@
             </v-input>
         </template>
         <template v-else-if="renderer == 'upload'">
-            <!-- Upload -->
+           <!-- <pre>{{model}}</pre> -->
             <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :persistent-hint="true" :hint="fileHint">
-                <!-- <pre>{{canAddValue}}, {{canRemoveValue}}, Min: {{minimum}}, Max: {{maximum}}</pre> -->
                 <div class="file-items" v-if="files.length">
                     <div class="file-item" v-for="file in files">
                         <!-- <v-progress-linear v-model="file.progress"></v-progress-linear> -->
@@ -236,9 +235,9 @@
                 <!-- <v-progress-linear class="total-progress" color="primary" v-model="progress"></v-progress-linear> -->
                 <!-- <div class="dropbox" v-show="!files.length"> -->
                 <!-- accept="image/*" -->
-                <label class="file-drop" v-if="canAddValue">
+                <label class="file-drop" v-if="canAddFile">
                     <input ref="file" type="file" :multiple="multipleInput" @change="filesSelected($event.target.files)">
-                    Drag and drop or click here to select files
+                    Drag and drop or click here to select {{multipleInput ? 'files' : 'a file'}}
                 </label>
                 <!-- <input type="file" multiple :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length" accept="image/*" class="input-file"> -->
                 <!--  <div>
@@ -519,6 +518,17 @@ export default {
             }
 
             return this.results;
+        },
+        canAddFile() {
+            if(this.canAddValue) {
+                return true;
+            }
+
+            if(this.maximum == 1) {
+                if(!this.files || !this.files.length) {
+                    return true;
+                }
+            }
         },
         canAddValue() {
 
@@ -1102,7 +1112,18 @@ export default {
         },
         mapFilesToValues() {
             var self = this;
-            self.fieldModel = _.map(self.files, 'attachmentID');
+
+            var mapField = 'result';//'attachmentID';
+
+            if(self.multipleInput) {
+                self.fieldModel = _.map(self.files, mapField);
+            } else {
+                self.fieldModel = _.chain(self.files)
+                .first()
+                .get(mapField)
+                .value();
+            }
+
             self.$forceUpdate();
         },
 
@@ -1209,8 +1230,7 @@ export default {
             }
         },
         touch() {
-
-            //////console.log('touched!');
+            console.log('touched!');
             this.$v.model.$touch()
         },
         valueChange(event, setTouched) {
