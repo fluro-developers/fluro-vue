@@ -1,7 +1,5 @@
 <template>
     <div class="fluro-editor">
-
-
         <!-- <pre>{{model}}</pre> -->
         <!-- <editor-floating-menu :editor="editor">
             <div slot-scope="{ commands, isActive, menu }" class="editor__floating-menu" :class="{ 'is-active': menu.isActive }" :style="`top: ${menu.top}px`">
@@ -84,6 +82,18 @@
                         </v-list-tile>
                     </v-list>
                 </v-menu>
+                <v-menu :fixed="true" transition="slide-y-transition" offset-y>
+                    <template v-slot:activator="{ on }">
+                        <v-btn small icon :disabled="showSource" v-on="on">
+                            <v-icon>image</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list>
+                        <v-list-tile @click="showImagePrompt(commands.image)">
+                            <v-list-tile-content>Add Image</v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
+                </v-menu>
                 <!-- 
                 <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.heading({ level: 1 }) }" @click="commands.heading({ level: 1 })">
                     H1
@@ -127,7 +137,7 @@
                     <v-icon>minimize</v-icon>
                 </v-btn>
                 <!--  -->
-               <!--  <v-btn icon class="hidden-xs-only" :disabled="showSource" small flat @click="commands.undo">
+                <!--  <v-btn icon class="hidden-xs-only" :disabled="showSource" small flat @click="commands.undo">
                     <v-icon>undo</v-icon>
                 </v-btn>
                 <v-btn icon class="hidden-xs-only" :disabled="showSource" small flat @click="commands.redo">
@@ -207,7 +217,7 @@
                 <template v-if="filteredUsers.length">
                     <!-- <pre>{{filteredUsers}}</pre> -->
                     <div v-for="(persona, index) in filteredUsers" :key="persona._id" class="suggestion-list__item" :class="{ 'is-selected': navigatedUserIndex === index }" @click="selectUser(persona)">
-                        <fluro-avatar left :id="persona" type="persona"/>{{ persona.title }}
+                        <fluro-avatar left :id="persona" type="persona" />{{ persona.title }}
                     </div>
                 </template>
                 <div v-else class="suggestion-list__item is-empty">
@@ -228,6 +238,7 @@ import tippy from 'tippy.js';
 import Fuse from 'fuse.js';
 import FluroCodeEditor from './FluroCodeEditor.vue';
 import Mention from './tiptap/mentions';
+import Image from './tiptap/image';
 import { Editor, EditorContent, EditorMenuBar, EditorFloatingMenu } from 'tiptap'
 import {
     Blockquote,
@@ -236,6 +247,7 @@ import {
     Heading,
     HorizontalRule,
     OrderedList,
+    // Image,
     BulletList,
     ListItem,
     TodoItem,
@@ -284,6 +296,12 @@ export default {
         },
         sourceChange(input) {
             this.model = input;
+        },
+        showImagePrompt(command) {
+            const src = prompt('Enter the url of your image here')
+            if (src !== null) {
+                command({ src })
+            }
         },
         // navigate to the previous item
         // if it's the first item, navigate to the last one
@@ -366,7 +384,7 @@ export default {
             type: String,
         },
         'options': {
-            default:function() {
+            default: function() {
                 return {}
             },
             type: Object,
@@ -408,6 +426,7 @@ export default {
                 new ListItem(),
                 // new TodoItem(),
                 // new TodoList(),
+                new Image(),
                 new Bold(),
                 new Code(),
                 new Italic(),
@@ -461,7 +480,6 @@ export default {
                     }) => {
 
                         var mentionInstance = this;
-
 
                         self.$fluro.content.mention(query, self.options.mentions).then(function(personas) {
                                 mentionInstance.query = query
@@ -536,8 +554,8 @@ export default {
 
                 // self.$emit('input', HTML);
             },
-            onBlur:self.blur,
-            onFocus:self.focus,
+            onBlur: self.blur,
+            onFocus: self.focus,
         })
 
 

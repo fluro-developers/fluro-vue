@@ -637,13 +637,17 @@ export default {
         expressions() {
             return this.field.expressions;
         },
-        title() {
+        errorTitle() {
+             return this.field.title;
+        },
+        title(force) {
 
 
             //Check if 
             if (this.options.labels && this.options.labels.hasOwnProperty(this.key)) {
                 return this.options.labels[this.key];
             }
+            
 
 
             return this.field.title;

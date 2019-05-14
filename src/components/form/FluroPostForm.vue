@@ -18,7 +18,7 @@
                         </v-flex>
                     </v-layout>
                     <form @submit.prevent="submit" :disabled="state == 'processing'">
-                        <fluro-content-form ref="form" v-model="model.data" :fields="form.fields" />
+                        <fluro-content-form ref="form" :options="options" v-model="model.data" :fields="form.fields" />
                         <div class="actions">
                             <template v-if="state == 'processing'">
                                 <v-btn class="mx-0" :disabled="true">

@@ -32,6 +32,15 @@ import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
 
 ////////////////////////////////////////////////////////////////////
 
+import FluroContentBrowser from './components/form/FluroContentBrowser.vue';
+export { FluroContentBrowser as FluroContentBrowser };
+
+import FluroContentSelect from './components/form/FluroContentSelect.vue';
+export { FluroContentSelect as FluroContentSelect };
+
+
+////////////////////////////////////////////////////////////////////
+
 //Form Components
 import FluroRealmSelect from './components/form/FluroRealmSelect.vue';
 export { FluroRealmSelect as FluroRealmSelect };

@@ -22,7 +22,7 @@
             <template v-else>
                 <slot name="info"></slot>
                 <form @submit.prevent="submit" :disabled="state == 'processing'">
-                    <fluro-content-form ref="form" v-model="model" :fields="fields" />
+                    <fluro-content-form ref="form" :options="options" v-model="model" :fields="fields" />
                     <div class="actions">
                         <template v-if="state == 'processing'">
                             <v-btn class="mx-0" :disabled="true">
@@ -86,6 +86,12 @@ export default {
         },
         'debugMode': {
             type: Boolean,
+        },
+        'options': {
+            default: function() {
+                return {}
+            },
+            type: Object,
         },
     },
     data() {

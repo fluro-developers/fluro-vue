@@ -151,7 +151,7 @@ export default {
             })
             .map(function(field) {
                 return {
-                    title:field.title,
+                    title:field.errorTitle,
                     messages:field.errorMessages,
                 }
             })
