@@ -280,7 +280,7 @@ mention other users by typing in @their.name and fits in and inherits the styles
 ```
 
 ```javascript
-import FluroEditor from 'fluro-vue';
+import {FluroEditor} from 'fluro-vue';
 
 ////////////////////////////////////////////////////////
 
@@ -308,7 +308,7 @@ An inline code editor, capable of inputting, rendering, beautifying your JSON, J
 > Example Usage
 
 ```javascript
-import FluroCodeEditor from 'fluro-vue';
+import {FluroCodeEditor} from 'fluro-vue';
 
 ////////////////////////////////////////////////////////
 
@@ -340,11 +340,12 @@ It will automatically render all of the fields, using the Fluro Content Field co
 | ----------- | ----------- | ----------- |
 | `v-model` | Object | The model to edit |
 | `fields` | Array | The array of fields to render, (Usually the array from a definition) |
+| `options` | Object | Extra configuration and options for the form fields |
 
 > Example Usage
 
 ```javascript
-import FluroContentForm from 'fluro-vue';
+import {FluroContentForm} from 'fluro-vue';
 
 ////////////////////////////////////////////////////////
 
@@ -382,7 +383,7 @@ within the Fluro Content Form Component
 > Example Usage
 
 ```javascript
-import FluroContentField from 'fluro-vue';
+import {FluroContentField} from 'fluro-vue';
 
 ////////////////////////////////////////////////////////
 
@@ -412,6 +413,238 @@ export default {
 
 ```html
 <fluro-content-field :field="field" v-model="model"></fluro-content-field>
+```
+
+
+
+## Fluro Interaction Form
+Renders a Fluro interaction definition as a fully working form, complete with validation, submission, resetting and payments
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `title` | String | An optional display title for the form |
+| `definition` | Object | The Form/Definition from Fluro to render |
+| `linkedProcess` | String or Object | The process card to link to if applicable |
+| `linkedEvent` | String or Object | The event to register tickets for if applicable |
+| `debugMode` | Boolean | Whether the form should be rendered in 'debug/test' mode |
+| `options` | Object | Extra configuration for the form and it's fields |
+
+> Example Usage
+
+```javascript
+import {FluroInteractionForm} from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroInteractionForm,
+    },
+    asyncComputed: {
+        form: {
+            get() {
+                var self = this;
+                //Retrieve a form from the API
+                return self.$fluro.content.form('58dca35c21228d2d045a1cf7');
+            }
+        }
+    }
+}
+```
+
+```html
+<fluro-interaction-form :definition="form">
+    <template v-slot:info>
+        <h1>My Awesome Form</h1>
+    </template>
+
+    <template v-slot:success="{result, reset}">
+        
+        <div> Form submitted successfully!</div>
+        <v-btn @click="reset()">
+            Back to form
+        </v-btn>
+    </template>
+
+    <template v-slot:error="{result}">
+        There was an error!
+
+        <v-btn @click="reset()">
+            Back to form
+        </v-btn>
+    </template>
+</fluro-interaction-form>
+```
+
+
+
+
+## Fluro Post Form
+Renders a Fluro post definition as a fully functional form
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `title` | String | An optional display title for the form |
+| `type` | String | The definition name of the type of post you want to create. Eg. 'comment' |
+| `target` | String or Object | The target parent you want to attach this post to |
+| `options` | Object | Extra configuration for the form and it's fields |
+
+> Example Usage
+
+```javascript
+import {FluroPostForm} from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroPostForm,
+    },
+}
+```
+
+```html
+<fluro-post-form title="Join the conversation" :options="{labels:{'body':''}, editor:{mentions:{managed:true}}}" :target="item" @created="commentAdded" type="comment">
+    
+    <template v-slot:authenticated>
+        <div class="text-xs-center">
+            You don't have permission to join this conversation
+        </div>
+    </template>
+
+    <template v-slot:unauthenticated>
+        <div class="text-xs-center">
+            <h5>Join the conversation</h5>
+            <v-btn color="primary" :to="{name:'user.login'}">
+                Login
+            </v-btn>
+            <v-btn color="primary" :to="{name:'user.signup'}">
+                Signup
+            </v-btn>
+        </div>
+    </template>
+
+</fluro-post-form>
+```
+
+
+
+## Fluro Post Thread
+Renders a thread of posts for a specified parent item
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Array | An array of comments |
+| `type` | String | The definition name of the type of post you want to create. Eg. 'comment' |
+| `target` | String or Object | The target parent you want to attach this post to |
+| `options` | Object | Extra configuration for the form and it's fields |
+
+> Example Usage
+
+```javascript
+import {FluroPostThread} from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroPostThread,
+    },
+    asyncComputed: {
+        comments: {
+            get() {
+                var self = this;
+                return self.$fluro.content.thread(self.item, 'comment');
+            },
+            default: [],
+        },
+}
+```
+
+```html
+<fluro-post-thread v-model="comments">
+    <template v-slot:post="{post}">
+        <pre>{{post}}</pre>
+    </template>
+</fluro-post-thread>
+```
+
+
+
+
+
+
+## Fluro Stat Toggle
+Makes it easy to add a stat toggle component, that can 'like', 'upvote', 'bookmark', 'favorite' a specified item.
+As this is for toggling on/off a specific stat, all stats toggled by this component will be considered 'unique' stats
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `target` | String, Object | The item to check |
+| `stat` | String | The name of the stat you want to toggle |
+
+> Example Usage
+
+```javascript
+import {FluroStatToggle} from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroStatToggle,
+    },
+}
+```
+
+```html
+<fluro-stat-toggle :target="item" stat="subscribe">
+    <template v-slot="{statting, toggle, statted, store}">
+        <v-btn depressed block @click="toggle" :class="{primary:statted}">
+            <div v-if="statted">
+                <span>Following</span>
+                <font-awesome-icon right :icon="['fas', 'rss']"></font-awesome-icon>
+            </div>
+            <div v-if="!statted">
+                <span>Follow</span>
+                <font-awesome-icon right :icon="['far', 'rss']"></font-awesome-icon>
+            </div>
+        </v-btn>
+    </template>
+</fluro-stat-toggle>
+```
+
+
+
+## Fluro Stat Total
+Displays a total of stats of a specified type for an item
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `target` | String, Object | The item to retrieve stats for |
+| `stat` | String | The name of the stat you want to display a total for |
+| `unique` | Boolean | Whether the stat is a unique stat or a cumulative stat |
+> Example Usage
+
+```javascript
+import {FluroStatToggle} from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroStatToggle,
+    },
+}
+```
+
+```html
+<fluro-stat-total :target="item" :unique="true" stat="subscribe">
+    <template v-slot="{total, processing}">
+        <span v-if="!processing">{{total}}</span>
+        <span v-if="processing">
+            <font-awesome-icon spin :icon="['far', 'spinner-third']"></font-awesome-icon>
+        </span>
+    </template>
+</fluro-stat-total>
 ```
 
 
@@ -480,7 +713,7 @@ Allows for data entry of a full Javascript date timestamp as a string or date
 > Example Usage
 
 ```javascript
-import FluroDateTimePicker from 'fluro-vue';
+import {FluroDateTimePicker} from 'fluro-vue';
 
 ////////////////////////////////////////////////////////
 

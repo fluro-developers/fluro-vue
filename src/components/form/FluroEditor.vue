@@ -235,7 +235,7 @@
 // Import the editor
 
 import tippy from 'tippy.js';
-import Fuse from 'fuse.js';
+// import Fuse from 'fuse.js';
 import FluroCodeEditor from './FluroCodeEditor.vue';
 import Mention from './tiptap/mentions';
 import Image from './tiptap/image';
