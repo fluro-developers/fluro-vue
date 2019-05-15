@@ -11,7 +11,7 @@
         <!-- <pre>{{minimum}} {{maximum}} {{total}} {{model}}</pre>  -->
         <v-layout v-if="canAddValue">
             <v-flex grow>
-                <v-autocomplete :box="true" :hide-selected="true" @change="selected()" prepend-inner-icon="search" placeholder="Search for items" :return-object="true" item-text="title" v-model="candidates" :multiple="true" :loading="loading" :items="results" :search-input.sync="search" flat hide-no-data :label="label">
+                <v-autocomplete :box="true" :hide-selected="true" @change="selected()" prepend-inner-icon="search"  append-icon="":hint="hint" :persistent-hint="true" :placeholder="placeholder" :return-object="true" item-text="title" v-model="candidates" :multiple="true" :loading="loading" :items="results" :search-input.sync="search" flat hide-no-data :label="label">
                     <template v-slot:item="{ item }">
                         <v-list-tile-avatar class="text-sm-center">
                             <template v-if="item._type == 'persona'">
@@ -40,11 +40,12 @@
                 </v-autocomplete>
             </v-flex>
             <v-flex shrink>
-                <v-btn color="primary" icon>
+               <!--  <v-btn color="primary" icon>
                     <v-icon>add</v-icon>
-                </v-btn>
-                <v-btn icon @click="dialog = true">
-                    <v-icon>more_horiz</v-icon>
+                </v-btn> -->
+                <v-btn flat @click="dialog = true">
+                    Browse
+                    <!-- <v-icon>search</v-icon> -->
                 </v-btn>
             </v-flex>
         </v-layout>
@@ -71,6 +72,14 @@ export default {
     mixins: [FluroSelectionMixin],
     props: {
         'label': {
+            type: String,
+        },
+        'hint': {
+            default:'',
+            type: String,
+        },
+        'placeholder': {
+            default:'Search to add items',
             type: String,
         },
         'value': {
@@ -193,11 +202,11 @@ export default {
             if (searchTerms && searchTerms.length) {
 
                 self.loading = true;
-                var options;
+                var options = {};
 
                 if(self.type) {
                     options.params = {
-                        type
+                        type:self.type,
                     }
                 }
 

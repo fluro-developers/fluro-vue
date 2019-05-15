@@ -126,7 +126,7 @@
         </template>
         <template v-else-if="renderer == 'content-select'">
             <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
-                <fluro-content-select :minimum="minimum" @input="touch" :type="restrictType" :maximum="maximum" v-model="model[field.key]"/>
+                <fluro-content-select :hint="field.description" :placeholder="field.placeholder" :minimum="minimum" @input="touch" :type="restrictType" :maximum="maximum" v-model="model[field.key]"/>
             </v-input>
         </template>
         <template v-else-if="renderer == 'search-select'">
@@ -168,20 +168,21 @@
             </v-card>
         </template>
         <template v-else-if="renderer == 'wysiwyg'">
-            <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
+            <v-input class="no-flex" :success="success" :required="required" :error-messages="errorMessages" :hint="field.description">
                 <template v-if="multipleInput">
                     <template v-if="fieldModel.length">
                         <template v-for="(entry, index) in fieldModel">
-                            <v-layout>
-                                <div class="vertical-center">
+                            <v-layout wrap row>
+                                <v-flex class="vertical-center">
                                     <v-label>{{groupTitle(entry, index)}}</v-label>
-                                </div>
+                                </v-flex>
                                 <v-spacer></v-spacer>
                                 <v-btn icon flat color="error" v-if="canRemoveValue" @click="removeValue(index, true)">
                                     <v-icon>close</v-icon>
                                 </v-btn>
                             </v-layout>
-                            <fluro-editor v-model="fieldModel[index]" :options="editorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
+                            
+                            <fluro-editor v-model="fieldModel[index]" :options="multiEditorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
                         </template>
                     </template>
                     <template v-if="canAddValue">
@@ -445,6 +446,7 @@ export default {
         }
     },
     computed: {
+
         restrictType() {
 
             if(this.field.params && this.field.params.restrictType) {
@@ -472,6 +474,10 @@ export default {
         editorOptions() {
             return this.options.editor;
         },
+        multiEditorOptions() {
+            return Object.assign({}, this.options.editor, {label:''})
+        },
+
         savedTerms() {
             return _.get(this.field, 'params.storeCopy');
         },
