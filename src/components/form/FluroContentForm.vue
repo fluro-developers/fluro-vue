@@ -209,7 +209,7 @@ export default {
                     (field.fields || []).forEach(createDefaults);
                 }
 
-                // console.log('SET', field.key, blankValue);
+                // //console.log('SET', field.key, blankValue);
                 Vue.set(self.model, field.key, blankValue);
             }
 
@@ -217,7 +217,7 @@ export default {
         },
         update: function(input) {
 
-            // console.log('Field was updated', input);
+            // //console.log('Field was updated', input);
             // this.model = input;
             // 
             //TODO Figure out how to make this reactive without needing this hack

@@ -25,10 +25,14 @@ import Fluro from 'fluro';
 import FluroAvatar from './components/FluroAvatar.vue';
 import FluroImage from './components/FluroImage.vue';
 import FluroIcon from './components/FluroIcon.vue';
-import FluroListItem from './components/FluroListItem.vue';
+
 import FluroVideo from './components/FluroVideo.vue';
 import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
 
+////////////////////////////////////////////////////////////////////
+
+import FluroListItem from './components/FluroListItem.vue';
+export { FluroListItem as FluroListItem };
 
 ////////////////////////////////////////////////////////////////////
 
@@ -111,6 +115,12 @@ export { FluroStatTotal as FluroStatTotal };
 //Mixins
 import Layout from './mixins/Layout';
 export { Layout as Layout };
+
+
+
+// //Mixins
+// import FluroSelectionMixin from './mixins/FluroSelectionMixin';
+// export { FluroSelectionMixin as FluroSelectionMixin };
 
 
 

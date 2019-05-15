@@ -1,6 +1,6 @@
 {
   "name": "fluro-vue",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "A package to make it easy to build Vue applications that interact with Fluro",
   "main": "src/index.js",
   "scripts": {
@@ -36,6 +36,7 @@
     "vue-vimeo-player": "0.0.9",
     "vue-youtube": "^1.3.4",
     "vue2-ace-editor": "0.0.13",
+    "vuedraggable": "^2.20.0",
     "vuex-map-fields": "^1.3.3"
   },
   "devDependencies": {

@@ -1,5 +1,7 @@
 <template>
     <div :data-field-key="key" class="fluro-content-form-field" v-if="isVisible" v-bind="attributes" :class="fieldClass">
+        
+       
         <template v-if="officeUseOnly">
         </template>
         <template v-else-if="renderer == 'custom'">
@@ -122,6 +124,11 @@
         <template v-else-if="renderer == 'select'">
             <v-select :success="success" :required="required" :return-object="type == 'reference'" :label="label" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="selectOptions" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
+        <template v-else-if="renderer == 'content-select'">
+            <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
+                <fluro-content-select :minimum="minimum" @input="touch" :type="restrictType" :maximum="maximum" v-model="model[field.key]"/>
+            </v-input>
+        </template>
         <template v-else-if="renderer == 'search-select'">
             <v-autocomplete :success="success" :deletable-chips="true" :hide-selected="true" prepend-inner-icon="search" :error-messages="errorMessages" :cache-items="!defaultReferences.length" :chips="multipleInput" :clearable="!required" :return-object="true" item-text="title" v-model="fieldModel" @blur="touch()" @change="valueChange" :multiple="multipleInput" :loading="loading" :items="searchResults" :search-input.sync="keywords" flat hide-no-data :label="label">
                 <!-- <template v-slot:selection="{ item, selected }">
@@ -189,7 +196,7 @@
             </v-input>
         </template>
         <template v-else-if="renderer == 'upload'">
-           <!-- <pre>{{model}}</pre> -->
+            <!-- <pre>{{model}}</pre> -->
             <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :persistent-hint="true" :hint="fileHint">
                 <div class="file-items" v-if="files.length">
                     <div class="file-item" v-for="file in files">
@@ -310,6 +317,7 @@ import FluroEditor from './FluroEditor.vue';
 import FluroCodeEditor from './FluroCodeEditor.vue';
 import FluroSignatureField from './FluroSignatureField.vue';
 import FluroDateTimePicker from './FluroDateTimePicker.vue';
+import FluroContentSelect from './FluroContentSelect.vue';
 //Allow custom html to be injected at runtime
 
 import Expressions from 'expression-eval';
@@ -323,6 +331,7 @@ export default {
         FluroCodeEditor,
         FluroSignatureField,
         FluroDateTimePicker,
+        FluroContentSelect,
     },
     data() {
         return {
@@ -436,6 +445,12 @@ export default {
         }
     },
     computed: {
+        restrictType() {
+
+            if(this.field.params && this.field.params.restrictType) {
+                return this.field.params.restrictType;
+            }
+        },
         fileHint() {
             switch (this.uploadState) {
                 case 'uploading':
@@ -447,7 +462,12 @@ export default {
             }
         },
         success() {
-            return (this.$v.$dirty && !this.$v.$invalid);
+
+            //If we are wanting to validate success (Change to green)
+            if(this.options.validateSuccess) {
+                return (this.$v.$dirty && !this.$v.$invalid);
+            }
+            
         },
         editorOptions() {
             return this.options.editor;
@@ -520,12 +540,12 @@ export default {
             return this.results;
         },
         canAddFile() {
-            if(this.canAddValue) {
+            if (this.canAddValue) {
                 return true;
             }
 
-            if(this.maximum == 1) {
-                if(!this.files || !this.files.length) {
+            if (this.maximum == 1) {
+                if (!this.files || !this.files.length) {
                     return true;
                 }
             }
@@ -638,7 +658,7 @@ export default {
             return this.field.expressions;
         },
         errorTitle() {
-             return this.field.title;
+            return this.field.title;
         },
         title(force) {
 
@@ -647,7 +667,7 @@ export default {
             if (this.options.labels && this.options.labels.hasOwnProperty(this.key)) {
                 return this.options.labels[this.key];
             }
-            
+
 
 
             return this.field.title;
@@ -739,6 +759,7 @@ export default {
             if (!this.$v.model.validateInput) {
 
 
+
                 if (this.proposedValue) {
                     _.each(checkValidInput(self, this.proposedValue), function(err) {
                         errors.push(err);
@@ -755,7 +776,7 @@ export default {
 
                 var valueType = 'answer';
 
-                if (self.directive = 'upload') {
+                if (self.directive == 'upload') {
                     valueType = 'file';
                 }
 
@@ -800,6 +821,8 @@ export default {
                                 errors.push(`Requires at least 1 ${valueType}`)
                             } else {
                                 //Provide at least X ${valueType}s
+                                //
+                                console.log('ANSWERS IS', numberOfAnswersProvided, this.minimum, this.maximum)
                                 errors.push(`Please provide at least ${this.minimum} ${valueType}s`)
                             }
                         }
@@ -850,7 +873,8 @@ export default {
                     directive = 'datetimepicker';
                     break;
                 case 'textarea':
-                    directive = 'textarea';
+                case 'select':
+                case 'upload':
                     break;
                 default:
                     switch (dataType) {
@@ -865,8 +889,13 @@ export default {
                         case 'decimal':
                             directive = 'number';
                             break;
+                        case 'reference':
+                            directive = 'content-select';
+                            break;
                     }
                     break;
+
+
             }
 
 
@@ -1052,6 +1081,9 @@ export default {
                 .first()
                 .value();
 
+            ///////////////////////////////////////////////////
+
+
             //If we can't upload to a realm
             if (!uploadRealmID) {
                 //Then fail here
@@ -1061,6 +1093,7 @@ export default {
 
             ///////////////////////////////////////////////////
 
+            console.log('Uploading to ', self.field.params)
             return this.$fluro.api.post(`/file/attach/${uploadRealmID}`, body, config)
                 .then(function(res) {
                     //console.log('UPLOAD RESPONSE', res);
@@ -1117,15 +1150,15 @@ export default {
         mapFilesToValues() {
             var self = this;
 
-            var mapField = 'result';//'attachmentID';
+            var mapField = 'result'; //'attachmentID';
 
-            if(self.multipleInput) {
+            if (self.multipleInput) {
                 self.fieldModel = _.map(self.files, mapField);
             } else {
                 self.fieldModel = _.chain(self.files)
-                .first()
-                .get(mapField)
-                .value();
+                    .first()
+                    .get(mapField)
+                    .value();
             }
 
             self.$forceUpdate();
@@ -1234,7 +1267,6 @@ export default {
             }
         },
         touch() {
-            console.log('touched!');
             this.$v.model.$touch()
         },
         valueChange(event, setTouched) {
@@ -1258,7 +1290,7 @@ export default {
             // }
 
             self.$emit('input', self.model); //[self.key])
-            // self.$forceUpdate();
+            
         }
     },
     created() {
@@ -1275,7 +1307,7 @@ export default {
         }
 
         ////////////////////////////////////////////
-   
+
         if (this.type == 'group' && !this.asObject) {
             //Do nothing
         } else {
@@ -1711,7 +1743,7 @@ function checkValidInput(self, input) {
     }
 
     .no-flex {
-        .v-input__slot {
+        & > .v-input__control > .v-input__slot {
             display: block;
             margin: 0;
         }

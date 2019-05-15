@@ -1,30 +1,51 @@
 <template>
     <div class="fluro-list-item">
         <div class="realm-bar" :style="realmStyle" />
-
-        <div class="item-icon">
+        <!-- <div class="handle" v-if="draggable">
+            <v-btn icon flat v-on="on">
+                <fluro-icon icon="arrows" />
+            </v-btn>
+        </div> -->
+        <div class="item-icon" :class="item._type">
             <template v-if="item._type == 'persona'">
                 <fluro-avatar :id="item._id" type="persona" />
             </template>
             <template v-else-if="item._type == 'contact'">
                 <fluro-avatar :id="item._id" type="contact" />
             </template>
+            <template v-else-if="item._type == 'image'">
+                <fluro-image :item="item" :spinner="true" :width="40" :height="40" />
+            </template>
             <template v-else>
                 <fluro-icon :type="item._type"></fluro-icon>
             </template>
         </div>
         <component :is="linkType" :to="to" class="item-text">
-            
             <!-- <router-link :to="to" class="item-text"> -->
-            <div class="item-title">{{title}}</div>
-            <div class="item-subtitle">{{subtitle}}</div>
-            
+            <div>
+                <div class="item-title">{{title}}</div>
+                <div class="item-subtitle">{{subtitle}}</div>
+            </div>
             <!-- </router-link> -->
         </component>
-        <div class="item-actions" v-if="actions.length">
-            <v-btn icon flat>
+        <div class="item-actions" :class="{active:actionsOpen}" v-if="availableActions.length">
+            <v-menu :left="true" v-model="actionsOpen" :fixed="true" transition="slide-y-transition" offset-y>
+                <template v-slot:activator="{ on }">
+                    <v-btn icon flat v-on="on">
+                        <v-icon>{{actionsOpen ? 'close' : 'more_horiz'}}</v-icon>
+                    </v-btn>
+                </template>
+                <v-list dense>
+                    <v-list-tile @click="action.click" v-for="action in availableActions">
+                        <v-list-tile-content>{{action.title}}</v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
+            <!-- 
+
+            <v-btn icon flat @click="">
                 <v-icon>more_horiz</v-icon>
-            </v-btn>
+            </v-btn> -->
         </div>
         <!-- LIST ITEM -->
     </div>
@@ -32,6 +53,10 @@
 <script>
 export default {
     props: {
+        'draggable': {
+            default: true,
+            type: Boolean,
+        },
         'to': {
             type: Object
         },
@@ -41,21 +66,130 @@ export default {
             default: 'node',
         },
         'actions': {
-            default: function() {
-                return []
-            },
             type: Array,
         }
     },
     data() {
         return {
-
+            actionsOpen: false,
+            availableActions: [],
         }
     },
-    methods: {
+    created() {
+
+        var self = this;
+
+        //Get any actions pushed in as props
+        var actions = self.actions || [];
+
+        /////////////////////////////////////
+
+        //Get the item we are looking at
+        var item = self.item;
+
+        /////////////////////////////////////
+
+        //Check if we can edit this thing
+        var canEdit = self.$fluro.access.canEditItem(item);
+        var canView = self.$fluro.access.canViewItem(item);
+        var canDelete = self.$fluro.access.canDeleteItem(item);
+
+        /////////////////////////////////////
+
+        //If we can edit this thing
+        if (canEdit) {
+            actions.push({
+                title: 'Edit',
+                click: function() {
+                    //Fire
+                    if (self.$fluro.global.edit) {
+                        self.$fluro.global.edit(item);
+                    }
+                }
+            })
+        }
+
+        /////////////////////////////////////
+
+        if (canView) {
+            actions.push({
+                title: 'View',
+                click: function() {
+                    //Fire
+                    if (self.$fluro.global.view) {
+                        self.$fluro.global.view(item);
+                    }
+                }
+            })
+
+
+            ///////////////////////////////////////
+
+
+
+            switch (item._type) {
+                case 'image':
+
+                    var url = self.$fluro.asset.getUrl(item);
+                    actions.push({
+                        title: 'View Image',
+                        click: function() {
+                            window.open(url)
+                        }
+                    })
+                    break;
+                case 'video':
+                    var url = self.$fluro.asset.imageUrl(item);
+                    actions.push({
+                        title: 'Watch Video',
+                        click: function() {
+                            window.open(url)
+                        }
+                    })
+                    break;
+                case 'audio':
+                    var url = self.$fluro.asset.getUrl(item);
+                    actions.push({
+                        title: 'Listen',
+                        click: function() {
+                            window.open(url)
+                        }
+                    })
+                    break;
+            }
+
+            if (item.assetType == 'upload') {
+                var url = self.$fluro.asset.downloadUrl(item);
+                actions.push({
+                    title: 'Download',
+                    click: function() {
+                        window.open(url)
+                    }
+                })
+            }
+        }
+
+        /////////////////////////////////////
+
+        if (canDelete) {
+            actions.push({
+                title: 'Delete',
+                click: function() {
+                    //Fire
+                    if (self.$fluro.global.delete) {
+                        self.$fluro.global.delete(item);
+                    }
+                }
+            })
+        }
+
+        /////////////////////////////////////
+
+        self.availableActions = actions;
 
     },
     computed: {
+
         linkType() {
             if (this.to) {
                 return 'router-link'
@@ -87,7 +221,10 @@ export default {
             return this.$fluro.types.icon(this.type);
         },
         type() {
-            return _.get(this, 'item._type') || 'article';
+            return _.get(this, 'item._type');
+        },
+        definition() {
+            return _.get(this, 'item.definition') || this.type;
         },
         title() {
             return _.get(this, 'item.title');
@@ -108,6 +245,41 @@ export default {
     background: #fff;
 
 
+    
+        user-select: none;
+        /* supported by Chrome and Opera */
+        -webkit-user-select: none;
+        /* Safari */
+        -khtml-user-select: none;
+        /* Konqueror HTML */
+        -moz-user-select: none;
+        /* Firefox */
+        -ms-user-select: none;
+        /* Internet Explorer/Edge */
+    
+
+
+
+    .item-actions {
+        opacity: 0;
+
+        &.active {
+            opacity: 1;
+        }
+    }
+
+    &:hover {
+        .item-actions {
+            opacity: 1;
+        }
+    }
+
+    @media(max-width: 768px) {
+        .item-actions {
+            opacity: 1;
+        }
+    }
+
     &:first-of-type {
         border-top: 1px solid #ddd;
         border-radius: 3px 3px 0 0;
@@ -125,28 +297,52 @@ export default {
         left: 0;
         top: 0;
         bottom: 0;
+        opacity: 0;
+    }
+
+    .handle {
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 15px;
+        text-align: center;
+        line-height: 50px;
+        opacity: 0.3;
+
+        &:hover {
+            opacity: 1;
+        }
+
     }
 
 
     .item-icon {
         flex: none;
         text-align: center;
-        padding: 10px 5px;
-        width: 40px;
+        padding: 10px;
+        width: 70px;
         display: flex;
         justify-content: center;
         align-items: center;
+
+        &.image {
+            padding: 0 10px;
+            // background: rgba(#000, 0.03);
+        }
     }
 
     .item-text {
         flex: 1;
-        padding: 10px 5px;
+        align-items: center;
+        // justify-content: center;
+        padding: 10px 15px;
         color: inherit;
-        display: block;
+        display: flex;
         text-decoration: none;
 
         .item-title {
-            font-weight: bold;
+            // font-weight: bold;
         }
 
         .item-subtitle {

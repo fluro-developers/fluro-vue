@@ -1,61 +1,131 @@
 <template>
     <div class="fluro-content-browser">
+        <v-toolbar class="elevation-0">
+            <v-spacer></v-spacer>
+            <v-text-field v-model="search" solo append-icon="search" label="Search" single-line hide-details></v-text-field>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="close()">
+                Done
+                <!-- <v-icon right>check</v-icon> -->
+            </v-btn>
+        </v-toolbar>
         <v-card>
-            <div v-if="items">
-                <v-data-table item-key="_id" :search="search" v-model="selected" select-all :rows-per-page-items="pageOptions" :disable-initial-sort="true" :hide-headers="$vuetify.breakpoint.xsOnly" :headers="headers" :items="items">
-                    <template v-slot:items="props">
-                        <tr :active="isSelected(props.item)" @click.prevent.stop.capture="toggle(props.item)">
-                            <td>
-                                <v-checkbox v-model="props.selected" hide-details></v-checkbox>
-                            </td>
-                            <td class="text-xs-center fixed">
-                                <template v-if="props.item._type == 'image'">
-                                    <fluro-image :item="props.item" :spinner="true" :width="50" :height="50" />
-                                </template>
-                                <!-- <template v-else-if="props.item._type == 'image'">
+            <template v-if="loading">
+                <v-card-text class="text-sm-center">
+                    <v-progress-circular indeterminate></v-progress-circular>
+                </v-card-text>
+            </template>
+            <template v-else>
+                <v-toolbar class="elevation-0" v-if="model.length">
+                    <div>{{selectionSummary}}</div>
+                    <v-spacer></v-spacer>
+                    <v-item-group>
+                        <v-btn small v-if="canSelectAll" @click="selectAll()">
+                            Select all {{items.length}}
+                            <!-- <v-icon right>check</v-icon> -->
+                        </v-btn>
+                        <v-btn small @click="deselectAll()">
+                            Deselect {{maximum == 1 ? '' : 'all'}}
+                            <!-- <v-icon right>check</v-icon> -->
+                        </v-btn>
+                    </v-item-group>
+                </v-toolbar>
+                <template v-if="items">
+                    <v-data-table item-key="_id" :search="search" v-model="model" :select-all="multiple" :rows-per-page-items="pageOptions" :disable-initial-sort="true" :hide-headers="$vuetify.breakpoint.xsOnly" :headers="headers" :items="items">
+                        <template v-slot:items="props">
+                            <tr :active="isSelected(props.item)" @click.prevent.stop.capture="clicked(props.item)">
+                                <td v-if="multiple">
+                                    <v-checkbox v-model="props.selected" hide-details></v-checkbox>
+                                </td>
+                                <td class="text-xs-center fixed-w">
+                                    <template v-if="props.item._type == 'image'">
+                                        <fluro-image :item="props.item" :spinner="true" :width="50" :height="50" />
+                                    </template>
+                                    <!-- <template v-else-if="props.item._type == 'image'">
                             </template> -->
-                                <template v-else>
-                                    <fluro-icon :type="props.item._type"></fluro-icon>
-                                </template>
-                            </td>
-                            <td>
-                                <strong>{{props.item.title}}</strong>
-                                <div class="small muted">{{summary(props.item)}}</div>
-                            </td>
-                            <td>{{props.item.created | timeago}}</td>
-                            <td>{{props.item.updated | timeago}}</td>
-                        </tr>
-                    </template>
-                </v-data-table>
-                <pre>{{selected.length}}</pre>
-            </div>
+                                    <template v-else>
+                                        <fluro-icon :type="props.item._type"></fluro-icon>
+                                    </template>
+                                </td>
+                                <td>
+                                    <div>{{props.item.title}}</div>
+                                    <div class="small muted">{{summary(props.item)}}</div>
+                                </td>
+                                <td>{{props.item.created | timeago}}</td>
+                                <td>{{props.item.updated | timeago}}</td>
+                            </tr>
+                        </template>
+                    </v-data-table>
+                </template>
+            </template>
         </v-card>
     </div>
 </template>
 <script>
+import FluroSelectionMixin from '../../mixins/FluroSelectionMixin';
+
+
 export default {
+    mixins: [FluroSelectionMixin],
     props: {
-        'type': {
-            type: String,
-        },
         'value': {
             default () {
                 return []
             },
             type: Array,
         },
-        'terms':{
-            default:'',
-            type:String,
+        'type': {
+            type: String,
+        },
+        'minimum': {
+            type: Number,
+            default: 0,
+        },
+        'maximum': {
+            type: Number,
+            default: 0,
         }
     },
     watch: {
-        'selected': function() {
+        'model': function() {
             var self = this;
-            this.$emit('input', self.selected); //[self.key])
+            this.$emit('input', self.model); //[self.key])
         }
     },
     computed: {
+        canSelectAll() {
+            if (this.model.length == this.items.length) {
+                return;
+            }
+
+            if (this.maximum) {
+                return this.total < this.maximum;
+            }
+
+            return true;
+        },
+        selectionSummary() {
+
+            if (this.multiple) {
+
+                if (this.minimum) {
+                    if(this.model.length >= this.minimum) {
+                        return `${this.model.length} selected`;
+                    }
+
+                    return `${this.model.length} of ${this.minimum} required`;
+                }
+
+
+                if (this.maximum) {
+
+                    return `${this.model.length} of max ${this.maximum} selected`;
+                }
+            }
+
+
+            return `${this.model.length} selected`
+        },
         search: {
             get() {
                 return this.terms;
@@ -63,13 +133,27 @@ export default {
             set: _.debounce(function(newValue) {
                 this.terms = newValue;
             }, 500)
-        }
+        },
+        multiple() {
+            return this.maximum != 1;
+        },
+        total() {
+            return this.model.length;
+        },
+        canAddValue() {
+            if (this.maximum) {
+                return this.total < this.maximum;
+            }
+
+            return true;
+        },
     },
     data() {
         return {
+            loading: true,
             terms: '',
-            selected: this.value,
-            pageOptions: [20, 40, 60],
+            model: this.value,
+            pageOptions: [10, 20, 60],
             headers: [{
                     text: '',
                     align: 'left',
@@ -100,39 +184,30 @@ export default {
         }
     },
     methods: {
-        select(item) {
-            var self = this;
-            if (!self.isSelected(item)) {
+        selectAll() {
 
-                self.$set(self.selected, self.selected.length, item);
-            }
-        },
-        deselect(item) {
-            var self = this;
-
-            //Get the item ID
-            var itemID = self.$fluro.utils.getStringID(item);
-
-            //Find the index of the matching item
-            var index = _.findIndex(self.selected, function(selectedItem) {
-                var selectedItemID = self.$fluro.utils.getStringID(selectedItem);
-                return itemID == selectedItemID;
-            })
-
-
-
-            //Splice the item out
-            self.selected.splice(index, 1);
-        },
-        toggle(item) {
-            var self = this;
-            if (self.isSelected(item)) {
-                self.deselect(item);
+            if(this.maximum) {
+                this.setSelection(this.items.slice(0, this.maximum));
             } else {
-                self.select(item);
+                this.setSelection(this.items);
+            }
+        },
+        clicked(item) {
+
+            if (this.isSelected(item)) {
+                return this.deselect(item);
             }
 
-            console.log('TOGGLE', self.selected);
+            if (this.multiple) {
+                if (this.canAddValue) {
+                    this.select(item);
+                }
+            } else {
+                this.setSelection([item]);
+            }
+        },
+        close() {
+            this.$emit('close');
         },
         summary(item) {
             var self = this;
@@ -147,19 +222,7 @@ export default {
 
             return firstLine;
         },
-        isSelected(item) {
-            var self = this;
 
-            var itemID = self.$fluro.utils.getStringID(item);
-
-            //Check if the ID is already selected
-            var match = _.some(self.selected, function(selectedItem) {
-                var selectedItemID = self.$fluro.utils.getStringID(selectedItem);
-                return itemID == selectedItemID;
-            })
-
-            return match;
-        },
     },
     asyncComputed: {
         items: {
@@ -167,38 +230,89 @@ export default {
 
                 var self = this;
 
-                return new Promise(function(resolve, reject) {
+                /////////////////////////////////////////////
 
-                    var endpoint = `/content`;
+                var endpoint = `/content`;
+                if (self.type && self.type.length) {
+                    endpoint = `/content/${self.type}`;
+                }
 
-                    if (self.type && self.type.length) {
-                        endpoint = `/content/${self.type}`;
+                /////////////////////////////////////////////
+
+                self.loading = true;
+
+                // /////////////////////////////////////////////
+
+                // var countRequest = self.$fluro.api.get(endpoint, {
+                //     params: {
+                //         count: true,
+                //     }
+                // });
+
+
+                var itemsRequest = self.$fluro.api.get(endpoint, {
+                    params: {
+                        list: true,
+                        simple: true,
                     }
+                });
 
-                    self.$fluro.api.get(endpoint, {
-                        params: {
-                            list: true,
-                            simple: true,
-                        }
-                    }).then(function(res) {
+                return new Promise(function(resolve, reject) {
+                    itemsRequest.then(function(res) {
 
-                        // self.selected = JSON.parse(JSON.stringify(res.data.slice(0, 2)));
-                        return resolve(res.data);
-                    }, reject);
+                            resolve(res.data);
+                            self.loading = false;
+                        })
+                        .catch(function(err) {
+                            reject(err);
+                            self.loading = false;
 
-                    // if(this.icon) {
-                    //     return ['far', this.icon];
-                    // } else {
-                    //     return this.$fluro.types.icon(this.type) || ['far', this.type];
-                    // }
-                })
+                        });
+
+                });
+
+                /////////////////////////////////////////////
+
+                // return new Promise(function(resolve, reject) {
+
+                // Promise.all([
+                // countRequest,
+                // itemsRequest,
+                // ])
+                //         .then(function(results) {
+
+                //             self.loading = false;
+
+                //             console.log('RESULTS', results);
+                //             resolve({
+                //                 items: results[1].data,
+                //                 total: results[0].data.total,
+                //             })
+                //         })
+                //         .catch(function(err) {
+
+                //             self.loading = false;
+                //             return reject(err);
+                //         });
+                // })
             }
         },
     }
 }
 </script>
 <style lang="scss">
-td.fixed {
+td.fixed-w {
     padding: 0 !important;
+}
+
+.fluro-content-browser {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .v-card {
+        flex: 1;
+        overflow: auto;
+    }
 }
 </style>

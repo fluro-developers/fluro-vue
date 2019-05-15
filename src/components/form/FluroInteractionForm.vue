@@ -89,7 +89,9 @@ export default {
         },
         'options': {
             default: function() {
-                return {}
+                return {
+                    validateSuccess:true,
+                }
             },
             type: Object,
         },
