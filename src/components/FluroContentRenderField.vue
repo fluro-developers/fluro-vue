@@ -330,7 +330,7 @@ export default {
 
         isEmpty() {
             if (this.multiple) {
-                return !this.fieldModel.length
+                return !this.fieldModel || !this.fieldModel.length
             } else {
                 return !this.fieldModel;
             }

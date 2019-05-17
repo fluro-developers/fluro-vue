@@ -28,7 +28,7 @@
             </div>
             <!-- </router-link> -->
         </component>
-        <div class="item-actions" :class="{active:actionsOpen}" v-if="availableActions.length">
+        <div class="item-actions" :class="{active:actionsOpen}" v-if="actionsEnabled">
             <v-menu :left="true" v-model="actionsOpen" :fixed="true" transition="slide-y-transition" offset-y>
                 <template v-slot:activator="{ on }">
                     <v-btn icon flat v-on="on">
@@ -54,7 +54,7 @@
 export default {
     props: {
         'draggable': {
-            default: true,
+            default: false,
             type: Boolean,
         },
         'to': {
@@ -66,7 +66,7 @@ export default {
             default: 'node',
         },
         'actions': {
-            type: Array,
+            type: [Array, Boolean],
         }
     },
     data() {
@@ -96,100 +96,108 @@ export default {
 
         /////////////////////////////////////
 
-        //If we can edit this thing
-        if (canEdit) {
-            actions.push({
-                title: 'Edit',
-                click: function() {
-                    //Fire
-                    if (self.$fluro.global.edit) {
-                        self.$fluro.global.edit(item);
-                    }
-                }
-            })
-        }
-
-        /////////////////////////////////////
-
-        if (canView) {
-            actions.push({
-                title: 'View',
-                click: function() {
-                    //Fire
-                    if (self.$fluro.global.view) {
-                        self.$fluro.global.view(item);
-                    }
-                }
-            })
-
-
-            ///////////////////////////////////////
-
-
-
-            switch (item._type) {
-                case 'image':
-
-                    var url = self.$fluro.asset.getUrl(item);
-                    actions.push({
-                        title: 'View Image',
-                        click: function() {
-                            window.open(url)
-                        }
-                    })
-                    break;
-                case 'video':
-                    var url = self.$fluro.asset.imageUrl(item);
-                    actions.push({
-                        title: 'Watch Video',
-                        click: function() {
-                            window.open(url)
-                        }
-                    })
-                    break;
-                case 'audio':
-                    var url = self.$fluro.asset.getUrl(item);
-                    actions.push({
-                        title: 'Listen',
-                        click: function() {
-                            window.open(url)
-                        }
-                    })
-                    break;
-            }
-
-            if (item.assetType == 'upload') {
-                var url = self.$fluro.asset.downloadUrl(item);
+        if (self.actions) {
+            //If we can edit this thing
+            if (canEdit) {
                 actions.push({
-                    title: 'Download',
+                    title: 'Edit',
                     click: function() {
-                        window.open(url)
+                        //Fire
+                        if (self.$fluro.global.edit) {
+                            self.$fluro.global.edit(item);
+                        }
                     }
                 })
             }
-        }
 
-        /////////////////////////////////////
+            /////////////////////////////////////
 
-        if (canDelete) {
-            actions.push({
-                title: 'Delete',
-                click: function() {
-                    //Fire
-                    if (self.$fluro.global.delete) {
-                        self.$fluro.global.delete(item);
+            if (canView) {
+                actions.push({
+                    title: 'View',
+                    click: function() {
+                        //Fire
+                        if (self.$fluro.global.view) {
+                            self.$fluro.global.view(item);
+                        }
                     }
+                })
+
+
+                ///////////////////////////////////////
+
+
+
+                switch (item._type) {
+                    case 'image':
+
+                        var url = self.$fluro.asset.getUrl(item);
+                        actions.push({
+                            title: 'View Image',
+                            click: function() {
+                                window.open(url)
+                            }
+                        })
+                        break;
+                    case 'video':
+                        var url = self.$fluro.asset.imageUrl(item);
+                        actions.push({
+                            title: 'Watch Video',
+                            click: function() {
+                                window.open(url)
+                            }
+                        })
+                        break;
+                    case 'audio':
+                        var url = self.$fluro.asset.getUrl(item);
+                        actions.push({
+                            title: 'Listen',
+                            click: function() {
+                                window.open(url)
+                            }
+                        })
+                        break;
                 }
-            })
+
+                if (item.assetType == 'upload') {
+                    var url = self.$fluro.asset.downloadUrl(item);
+                    actions.push({
+                        title: 'Download',
+                        click: function() {
+                            window.open(url)
+                        }
+                    })
+                }
+            }
+
+            /////////////////////////////////////
+
+            if (canDelete) {
+                actions.push({
+                    title: 'Delete',
+                    click: function() {
+                        //Fire
+                        if (self.$fluro.global.delete) {
+                            self.$fluro.global.delete(item);
+                        }
+                    }
+                })
+            }
+
+            /////////////////////////////////////
+
+            self.availableActions = actions;
         }
-
-        /////////////////////////////////////
-
-        self.availableActions = actions;
 
     },
     computed: {
+        actionsEnabled() {
+            if(this.actions === false) {
+                return false;
+            }
 
+            return this.availableActions.length;
+        },
         linkType() {
             if (this.to) {
                 return 'router-link'
@@ -245,18 +253,18 @@ export default {
     background: #fff;
 
 
-    
-        user-select: none;
-        /* supported by Chrome and Opera */
-        -webkit-user-select: none;
-        /* Safari */
-        -khtml-user-select: none;
-        /* Konqueror HTML */
-        -moz-user-select: none;
-        /* Firefox */
-        -ms-user-select: none;
-        /* Internet Explorer/Edge */
-    
+
+    user-select: none;
+    /* supported by Chrome and Opera */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+
 
 
 

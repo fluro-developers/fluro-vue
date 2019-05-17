@@ -23,6 +23,14 @@ import Fluro from 'fluro';
 
 //Import Components
 import FluroAvatar from './components/FluroAvatar.vue';
+export { FluroAvatar as FluroAvatar };
+
+
+import FluroAvatarUpdate from './components/FluroAvatarUpdate.vue';
+export { FluroAvatarUpdate as FluroAvatarUpdate };
+
+
+
 import FluroImage from './components/FluroImage.vue';
 import FluroIcon from './components/FluroIcon.vue';
 
