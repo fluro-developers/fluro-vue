@@ -47,6 +47,9 @@ export default {
                 case 'js':
                     return 'javascript';
                     break;
+                case 'html':
+                    return 'html';
+                    break;
                 default:
                     return `${this.lang}`;
                     break;
@@ -56,7 +59,7 @@ export default {
     methods: {
         beautify() {
 
-
+            console.log('Beautify!!!')
             //Get the current string
             var input = this.editor.session.getValue() || '';
 
@@ -68,7 +71,7 @@ export default {
 
             switch (this.syntax) {
                 case 'html':
-                    input = js_beautify.html(input)
+                    input = js_beautify.html(input);//, {extra_liners:'p, br'})
                     break;
                 case 'json':
                 case 'javascript':

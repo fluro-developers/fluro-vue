@@ -6,7 +6,7 @@
                 <fluro-icon icon="arrows" />
             </v-btn>
         </div> -->
-        <div class="item-icon" :class="item._type">
+        <div class="item-icon" :class="item._type" :style="{color:foregroundColor, backgroundColor:backgroundColor}">
             <template v-if="item._type == 'persona'">
                 <fluro-avatar :id="item._id" type="persona" />
             </template>
@@ -191,8 +191,23 @@ export default {
 
     },
     computed: {
+        primaryRealm() {
+            return _.chain(this.item)
+                .get('realms')
+                .filter(function(realm) {
+                    return realm.bgColor;
+                })
+                .last()
+                .value();
+        },
+        foregroundColor() {
+            return this.primaryRealm ? this.primaryRealm.color : null;
+        },
+        backgroundColor() {
+            return this.primaryRealm ? this.primaryRealm.bgColor : null;
+        },
         actionsEnabled() {
-            if(this.actions === false) {
+            if (this.actions === false) {
                 return false;
             }
 
@@ -237,20 +252,57 @@ export default {
         title() {
             return _.get(this, 'item.title');
         },
-        subtitle() {
+        firstLine() {
             return _.get(this, 'item.firstLine');
+        },
+        subtitle() {
+
+            var self = this;
+            var item = this.item;
+            var pieces = [];
+
+            ////////////////////////////////
+
+            switch (item._type) {
+                case 'contact':
+                    return '';
+                break;
+                case 'event':
+                    pieces.push(self.$fluro.date.readableEventDate(item));
+                    if (item.rooms) {
+                        pieces.push(item.rooms.join(', '));
+
+                    }
+                    break;
+                default:
+                    return pieces.push(this.firstLine);
+                    break;
+            }
+
+            ////////////////////////////////
+
+            return _.compact(pieces).join('. ');
+
         }
     }
 }
 </script>
 <style scoped lang="scss">
 .fluro-list-item {
+
+
+    $border-color: rgba(#000, 0.1);
     display: flex;
-    border: 1px solid #ddd;
+    border-bottom: 1px solid $border-color;
     border-top: none;
     overflow: hidden;
     position: relative;
     background: #fff;
+
+    &.bordered {
+        border-left: 1px solid $border-color;
+        border-right: 1px solid $border-color;
+    }
 
 
 
@@ -289,14 +341,24 @@ export default {
     }
 
     &:first-of-type {
-        border-top: 1px solid #ddd;
-        border-radius: 3px 3px 0 0;
+        border-top: 1px solid $border-color;
     }
 
     &:last-of-type {
-        border-bottom: 1px solid #ddd;
-        border-radius: 0 0 3px 3px;
+        border-bottom: none;
+    }
 
+
+    &.bordered {
+        &:first-of-type {
+            border-radius: 3px 3px 0 0;
+        }
+
+        &:last-of-type {
+            border-radius: 0 0 3px 3px;
+            border-bottom: 1px solid $border-color;
+
+        }
     }
 
     .realm-bar {

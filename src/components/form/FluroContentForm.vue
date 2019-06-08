@@ -7,7 +7,9 @@
             <v-container class="grid-list-xl" pa-0>
                 <!-- <pre>{{field}}</pre> -->
                 <!-- :parent="model[key]"  -->
+                
                 <fluro-content-form-field :form-fields="formFields" :options="options" :field="field" @input="update" v-model="model"></fluro-content-form-field>
+                
             </v-container>
         </template>
         <!-- <pre v-for="field in formFields">{{field.title}} {{field.errorMessages.length}}</pre> -->

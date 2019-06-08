@@ -337,6 +337,10 @@ export default {
         },
         fieldModel: {
             get() {
+                if(!this.model) {
+                    return;
+                }
+                
                 return this.model[this.key]
             },
             set() {

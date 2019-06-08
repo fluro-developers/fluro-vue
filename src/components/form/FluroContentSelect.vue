@@ -103,6 +103,14 @@ export default {
 
     // <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
     computed: {
+        model:{
+            get() {
+                return this.selection;
+            },
+            set(array) {
+                this.selection = array;
+            }
+        },
         multiple() {
             return this.maximum != 1;
         },

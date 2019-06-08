@@ -1,7 +1,6 @@
 <template>
     <div :data-field-key="key" class="fluro-content-form-field" v-if="isVisible" v-bind="attributes" :class="fieldClass">
-        
-       
+        <!-- <pre>{{renderer}}</pre> -->
         <template v-if="officeUseOnly">
         </template>
         <template v-else-if="renderer == 'custom'">
@@ -82,21 +81,34 @@
             <v-text-field :success="success" :required="required" type="number" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'datepicker'">
-            <v-dialog ref="dialog" v-model="modal" persistent :return-value.sync="fieldModel" lazy full-width width="290px">
+            <!--      <template v-slot:activator="{ on }">
+                            <v-btn small v-on="on">
+                                <fluro-icon library="far" icon="clock" />&nbsp;{{dateGroupFormat.title}}
+                            </v-btn>
+                        </template>
+                        <v-list dense>
+                            <v-list-tile @click="dateGroupFormat = option" v-for="option in dateGroupFormatOptions">
+                                <v-list-tile-content>{{option.title}}</v-list-tile-content>
+                            </v-list-tile>
+                        </v-list>
+                    </v-menu> -->
+            <!-- <v-dialog ref="dialog" v-model="modal" persistent :return-value.sync="fieldModel" lazy full-width width="290px"> -->
+            <v-menu :fixed="true" min-width="290px" :right="true" :close-on-content-click="false" transition="slide-y-transition" offset-y>
                 <template v-slot:activator="{ on }">
                     <v-text-field :success="success" v-model="fieldModel" :label="label" prepend-inner-icon="event" readonly v-on="on" @focus="modal = true"></v-text-field>
                 </template>
-                <v-card v-if="modal">
-                    <v-toolbar color="primary" dark>
+                <v-card>
+                    <v-date-picker v-model="fieldModel" no-title scrollable></v-date-picker>
+                    <!-- <v-toolbar color="primary" dark>
                         <v-toolbar-title>{{label}}</v-toolbar-title>
                     </v-toolbar>
                     <v-date-picker v-model="sudoModel" scrollable>
                         <v-spacer></v-spacer>
                         <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
                         <v-btn flat color="primary" @click="$refs.dialog.save(sudoModel)">OK</v-btn>
-                    </v-date-picker>
+                    </v-date-picker> -->
                 </v-card>
-            </v-dialog>
+            </v-menu>
         </template>
         <template v-else-if="renderer == 'timepicker'">
             <v-dialog ref="dialog" v-model="modal" persistent :return-value.sync="fieldModel" lazy full-width width="290px">
@@ -126,7 +138,7 @@
         </template>
         <template v-else-if="renderer == 'content-select'">
             <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
-                <fluro-content-select :hint="field.description" :placeholder="field.placeholder" :minimum="minimum" @input="touch" :type="restrictType" :maximum="maximum" v-model="model[field.key]"/>
+                <fluro-content-select :hint="field.description" :placeholder="field.placeholder" :minimum="minimum" @input="touch" :type="restrictType" :maximum="maximum" v-model="model[field.key]" />
             </v-input>
         </template>
         <template v-else-if="renderer == 'search-select'">
@@ -181,7 +193,6 @@
                                     <v-icon>close</v-icon>
                                 </v-btn>
                             </v-layout>
-                            
                             <fluro-editor v-model="fieldModel[index]" :options="multiEditorOptions" @input="valueChange" @blur="touch()" :placeholder="field.placeholder"></fluro-editor>
                         </template>
                     </template>
@@ -449,7 +460,7 @@ export default {
 
         restrictType() {
 
-            if(this.field.params && this.field.params.restrictType) {
+            if (this.field.params && this.field.params.restrictType) {
                 return this.field.params.restrictType;
             }
         },
@@ -466,16 +477,16 @@ export default {
         success() {
 
             //If we are wanting to validate success (Change to green)
-            if(this.options.validateSuccess) {
+            if (this.options.validateSuccess) {
                 return (this.$v.$dirty && !this.$v.$invalid);
             }
-            
+
         },
         editorOptions() {
             return this.options.editor;
         },
         multiEditorOptions() {
-            return Object.assign({}, this.options.editor, {label:''})
+            return Object.assign({}, this.options.editor, { label: '' })
         },
 
         savedTerms() {
@@ -615,7 +626,7 @@ export default {
 
             ////////////////////////////////////////////////
 
-            classes.push(this.field.className);
+            classes.push(this.className);
 
             ////////////////////////////////////////////////
 
@@ -623,7 +634,7 @@ export default {
         },
         groupClass() {
             if (this.type == 'group' || this.type == 'embedded') {
-                return `${this.field.className}`;
+                return `${this.className}`;
             }
         },
 
@@ -643,6 +654,22 @@ export default {
             } else {
                 return `Add ${this.title}`
             }
+        },
+        className() {
+
+            String.prototype.replaceAll = function(search, replacement) {
+                var target = this;
+                return target.split(search).join(replacement);
+            };
+
+
+
+            return (this.field.className || '')
+                .replaceAll('col-xs-', 'xs')
+                .replaceAll('col-sm-', 'sm')
+                .replaceAll('col-md-', 'md')
+                .replaceAll('col-lg-', 'lg')
+                .replaceAll('col-xl-', 'xl')
         },
         key() {
             return this.field.key;
@@ -868,6 +895,7 @@ export default {
 
 
             switch (directive) {
+                case 'dob-select':
                 case 'date-select':
                     directive = 'datepicker';
                     break;
@@ -881,6 +909,12 @@ export default {
                 case 'textarea':
                 case 'select':
                 case 'upload':
+                case 'embedded':
+                    break;
+                case 'button-select':
+
+                case 'order-select':
+                    directive = 'select';
                     break;
                 default:
                     switch (dataType) {
@@ -1188,12 +1222,21 @@ export default {
 
             }
 
-            var ast = Expressions.parse(expression);
-            var result = Expressions.eval(ast, context);
+            var ast;
+            var result;
 
-            ////console.log('Expression?', expression, result);
+            try {
+                ast = Expressions.parse(expression);
+                result = Expressions.eval(ast, context);
+            } catch (err) {
+                // console.log(expression, result);
+            } finally {
+                return result;
+            }
 
-            return result;
+
+
+
         },
         groupTitle(object, index) {
             if (object) {
@@ -1296,7 +1339,7 @@ export default {
             // }
 
             self.$emit('input', self.model); //[self.key])
-            
+
         }
     },
     created() {
@@ -1449,8 +1492,15 @@ export default {
                     return value;
                 }
 
-                value = this.resolveExpression(self.field.hideExpression);
-                return Promise.resolve(value);
+               
+                    value = this.resolveExpression(self.field.hideExpression);
+               
+                    
+                    // self.field.hideExpression, self.model) //err);
+                
+                    return Promise.resolve(value);
+                
+
             },
         },
     },
@@ -1749,7 +1799,7 @@ function checkValidInput(self, input) {
     }
 
     .no-flex {
-        & > .v-input__control > .v-input__slot {
+        &>.v-input__control>.v-input__slot {
             display: block;
             margin: 0;
         }

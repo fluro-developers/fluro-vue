@@ -41,6 +41,50 @@
                 </button>
             </div>
         </editor-floating-menu> -->
+        <editor-menu-bubble :editor="editor" @hide="hideBubble" :keep-in-bounds="keepInBounds" v-slot="{ commands, isActive, getMarkAttrs, menu }">
+            <div class="menububble" :class="{ 'active': menu.isActive }" :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`">
+                <v-btn icon small flat :class="{ 'active': isActive.bold() }" @click="commands.bold">
+                    <fluro-icon icon="bold" />
+                </v-btn>
+                <v-btn icon small flat :class="{ 'active': isActive.italic() }" @click="commands.italic">
+                    <fluro-icon icon="italic" />
+                </v-btn>
+                <v-btn icon small flat :class="{ 'active': isActive.underline() }" @click="commands.underline">
+                    <fluro-icon icon="underline" />
+                </v-btn>
+                <!-- 
+                <button class="menububble__button" :class="{ 'active': isActive.bold() }" @click="commands.bold">
+                    <v-icon>format_bold</v-icon>
+                </button> -->
+                <!-- <button class="menububble__button" :class="{ 'active': isActive.italic() }" @click="commands.italic"> -->
+                <!-- <v-icon>format_italic</v-icon>
+                    
+                </button> -->
+                <!-- <button class="menububble__button" :class="{ 'active': isActive.code() }" @click="commands.code"> -->
+                <!-- <v-icon>format_italic</v-icon> -->
+                <!-- </button> -->
+                <form class="menububble__form" v-if="linkMenuIsActive" @submit.prevent="setLinkUrl(commands.link, linkUrl)">
+                    <input class="link-input" type="text" v-model="linkUrl" placeholder="https://" ref="linkInput" @keydown.esc="hideLinkMenu" />
+                    <!-- <button class="menububble__button" @click="setLinkUrl(commands.link, null)" type="button">
+                        <v-icon>close</v-icon>
+                    </button> -->
+                    <v-btn small icon flat @click="setLinkUrl(commands.link, null)">
+                        <!-- <span>{{ isActive.link() ? 'Update Link' : 'Add Link'}}</span> -->
+                        <fluro-icon icon="unlink" />
+                    </v-btn>
+                </form>
+                <template v-else>
+                    <v-btn small flat :class="{ 'active': isActive.link() }" @click="showLinkMenu(getMarkAttrs('link'))">
+                        <span>{{ isActive.link() ? 'Update Link' : 'Link'}}</span>
+                        <fluro-icon right icon="link" />
+                    </v-btn>
+                    <!--  <button class="menububble__button" @click="showLinkMenu(getMarkAttrs('link'))" :class="{ 'active': isActive.link() }">
+                        <span>{{ isActive.link() ? 'Update Link' : 'Add Link'}}</span>
+                        <v-icon>link</v-icon>
+                    </button> -->
+                </template>
+            </div>
+        </editor-menu-bubble>
         <editor-menu-bar :editor="editor">
             <div class="fluro-editor-toolbar" slot-scope="{ commands, isActive }">
                 <v-btn icon small flat class="hidden-xs-only" :class="{ 'is-active':showSource }" @click="showSource = !showSource">
@@ -239,7 +283,10 @@ import tippy from 'tippy.js';
 import FluroCodeEditor from './FluroCodeEditor.vue';
 import Mention from './tiptap/mentions';
 import Image from './tiptap/image';
-import { Editor, EditorContent, EditorMenuBar, EditorFloatingMenu } from 'tiptap'
+// import AutoLinkMark from './tiptap/autolink';
+
+
+import { Editor, EditorContent, EditorMenuBubble, EditorMenuBar, EditorFloatingMenu, Mark} from 'tiptap'
 import {
     Blockquote,
     CodeBlock,
@@ -270,6 +317,7 @@ import {
 export default {
     data() {
         return {
+            keepInBounds: true,
             showSource: false,
             model: this.value,
             editor: null,
@@ -280,6 +328,8 @@ export default {
             navigatedUserIndex: 0,
             insertMention: () => {},
             observer: null,
+            linkUrl: null,
+            linkMenuIsActive: false,
         }
     },
     computed: {
@@ -288,6 +338,25 @@ export default {
         },
     },
     methods: {
+        hideBubble() {
+            this.hideLinkMenu();
+        },
+        showLinkMenu(attrs) {
+            this.linkUrl = attrs.href
+            this.linkMenuIsActive = true
+            this.$nextTick(() => {
+                this.$refs.linkInput.focus()
+            })
+        },
+        hideLinkMenu() {
+            this.linkUrl = null
+            this.linkMenuIsActive = false
+        },
+        setLinkUrl(command, url) {
+            command({ href: url })
+            this.hideLinkMenu()
+            this.editor.focus()
+        },
         blur($event) {
             this.$emit('blur', $event);
         },
@@ -395,6 +464,7 @@ export default {
         EditorContent,
         FluroCodeEditor,
         EditorFloatingMenu,
+        EditorMenuBubble,
     },
     created() {
         var self = this;
@@ -433,6 +503,7 @@ export default {
                 new Link(),
                 new Strike(),
                 new Underline(),
+                // new AutoLinkMark(), 
                 new History(),
                 new Table(),
                 new TableHeader(),
@@ -603,6 +674,82 @@ $color-white: #fff;
 
 
 
+    .menububble {
+        position: absolute;
+        display: flex;
+        z-index: 20;
+        background: #000;
+        border-radius: 5px;
+        padding: .3rem;
+        margin-bottom: .5rem;
+        transform: translateX(-50%);
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity .2s, visibility .2s;
+        color: $color-white !important;
+
+        &.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .v-btn {
+            margin: 0;
+            color: #fff;
+        }
+
+        .link-input {
+            background: rgba(#fff, 0.2);
+            color: #fff;
+            // border: 1px solid #fff;
+            border-radius: 3px;
+            font-size: 0.8em;
+            padding:2px 4px;
+            color: #fff !important;
+
+            &::placeholder {
+                /* Firefox, Chrome, Opera */
+                color: rgba(#fff, 0.5);
+            }
+
+            &:-ms-input-placeholder {
+                /* Internet Explorer 10-11 */
+                color: rgba(#fff, 0.5);
+            }
+
+            &::-ms-input-placeholder {
+                /* Microsoft Edge */
+                color: rgba(#fff, 0.5);
+            }
+        }
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -webkit-touch-callout: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    user agent stylesheet div {
+        display: block;
+    }
+
+    html {
+        font-family: -apple-system, BlinkMacSystemFont, San Francisco, Roboto, Segoe UI, Helvetica Neue, sans-serif;
+        font-size: 18px;
+        color: #000;
+        line-height: 1.5;
+    }
 
     .floating-menu {
         position: absolute;

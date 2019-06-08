@@ -93,6 +93,14 @@ export default {
         }
     },
     computed: {
+        model:{
+            get() {
+                return this.selection;
+            },
+            set(array) {
+                this.selection = array;
+            }
+        },
         canSelectAll() {
             if (this.model.length == this.items.length) {
                 return;
