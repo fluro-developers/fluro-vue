@@ -27,7 +27,7 @@
   "homepage": "https://github.com/fluro-developers/fluro-vue#readme",
   "dependencies": {
     "expression-eval": "^2.0.0",
-    "fluro": "^1.0.56",
+    "fluro": "^1.0.60",
     "js-beautify": "^1.9.1",
     "signature_pad": "^3.0.0-beta.3",
     "tippy.js": "^4.3.0",
