@@ -67,6 +67,9 @@ import FluroSelectionMixin from '../../mixins/FluroSelectionMixin';
 
 export default {
     mixins: [FluroSelectionMixin],
+    created() {
+        this.setSelection(this.value);
+    },
     props: {
         'value': {
             default () {
@@ -160,7 +163,7 @@ export default {
         return {
             loading: true,
             terms: '',
-            model: this.value,
+            // selection: this.value,
             pageOptions: [10, 20, 60],
             headers: [{
                     text: '',

@@ -26,6 +26,9 @@
                 <div class="item-title">{{title}}</div>
                 <div class="item-subtitle">{{subtitle}}</div>
             </div>
+
+           <!--  <pre>{{subtitle}}</pre>
+            <pre>{{item}}</pre> -->
             <!-- </router-link> -->
         </component>
         <div class="item-actions" :class="{active:actionsOpen}" v-if="actionsEnabled">
@@ -51,6 +54,8 @@
     </div>
 </template>
 <script>
+
+console.log('LIST ITEM')
 export default {
     props: {
         'draggable': {
@@ -271,14 +276,14 @@ export default {
                     pieces.push(self.$fluro.date.readableEventDate(item));
                     if (item.rooms) {
                         pieces.push(item.rooms.join(', '));
-
                     }
                     break;
                 default:
-                    return pieces.push(this.firstLine);
+                    pieces.push(this.firstLine);
                     break;
             }
 
+            console.log('PIECES', pieces, this);
             ////////////////////////////////
 
             return _.compact(pieces).join('. ');
@@ -291,18 +296,15 @@ export default {
 .fluro-list-item {
 
 
-    $border-color: rgba(#000, 0.1);
+    $border-color: rgba(0, 0, 0, 0.3);//rgba(#000, 0.1);
     display: flex;
-    border-bottom: 1px solid $border-color;
-    border-top: none;
+    // border-bottom: 1px solid $border-color;
+    // border-top: none;
     overflow: hidden;
     position: relative;
     background: #fff;
 
-    &.bordered {
-        border-left: 1px solid $border-color;
-        border-right: 1px solid $border-color;
-    }
+
 
 
 
@@ -349,13 +351,21 @@ export default {
     }
 
 
-    &.bordered {
+    &.bordered,
+    &[bordered] {
+        border-top: 1px solid $border-color;
+        // border-bottom: 1px solid $border-color;
+        border-left: 1px solid $border-color;
+        border-right: 1px solid $border-color;
+
         &:first-of-type {
-            border-radius: 3px 3px 0 0;
+           border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
         }
 
         &:last-of-type {
-            border-radius: 0 0 3px 3px;
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
             border-bottom: 1px solid $border-color;
 
         }
@@ -392,6 +402,8 @@ export default {
         text-align: center;
         padding: 10px;
         width: 70px;
+        line-height: 60px;
+        height:60px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -406,7 +418,7 @@ export default {
         flex: 1;
         align-items: center;
         // justify-content: center;
-        padding: 10px 15px;
+        padding: 8px 15px;
         color: inherit;
         display: flex;
         text-decoration: none;

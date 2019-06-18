@@ -22,7 +22,7 @@
             <template v-else>
                 <slot name="info"></slot>
                 <form @submit.prevent="submit" :disabled="state == 'processing'">
-                    <fluro-content-form ref="form" :options="options" v-model="model" :fields="fields" />
+                    <fluro-content-form @errorMessages="validate" ref="form" :options="options" v-model="model" :fields="fields" />
                     <div class="actions">
                         <template v-if="state == 'processing'">
                             <v-btn class="mx-0" :disabled="true">
@@ -111,11 +111,7 @@ export default {
         this.reset();
     },
     mounted() {
-        var self = this;
-        self.$watch(function() {
-            return _.get(self.$refs, 'form.errorMessages');
-        }, self.validate);
-        self.validate();
+        this.validate();
     },
     computed: {
         
@@ -357,7 +353,6 @@ export default {
             form.touch();
             this.validate();
         },
-
         defaultUserValue(key) {
 
             if (!this.user) {

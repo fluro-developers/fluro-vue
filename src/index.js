@@ -16,6 +16,7 @@
 
 // export default FluroVue;
 
+console.log('fluro-vue v1.2')
 // import store from './store'
 import Fluro from 'fluro';
 
@@ -44,6 +45,13 @@ import FluroListItem from './components/FluroListItem.vue';
 export { FluroListItem as FluroListItem };
 
 
+////////////////////////////////////////////////////////////////////
+
+import FluroContentPanel from './components/content/FluroContentPanel.vue';
+export { FluroContentPanel as FluroContentPanel };
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
 //Content Render Components
@@ -111,6 +119,10 @@ export { FluroDateTimePicker as FluroDateTimePicker };
 
 import FluroSignatureField from './components/form/FluroSignatureField.vue';
 export { FluroSignatureField as FluroSignatureField };
+
+
+import FluroAcademicSelect from './components/form/FluroAcademicSelect.vue';
+export { FluroAcademicSelect as FluroAcademicSelect };
 
 
 import FluroPostForm from './components/form/FluroPostForm.vue';

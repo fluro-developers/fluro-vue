@@ -1,5 +1,5 @@
 <template>
-    <font-awesome-icon :icon="iconName"></font-awesome-icon>
+    <font-awesome-icon :spin="spin" :icon="iconName"></font-awesome-icon>
 </template>
 <script>
 
@@ -14,6 +14,9 @@ export default {
         'library':{
             default:'fas',
             type:String,
+        },
+        'spin':{
+            type:Boolean,
         }
     },
     computed: {

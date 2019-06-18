@@ -1,125 +1,124 @@
 <template>
     <div class="fluro-content-form">
-        <!-- <slot></slot> -->
-        <template v-for="field in fields">
-            <!-- <pre>{{model[field.key]}}</pre> -->
-            <!-- <fluro-code-editor v-model="model[field.key]" @input="valueChange" :height="200"></fluro-code-editor> -->
-            <v-container class="grid-list-xl" pa-0>
-                <!-- <pre>{{field}}</pre> -->
-                <!-- :parent="model[key]"  -->
-                
-                <fluro-content-form-field :form-fields="formFields" :options="options" :field="field" @input="update" v-model="model"></fluro-content-form-field>
-                
-            </v-container>
-        </template>
-        <!-- <pre v-for="field in formFields">{{field.title}} {{field.errorMessages.length}}</pre> -->
+        <slot name="form">
+            <template v-for="field in fields">
+                <!-- <pre>{{model[field.key]}}</pre> -->
+                <!-- <fluro-code-editor v-model="model[field.key]" @input="valueChange" :height="200"></fluro-code-editor> -->
+                <v-container class="grid-list-xl" pa-0>
+                    <!-- <pre>{{field}}</pre> -->
+                    <!-- :parent="model[key]"  -->
+                    <fluro-content-form-field :outline="showOutline" :form-fields="formFields" :options="options" :field="field" @input="update" v-model="model"></fluro-content-form-field>
+                </v-container>
+            </template>
+        </slot>
     </div>
 </template>
 <script>
 import FluroContentFormField from './FluroContentFormField.vue';
 import _ from 'lodash';
 import Vue from 'vue';
+import Fluro from 'fluro';
 
 
 
-//////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 
-function getDefaultValueForField(field) {
+// function getDefaultValueForField(field) {
 
-    var blankValue;
-    var multiple = field.maximum != 1;
+//     var blankValue;
+//     var multiple = field.maximum != 1;
 
-    //Check if it's a nested subgroup or embedded form
-    var nested = ((field.type == 'group' && field.asObject) || field.directive == 'embedded');
+//     //Check if it's a nested subgroup or embedded form
+//     var nested = ((field.type == 'group' && field.asObject) || field.directive == 'embedded');
 
-    ///////////////////////////////////////
+//     ///////////////////////////////////////
 
-    if (multiple) {
-        blankValue = [];
-    }
+//     if (multiple) {
+//         blankValue = [];
+//     }
 
-    ///////////////////////////////////////
+//     ///////////////////////////////////////
 
-    switch (field.type) {
-        case 'reference':
-            if (field.defaultReferences && field.defaultReferences.length) {
-                if (multiple) {
-                    blankValue = blankValue.concat(field.defaultReferences);
+//     switch (field.type) {
+//         case 'reference':
+//             if (field.defaultReferences && field.defaultReferences.length) {
+//                 if (multiple) {
+//                     blankValue = blankValue.concat(field.defaultReferences);
 
-                } else {
-                    blankValue = _.first(field.defaultReferences);
-                }
-            }
-            break;
-        default:
-            if (field.defaultValues && field.defaultValues.length) {
-                if (multiple) {
-                    blankValue = blankValue.concat(field.defaultValues);
+//                 } else {
+//                     blankValue = _.first(field.defaultReferences);
+//                 }
+//             }
+//             break;
+//         default:
+//             if (field.defaultValues && field.defaultValues.length) {
+//                 if (multiple) {
+//                     blankValue = blankValue.concat(field.defaultValues);
 
-                } else {
-                    blankValue = _.first(field.defaultValues);
-                }
-            }
-            break;
-    }
+//                 } else {
+//                     blankValue = _.first(field.defaultValues);
+//                 }
+//             }
+//             break;
+//     }
 
-    ///////////////////////////////////////
+//     ///////////////////////////////////////
 
 
-    if (multiple) {
+//     if (multiple) {
 
-        var askCount = Math.max(field.askCount, field.minimum);
-        var additionalRequired = Math.max((askCount - blankValue.length), 0);
+//         var askCount = Math.max(field.askCount, field.minimum);
+//         var additionalRequired = Math.max((askCount - blankValue.length), 0);
 
-        //If we need some entries by default
-        if (additionalRequired) {
+//         //If we need some entries by default
+//         if (additionalRequired) {
 
-            switch (field.directive) {
-                case 'wysiwyg':
-                case 'textarea':
-                case 'code':
-                    _.times(additionalRequired, function() {
-                        blankValue.push('');
-                    })
-                    break;
-                default:
-                    //We need to add objects
-                    if (nested) {
-                        _.times(additionalRequired, function() {
-                            blankValue.push({});
-                        })
-                    }
-                    break;
-            }
+//             switch (field.directive) {
+//                 case 'wysiwyg':
+//                 case 'textarea':
+//                 case 'code':
+//                     _.times(additionalRequired, function() {
+//                         blankValue.push('');
+//                     })
+//                     break;
+//                 default:
+//                     //We need to add objects
+//                     if (nested) {
+//                         _.times(additionalRequired, function() {
+//                             blankValue.push({});
+//                         })
+//                     }
+//                     break;
+//             }
 
-        }
-    } else {
+//         }
+//     } else {
 
-        if (!blankValue) {
-            switch (field.directive) {
-                case 'wysiwyg':
-                case 'textarea':
-                case 'code':
-                    // case 'select':
-                    blankValue = '';
-                    break;
-                default:
-                    //We need to add objects
-                    if (nested) {
-                        blankValue = {};
-                    }
-                    //  else {
-                    //     blankValue =  null;
-                    // }
-                    break;
-            }
-        }
-    }
+//         if (!blankValue) {
+//             switch (field.directive) {
+//                 case 'wysiwyg':
+//                 case 'textarea':
+//                 case 'code':
+//                     // case 'select':
+//                     blankValue = '';
+//                     break;
+//                 default:
+//                     //We need to add objects
+//                     if (nested) {
+//                         blankValue = {};
+//                     }
+//                     //  else {
+//                     //     blankValue =  null;
+//                     // }
+//                     break;
+//             }
+//         }
+//     }
 
-    ///////////////////////////////////////
+//     ///////////////////////////////////////
 
-    return blankValue;
-}
+//     return blankValue;
+// }
 
 //////////////////////////////////////////////////
 
@@ -133,10 +132,10 @@ export default {
             type: Object,
         },
         'formFields': {
-            default() {
+            default () {
                 return [];
             },
-            type:Array,
+            type: Array,
         },
         'options': {
             default: function() {
@@ -144,21 +143,33 @@ export default {
             },
             type: Object,
         },
+        'outline': {
+            type: Boolean,
+        }
     },
-    computed:{
+    computed: {
+        showOutline() {
+            return this.outline || this.options.outline;
+        },
         errorMessages() {
             return _.chain(this.formFields)
-            .filter(function(field) {
-                return field.errorMessages.length;
-            })
-            .map(function(field) {
-                return {
-                    title:field.errorTitle,
-                    messages:field.errorMessages,
-                }
-            })
-            .value();
-        }
+                .filter(function(field) {
+                    return field.errorMessages.length;
+                })
+                .map(function(field) {
+                    return {
+                        title: field.errorTitle,
+                        messages: field.errorMessages,
+                    }
+                })
+                .value();
+        },
+        fieldHash() {
+            return _.reduce(this.fields, function(set, field) {
+                set[field.key] = field;
+                return set;
+            }, {})
+        },
     },
     data() {
         return {
@@ -175,6 +186,9 @@ export default {
         'fields': function(val) {
             return this.reset();
         },
+        'errorMessages':function(messages) {
+            this.$emit('errorMessages', messages);
+        }
     },
     created() {
         this.reset();
@@ -182,7 +196,9 @@ export default {
     methods: {
         touch() {
             _.each(this.formFields, function(component) {
-                component.touch();
+                if(component.touch) {
+                    component.touch();
+                }
             })
         },
         reset() {
@@ -204,7 +220,7 @@ export default {
 
             //Recursively create all the default keys for nested fields
             function createDefaults(field) {
-                var blankValue = getDefaultValueForField(field);
+                var blankValue = Fluro.utils.getDefaultValueForField(field);
 
                 //Check if it's just a display group
                 if (field.type == 'group' && !field.asObject) {
@@ -214,6 +230,9 @@ export default {
                 // //console.log('SET', field.key, blankValue);
                 Vue.set(self.model, field.key, blankValue);
             }
+
+
+
 
 
         },

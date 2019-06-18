@@ -1,17 +1,17 @@
 <template>
-    <div class="fluro-content-select">
-        <div class="fluro-content-list">
+    <div class="fluro-content-select" :class="{outlined:showOutline}">
+        <div class="fluro-content-list" v-if="model.length">
             <draggable v-model="model" v-bind="dragOptions" @start="drag=true" @end="drag=false">
                 <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                     <!-- <div v-for="element in myArray" :key="element.id">{{element.name}}</div> -->
-                    <fluro-list-item :item="item" v-for="item in model" :key="item._id" :actions="getActions(item)" />
+                    <fluro-list-item bordered :item="item" v-for="item in model" :key="item._id" :actions="getActions(item)" />
                 </transition-group>
             </draggable>
         </div>
-        <!-- <pre>{{minimum}} {{maximum}} {{total}} {{model}}</pre>  -->
-        <v-layout v-if="canAddValue">
-            <v-flex grow>
-                <v-autocomplete :box="true" :hide-selected="true" @change="selected()" prepend-inner-icon="search"  append-icon="":hint="hint" :persistent-hint="true" :placeholder="placeholder" :return-object="true" item-text="title" v-model="candidates" :multiple="true" :loading="loading" :items="results" :search-input.sync="search" flat hide-no-data :label="label">
+        <div class="content-select-search-bar" v-if="canAddValue">
+            <div class="content-select-search">
+                <!-- :label="label" -->
+                <v-autocomplete :outline="showOutline" :success="success" :required="required" :error-messages="errorMessages" :hint="hint" :hide-selected="true" @change="selected()" prepend-inner-icon="search" append-icon="" :persistent-hint="true" :placeholder="textPlaceholder" :return-object="true" item-text="title" v-model="candidates" :multiple="true" :loading="loading" :items="results" :search-input.sync="search" flat hide-no-data>
                     <template v-slot:item="{ item }">
                         <v-list-tile-avatar class="text-sm-center">
                             <template v-if="item._type == 'persona'">
@@ -27,28 +27,48 @@
                                 <fluro-icon :type="item._type"></fluro-icon>
                             </template>
                         </v-list-tile-avatar>
-                        <!-- <fluro-avatar class="xs" :id="item._id" type="contact"></fluro-avatar>   -->  
                         <v-list-tile-content>
                             <v-list-tile-title v-text="item.title"></v-list-tile-title>
-                            <!-- <v-list-item-subtitle> -->
-                            <!-- </v-list-item-subtitle> -->
-                            <!-- <v-list-item-title v-text="item.title">{{title}}</v-list-item-title> -->
-                            <!-- <div class="item-subtitle">{{subtitle}}</div> -->
-                            <!-- <v-list-item-title v-text="item.title"></v-list-item-title> -->
+                        </v-list-tile-content>
+                    </template>
+                </v-autocomplete>
+            </div>
+            <div class="content-select-search-buttons">
+                <v-btn flat block @click="dialog = true">
+                    Browse
+                </v-btn>
+            </div>
+        </div>
+        <!-- <v-layout row v-if="canAddValue">
+            <v-flex grow>
+                <v-autocomplete :hide-selected="true" @change="selected()" prepend-inner-icon="search" append-icon="" :hint="hint" :persistent-hint="true" :placeholder="placeholder" :return-object="true" item-text="title" v-model="candidates" :multiple="true" :loading="loading" :items="results" :search-input.sync="search" flat hide-no-data :label="label">
+                    <template v-slot:item="{ item }">
+                        <v-list-tile-avatar class="text-sm-center">
+                            <template v-if="item._type == 'persona'">
+                                <fluro-avatar :id="item._id" type="persona" />
+                            </template>
+                            <template v-else-if="item._type == 'contact'">
+                                <fluro-avatar :id="item._id" type="contact" />
+                            </template>
+                            <template v-else-if="item._type == 'image'">
+                                <fluro-image :item="item" :spinner="true" :width="40" :height="40" />
+                            </template>
+                            <template v-else>
+                                <fluro-icon :type="item._type"></fluro-icon>
+                            </template>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title v-text="item.title"></v-list-tile-title>
                         </v-list-tile-content>
                     </template>-
                 </v-autocomplete>
             </v-flex>
-            <v-flex shrink>
-               <!--  <v-btn color="primary" icon>
-                    <v-icon>add</v-icon>
-                </v-btn> -->
-                <v-btn flat @click="dialog = true">
+            <v-flex shrink class="buttons"> 
+                <v-btn flat block @click="dialog = true">
                     Browse
-                    <!-- <v-icon>search</v-icon> -->
                 </v-btn>
             </v-flex>
-        </v-layout>
+        </v-layout> -->
         <v-dialog content-class="fluro-content-select-dialog" v-model="dialog">
             <template v-if="dialog">
                 <fluro-content-browser :minimum="minimum" :maximum="maximum" :type="type" @close="closeModal()" v-model="model"></fluro-content-browser>
@@ -71,15 +91,23 @@ export default {
     },
     mixins: [FluroSelectionMixin],
     props: {
+        'success': {
+            type: Boolean,
+        },
+        'required': {
+            type: Boolean,
+        },
+        'errorMessages': {
+            type: Array,
+        },
         'label': {
             type: String,
         },
         'hint': {
-            default:'',
+            default: '',
             type: String,
         },
         'placeholder': {
-            default:'Search to add items',
             type: String,
         },
         'value': {
@@ -98,12 +126,27 @@ export default {
         'maximum': {
             type: Number,
             default: 0,
-        }
+        },
+        'outline': {
+            type: Boolean,
+        },
+        'options': {
+            default: function() {
+                return {}
+            },
+            type: Object,
+        },
     },
 
     // <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
     computed: {
-        model:{
+        textPlaceholder() {
+            return this.placeholder || `Search for ${this.label || 'items'}`;
+        },
+        showOutline() {
+            return this.outline || this.options.outline;
+        },
+        model: {
             get() {
                 return this.selection;
             },
@@ -148,6 +191,9 @@ export default {
         //     'realmSelectFullScreen', //The authenticated user if they log in
         // ]),
     },
+    created() {
+        this.setSelection(this.value);
+    },
     methods: {
         closeModal() {
             this.dialog = false;
@@ -169,7 +215,7 @@ export default {
                     newEntries = newEntries.slice(0, numOpenSlots);
                 }
 
-                if(newEntries.length) {
+                if (newEntries.length) {
                     _.each(newEntries, function(item) {
                         self.select(item);
                     });
@@ -210,15 +256,17 @@ export default {
             if (searchTerms && searchTerms.length) {
 
                 self.loading = true;
-                var options = {};
+                var params = {};
 
-                if(self.type) {
-                    options.params = {
-                        type:self.type,
-                    }
+                if (self.type) {
+                    params.types = self.type;
+
                 }
 
-                self.$fluro.content.search(searchTerms, options)
+
+                console.log('OPTIONS', this);
+
+                self.$fluro.content.search(searchTerms, params)
                     .then(function(results) {
 
                         self.results = results; //_.map(results, 'title');
@@ -244,13 +292,18 @@ export default {
             terms: '',
             loading: false,
             dialog: false,
-            model: this.value,
+            // model: this.value,
             drag: false,
         }
     },
 }
 </script>
 <style lang="scss">
+.fluro-content-list {
+    margin-bottom: 5px;
+}
+
+
 .fluro-content-select {
 
     & /deep/ .v-select__selections {
@@ -269,26 +322,77 @@ export default {
     & /deep/ .v-text-field--box .v-input__slot {
         background: rgba(#000, 0.03);
     }
-}
-
-.fluro-content-select-dialog {
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.ghost {
-    opacity: 0.5;
-}
 
 
 
 
-.flip-list-move {
-    transition: transform 0.5s;
-}
 
-.no-move {
-    transition: transform 0s;
+
+    .content-select-search-bar {
+        position: relative;
+
+
+        .content-select-search-buttons {
+            position: absolute;
+            right: 5px;
+            top: 10px;
+
+
+
+            display: flex;
+            align-items: center;
+
+            .v-btn {
+                background: #fff;
+            }
+        }
+    }
+
+
+     &.outlined {
+        & /deep/ .v-input__slot {
+            height: 60px;
+        }
+
+
+        & /deep/ .v-input__prepend-inner {
+            margin-top:16px !important;
+        }
+        .content-select-search-bar .content-select-search-buttons {
+            top:6px;
+        }
+        
+    }
+
+
+
+
+
+
+    .fluro-content-select-dialog {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ghost {
+        opacity: 0.5;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    .flip-list-move {
+        transition: transform 0.5s;
+    }
+
+    .no-move {
+        transition: transform 0s;
+    }
+
 }
 </style>
