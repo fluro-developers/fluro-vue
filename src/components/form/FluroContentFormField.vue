@@ -70,15 +70,15 @@
         </template>
         <template v-else-if="renderer == 'checkbox'">
             <div class="terms" :class="{'has-error':errorMessages.length}" v-if="savedTerms">
-                <v-checkbox :outline="showOutline" :success="success" :mandatory="required" :persistent-hint="true" :label="label" v-model="fieldModel" @change="valueChange($event, true)" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+                <v-checkbox :outline="showOutline" :success="success" :mandatory="required" :persistent-hint="true" :label="displayLabel" v-model="fieldModel" @change="valueChange($event, true)" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
                 <div class="conditions">{{field.params.storeData}}</div>
             </div>
             <template v-else>
-                <v-checkbox :outline="showOutline" :success="success" :mandatory="required" :persistent-hint="true" :label="label" v-model="fieldModel" @change="valueChange($event, true)" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+                <v-checkbox :outline="showOutline" :success="success" :mandatory="required" :persistent-hint="true" :label="displayLabel" v-model="fieldModel" @change="valueChange($event, true)" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
             </template>
         </template>
         <template v-else-if="renderer == 'number'">
-            <v-text-field :outline="showOutline" :success="success" :required="required" type="number" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+            <v-text-field :outline="showOutline" :success="success" :required="required" type="number" :label="displayLabel" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'datepicker'">
             <!--      <template v-slot:activator="{ on }">
@@ -97,7 +97,7 @@
                 <template v-slot:activator="{ on }">
                     <!-- :value="computedDateFormattedMomentjs"  -->
                     <!-- @focus="modal = true" -->
-                    <v-text-field :outline="showOutline" :success="success" v-model="fieldModel" :persistent-hint="true" :hint="formattedDate" :label="label" prepend-inner-icon="event" readonly v-on="on"></v-text-field>
+                    <v-text-field :outline="showOutline" :success="success" v-model="fieldModel" :persistent-hint="true" :hint="formattedDate" :label="displayLabel" prepend-inner-icon="event" readonly v-on="on"></v-text-field>
                 </template>
                 <v-card>
                     <v-date-picker @change="modal = false" v-model="fieldModel" no-title scrollable>
@@ -119,7 +119,7 @@
         <template v-else-if="renderer == 'timepicker'">
             <v-dialog ref="dialog" v-model="modal" persistent :return-value.sync="fieldModel" lazy full-width width="290px">
                 <template v-slot:activator="{ on }">
-                    <v-text-field :outline="showOutline" :success="success" v-model="fieldModel" :label="label" prepend-inner-icon="access_time" readonly v-on="on" @focus="modal = true"></v-text-field>
+                    <v-text-field :outline="showOutline" :success="success" v-model="fieldModel" :label="displayLabel" prepend-inner-icon="access_time" readonly v-on="on" @focus="modal = true"></v-text-field>
                 </template>
                 <v-card v-if="modal">
                     <v-toolbar color="primary" dark>
@@ -134,21 +134,21 @@
             </v-dialog>
         </template>
         <template v-else-if="renderer == 'datetimepicker'">
-            <fluro-date-time-picker :outline="showOutline" :success="success" format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="fieldModel" @focus="modal = true" />
+            <fluro-date-time-picker :outline="showOutline" :success="success" format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="displayLabel" v-model="fieldModel" @focus="modal = true" />
         </template>
         <template v-else-if="renderer == 'textarea'">
-            <v-textarea :outline="showOutline" :success="success" :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+            <v-textarea :outline="showOutline" :success="success" :required="required" :label="displayLabel" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'select'">
-            <v-select :outline="showOutline" :success="success" :required="required" :return-object="type == 'reference'" :label="label" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="selectOptions" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+            <v-select :outline="showOutline" :success="success" :required="required" :return-object="type == 'reference'" :label="displayLabel" :chips="multipleInput" no-data-text="No options available" :multiple="multipleInput" v-model="fieldModel" item-text="title" :items="selectOptions" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
         </template>
         <template v-else-if="renderer == 'content-select'">
-            <v-input class="no-flex" :label="label" :success="success"  :required="required" :error-messages="errorMessages" :hint="field.description">
-                <fluro-content-select :success="success"  :required="required" :error-messages="errorMessages" :label="label" :outline="showOutline" :hint="field.description" :placeholder="field.placeholder" :minimum="minimum" @input="touch" :type="restrictType" :maximum="maximum" v-model="model[field.key]" />
+            <v-input class="no-flex" :label="displayLabel" :success="success"  :required="required" :error-messages="errorMessages" :hint="field.description">
+                <fluro-content-select :success="success"  :required="required" :error-messages="errorMessages" :label="displayLabel" :outline="showOutline" :hint="field.description" :placeholder="field.placeholder" :minimum="minimum" @input="touch" :type="restrictType" :maximum="maximum" v-model="model[field.key]" />
             </v-input>
         </template>
         <template v-else-if="renderer == 'search-select'">
-            <v-autocomplete :outline="showOutline" :success="success" :deletable-chips="true" :hide-selected="true" prepend-inner-icon="search" :error-messages="errorMessages" :cache-items="!defaultReferences.length" :chips="multipleInput" :clearable="!required" :return-object="true" item-text="title" v-model="fieldModel" @blur="touch()" @change="valueChange" :multiple="multipleInput" :loading="loading" :items="searchResults" :search-input.sync="keywords" flat hide-no-data :label="label">
+            <v-autocomplete :outline="showOutline" :success="success" :deletable-chips="true" :hide-selected="true" prepend-inner-icon="search" :error-messages="errorMessages" :cache-items="!defaultReferences.length" :chips="multipleInput" :clearable="!required" :return-object="true" item-text="title" v-model="fieldModel" @blur="touch()" @change="valueChange" :multiple="multipleInput" :loading="loading" :items="searchResults" :search-input.sync="keywords" flat hide-no-data :label="displayLabel">
                 <!-- <template v-slot:selection="{ item, selected }">
                     <v-chip close @input="removeValue(index)" :selected="selected" color="blue-grey" class="white--text">
                        
@@ -167,7 +167,7 @@
             </v-autocomplete>
         </template>
         <template v-else-if="renderer == 'signature'">
-            <fluro-signature-field :outline="showOutline" :success="success" :label="label" v-model="fieldModel" :required="required" :error-messages="errorMessages" :hint="field.description" />
+            <fluro-signature-field :outline="showOutline" :success="success" :label="displayLabel" v-model="fieldModel" :required="required" :error-messages="errorMessages" :hint="field.description" />
             <!-- <v-input class="no-flex" >
                 <div class="signature-wrap">
                     <vue-signature-pad class="pad" ref="pad" width="100%" height="300px" />
@@ -215,7 +215,7 @@
         </template>
         <template v-else-if="renderer == 'upload'">
             <!-- <pre>{{model}}</pre> -->
-            <v-input class="no-flex" :outline="showOutline" :success="success" :label="label" :required="required" :error-messages="errorMessages" :persistent-hint="true" :hint="fileHint">
+            <v-input class="no-flex" :outline="showOutline" :success="success" :label="displayLabel" :required="required" :error-messages="errorMessages" :persistent-hint="true" :hint="fileHint">
                 <div class="file-items" v-if="files.length">
                     <div class="file-item" v-for="file in files">
                         <!-- <v-progress-linear v-model="file.progress"></v-progress-linear> -->
@@ -301,7 +301,7 @@
         <template v-else>
             <template v-if="multipleInput">
                 <!--  -->
-                <v-input :outline="showOutline" :label="label" :success="success" class="no-flex">
+                <v-input :outline="showOutline" :label="displayLabel" :success="success" class="no-flex">
                     <template v-if="fieldModel.length">
                         <draggable v-model="fieldModel" v-bind="dragOptions" @start="drag=true" @end="drag=false">
                             <transition-group type="transition" :name="!drag ? 'flip-list' : null">
@@ -319,12 +319,12 @@
                         <!-- :placeholder="field.placeholder" -->
                         <!-- <pre>{{multiLabel}}</pre> -->
                         <!--   -->
-                        <v-text-field class="faint" append-inner-icon="plus" :outline="showOutline" :success="success" browser-autocomplete="off" append-icon="plus" :required="required" :label="multiLabel" v-model="proposedValue" @keyup.enter.native.stop="addProposedValue()" @blur="addProposedValue()" :error-messages="errorMessages" :hint="hint" />
+                        <v-text-field :autofocus="autofocus" class="faint" append-inner-icon="plus" :outline="showOutline" :success="success" browser-autocomplete="off" append-icon="plus" :required="required" :label="multiLabel" v-model="proposedValue" @keyup.enter.native.stop="addProposedValue()" @blur="addProposedValue()" :error-messages="errorMessages" :hint="hint" :placeholder="field.placeholder" />
                     </template>
                 </v-input>
             </template>
             <template v-if="!multipleInput">
-                <v-text-field :outline="showOutline" :success="success" browser-autocomplete="off" :required="required" :label="label" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
+                <v-text-field :autofocus="autofocus"  :outline="showOutline" :success="success" browser-autocomplete="off" :required="required" :label="displayLabel" v-model="fieldModel" @input="valueChange" @blur="touch()" :error-messages="errorMessages" :hint="field.description" :placeholder="field.placeholder" />
             </template>
         </template>
         <!-- <pre>{{$v}}</pre> -->
@@ -544,7 +544,12 @@ export default {
             return this.label
 
         },
-        label() {
+        displayLabel() {
+
+            if(!this.showLabel) {
+                return;
+            }
+
             var title = this.title || '';
 
             if (this.title.length) {
@@ -1417,9 +1422,17 @@ export default {
         // 'parent':{
         //     type:Object,
         // },
+        'autofocus':{
+            type:Boolean,
+        },
         'outline': {
             type: Boolean,
         },
+        'showLabel': {
+            type: Boolean,
+            default:true,
+        },
+
         'formFields': {
             type: Array,
         },

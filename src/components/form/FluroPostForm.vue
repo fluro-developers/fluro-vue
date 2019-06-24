@@ -3,20 +3,23 @@
         <template v-if="form">
             <template v-if="!allowed">
                 <template v-if="user">
-                    <slot name="authenticated"></slot>
+                    <slot name="authenticated" :form="form"></slot>
                 </template>
                 <template v-if="!user">
-                    <slot name="unauthenticated"></slot>
+                    <slot name="unauthenticated" :form="form"></slot>
                 </template>
             </template>
             <template v-if="allowed">
                 <div class="fluro-post-form">
-                    <v-layout>
-                        <fluro-avatar left md :id="user.persona" type="persona"></fluro-avatar>    
-                        <v-flex d-flex>
-                            <h3 title>{{displayTitle}}</h3>
-                        </v-flex>
-                    </v-layout>
+                    <!-- :targetID="targetID" -->
+                    <slot name="header" :title="displayTitle" :form="form" :targetID="targetID">
+                        <v-layout>
+                            <fluro-avatar left md :id="user.persona" type="persona"></fluro-avatar>    
+                            <v-flex d-flex>
+                                <h3 title>{{displayTitle}}</h3>
+                            </v-flex>
+                        </v-layout>
+                    </slot>
                     <form @submit.prevent="submit" :disabled="state == 'processing'">
                         <fluro-content-form ref="form" :options="options" v-model="model.data" :fields="form.fields" />
                         <div class="actions">
@@ -41,9 +44,11 @@
                                         <strong>{{error.title}}</strong>: {{error.messages[0]}}
                                     </div>
                                 </v-alert>
-                                <v-btn class="mx-0" :disabled="hasErrors" type="submit" color="primary">
-                                    Submit
-                                </v-btn>
+                                <slot name="submit" :hasErrors="hasErrors">
+                                    <v-btn class="mx-0" :disabled="hasErrors" type="submit" color="primary">
+                                        {{saveButtonText}}
+                                    </v-btn>
+                                </slot>
                             </template>
                         </div>
                     </form>
@@ -71,6 +76,13 @@ export default {
         },
         'type': {
             type: String,
+        },
+        'cancelButtonText': {
+            type: String,
+        },
+        'saveButtonText': {
+            type: String,
+            default: 'Submit',
         },
         'target': {
             type: [Object, String],
@@ -104,6 +116,9 @@ export default {
         self.validate();
     },
     computed: {
+        targetID() {
+            return this.$fluro.utils.getStringID(this.target);
+        },
         hasErrors() {
             console.log('Has Errors?', this.errorMessages)
             return this.errorMessages.length ? true : false;
@@ -141,7 +156,7 @@ export default {
     },
     methods: {
         validate() {
-            this.errorMessages = _.get(this.$refs, 'form.errorMessages');        
+            this.errorMessages = _.get(this.$refs, 'form.errorMessages');
         },
         reset() {
             var self = this;
@@ -162,7 +177,7 @@ export default {
 
             var self = this;
 
-             self.validate();
+            self.validate();
 
 
             self.state = 'processing';
@@ -181,8 +196,8 @@ export default {
                     self.$fluro.error(err);
                     self.state = 'error';
                     self.$emit('error', err);
-
-                    self.error(err);
+                    self.serverErrors = self.$fluro.utils.errorMessage(err);
+                    
                 })
 
 

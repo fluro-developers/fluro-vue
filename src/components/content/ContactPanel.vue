@@ -6,7 +6,7 @@
         <wrapper xs>
             <v-layout row wrap>
                 <v-flex :class="{'xs12':$vuetify.breakpoint.xsOnly}">
-                    <fluro-content-form-field class="right-messages" :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.firstName" v-model="model"></fluro-content-form-field>
+                    <fluro-content-form-field :autofocus="true" class="right-messages" :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.firstName" v-model="model"></fluro-content-form-field>
                     <fluro-content-form-field class="right-messages" :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.preferredName" v-model="model" v-if="showPreferredName"></fluro-content-form-field>
                     <fluro-content-form-field class="right-messages" :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.ethnicName" v-model="model" v-if="showEthnicName"></fluro-content-form-field>
                     <div class="additions">
@@ -58,9 +58,11 @@
                 <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.timezone" v-model="model"></fluro-content-form-field>
             </v-flex>
         </v-layout>
+        <v-label>Family Household</v-label>
         <v-layout row wrap>
+
             <v-flex xs12 sm6>
-                <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.family" v-model="model"></fluro-content-form-field>
+                <fluro-content-form-field :form-fields="formFields" :showLabel="false" :outline="showOutline" @input="update" :options="options" :field="fieldHash.family" v-model="model"></fluro-content-form-field>
             </v-flex>
             <v-flex xs12 sm6>
                 <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.householdRole" v-model="model"></fluro-content-form-field>
@@ -427,7 +429,7 @@ export default {
     },
     computed: {
         showOutline() {
-            return false;//true;//false;//true;
+            return true;//false;//true;//false;//true;
         },
         showPreferredName() {
             return (this.model.preferredName && this.model.preferredName.length) || this.show.preferredName;

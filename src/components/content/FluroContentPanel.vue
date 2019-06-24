@@ -4,22 +4,27 @@
             <!-- @submit.prevent="submit" -->
             <form :disabled="state == 'processing'">
                 <component @errorMessages="validate" ref="form" v-bind:is="component" :type="config.type" v-model="model" :definition="config.definition" v-if="component"></component>
-                 <h5>Realms</h5>
+                <h5>Realms</h5>
+                <!-- <v-container class="grid-list-xl" pa-0> -->
+                    <!-- <fluro-realm-select :expanded="true" v-model="realms" :type="typeName" :definition="definitionName" /> -->
+                <!-- </v-container> -->
+                <fluro-realm-select v-model="realms" :type="typeName" :definition="definitionName" />
+                <!-- <h5>Tags</h5> -->
+
+                <!-- <div class="block border-bottom"> -->
+                    <!-- <div class="form-group"> -->
+                        <!-- <label>Tags <span class="text-muted">{{tags | comma}}</span></label> -->
+                         <h5>Tags</h5>
+                        <v-combobox multiple v-model="tags" label="Type here and press enter to add tags" append-icon chips deletable-chips class="tag-input" :search-input.sync="tagSearch"></v-combobox>
+                    <!-- </div> -->
+                <!-- </div> -->
+
+
+
                 <v-container class="grid-list-xl" pa-0>
-                   
-                    <fluro-realm-select :expanded="true" v-model="realms" :type="typeName" :definition="definitionName" />
-                </v-container>
-
-
-
-
-                    <fluro-realm-select v-model="realms" :type="typeName" :definition="definitionName" />
-
-<h5>Tags</h5>
-                <v-container class="grid-list-xl" pa-0>
-                    
                     <fluro-tag-select :expanded="true" v-model="tags" :type="typeName" :definition="definitionName" />
                 </v-container>
+
 
 
                 <div class="actions">
@@ -97,6 +102,7 @@ export default {
             errorMessages: [],
             result: null,
             state: 'ready',
+            tagSearch:'',
         }
     },
     created() {
@@ -165,7 +171,18 @@ export default {
             self.$fluro.api.post(`/content/${self.type}`, requestData)
                 .then(function(result) {
                     self.reset(true);
-                    self.$emit('success', result);
+                    self.$emit('success', result.data);
+
+                    // console.log('RESULT WAS', result);
+                    //Print a success message to the screen
+                    self.$fluro.dispatch('notification', {
+                        message:`${result.data.title} was saved successfully`,
+                        options:{
+                            type:'success',
+                        }
+                    });
+
+
                 }, function(err) {
                     //Dispatch an error
                     var humanMessage = self.$fluro.utils.errorMessage(err);
@@ -173,6 +190,15 @@ export default {
                     self.serverErrors = humanMessage;
                     self.state = 'error';
                     self.$emit('error', err);
+
+
+                    //Print the error to the screen
+                    self.$fluro.dispatch('notification', {
+                        message:humanMessage,
+                        options:{
+                            type:'error',
+                        }
+                    });
 
 
                     console.log('SWITCH STATE TO', err, self)

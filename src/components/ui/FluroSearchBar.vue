@@ -4,7 +4,7 @@
             <constrain>
                 <v-layout row>
                     <v-flex class="search-wrapper">
-                        <input @focus="isFocused = true" @blur="isFocused = false" :placeholder="placeholder" v-model="model" />
+                        <input @focus="isFocused = true" @blur="isFocused = false" :placeholder="placeholder" @input="keywordsChanged" v-model="model" />
                         <div class="icon-search icon" :class="{active:model.length}" @click="clear()">
                             <fluro-icon library="far" v-if="model.length" icon="times" />
                             <fluro-icon library="far" v-if="!model.length" icon="search" />
@@ -39,12 +39,13 @@ export default {
             isFocused: false,
             model: this.value,
             showOptions: false,
+            debounced:null,
         }
     },
     props: {
         'debounce': {
             type: Number,
-            default: 1000,
+            default: 500,
         },
         'placeholder': {
             type: String,
@@ -55,27 +56,34 @@ export default {
             default: ''
         },
     },
+    created() {
+        var self = this;
+
+        self.debounced = _.debounce(function() {
+            // self.model = self.words;
+            console.log('DEBOUNCED', self.model)
+            self.$emit('input', self.model);
+        }, self.debounce);
+
+    },
     computed: {
         isActive() {
             return (this.isFocused || this.model.length);
         },
     },
     methods: {
+        keywordsChanged() {
+            var self = this;
+            if(!self.model || !self.model.length) {
+                return self.clear();
+            }
+            //Call the debouncer
+            self.debounced();
+        },
         clear() {
             this.model = '';
             this.$emit('input', '');
-        }
-    },
-    watch: {
-        model(keywords) {
-            const self = this;
-            _.debounce(function() {
-                self.$emit('input', keywords)
-            }, self.debounce).call(null);
-        }
-
-
-        // 'model': 'change',
+        },
     },
     // methods: {
     //     change:_.debounce(function(keywords) {

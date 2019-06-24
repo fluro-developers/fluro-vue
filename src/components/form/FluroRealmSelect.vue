@@ -332,7 +332,7 @@ $line-color: darken($bg-color, 10%);
     }
 
     .children {
-        padding: 25px 0 15px;
+        padding: 0px 0 15px;
         margin-left: 21px;
         border-left: 1px solid $line-color;
         position: relative;
