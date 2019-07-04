@@ -26,8 +26,7 @@
                 <div class="item-title">{{title}}</div>
                 <div class="item-subtitle">{{subtitle}}</div>
             </div>
-
-           <!--  <pre>{{subtitle}}</pre>
+            <!--  <pre>{{subtitle}}</pre>
             <pre>{{item}}</pre> -->
             <!-- </router-link> -->
         </component>
@@ -54,7 +53,6 @@
     </div>
 </template>
 <script>
-
 export default {
     props: {
         'draggable': {
@@ -71,6 +69,9 @@ export default {
         },
         'actions': {
             type: [Array, Boolean],
+        },
+        'defaultActions': {
+            type: Boolean,
         }
     },
     data() {
@@ -100,93 +101,96 @@ export default {
 
         /////////////////////////////////////
 
-        if (self.actions) {
-            //If we can edit this thing
-            if (canEdit) {
-                actions.push({
-                    title: 'Edit',
-                    click: function() {
-                        //Fire
-                        if (self.$fluro.global.edit) {
-                            self.$fluro.global.edit(item);
-                        }
-                    }
-                })
-            }
-
-            /////////////////////////////////////
-
-            if (canView) {
-                actions.push({
-                    title: 'View',
-                    click: function() {
-                        //Fire
-                        if (self.$fluro.global.view) {
-                            self.$fluro.global.view(item);
-                        }
-                    }
-                })
+        if (self.defaultActions && self.actions) {
 
 
-                ///////////////////////////////////////
-
-
-
-                switch (item._type) {
-                    case 'image':
-
-                        var url = self.$fluro.asset.getUrl(item);
-                        actions.push({
-                            title: 'View Image',
-                            click: function() {
-                                window.open(url)
-                            }
-                        })
-                        break;
-                    case 'video':
-                        var url = self.$fluro.asset.imageUrl(item);
-                        actions.push({
-                            title: 'Watch Video',
-                            click: function() {
-                                window.open(url)
-                            }
-                        })
-                        break;
-                    case 'audio':
-                        var url = self.$fluro.asset.getUrl(item);
-                        actions.push({
-                            title: 'Listen',
-                            click: function() {
-                                window.open(url)
-                            }
-                        })
-                        break;
-                }
-
-                if (item.assetType == 'upload') {
-                    var url = self.$fluro.asset.downloadUrl(item);
+                //If we can edit this thing
+                if (canEdit) {
                     actions.push({
-                        title: 'Download',
+                        title: 'Edit',
                         click: function() {
-                            window.open(url)
+                            //Fire
+                            if (self.$fluro.global.edit) {
+                                self.$fluro.global.edit(item);
+                            }
                         }
                     })
                 }
-            }
 
-            /////////////////////////////////////
+                /////////////////////////////////////
 
-            if (canDelete) {
-                actions.push({
-                    title: 'Delete',
-                    click: function() {
-                        //Fire
-                        if (self.$fluro.global.delete) {
-                            self.$fluro.global.delete(item);
+                if (canView) {
+                    actions.push({
+                        title: 'View',
+                        click: function() {
+                            //Fire
+                            if (self.$fluro.global.view) {
+                                self.$fluro.global.view(item);
+                            }
                         }
+                    })
+
+
+                    ///////////////////////////////////////
+
+
+
+                    switch (item._type) {
+                        case 'image':
+
+                            var url = self.$fluro.asset.getUrl(item);
+                            actions.push({
+                                title: 'View Image',
+                                click: function() {
+                                    window.open(url)
+                                }
+                            })
+                            break;
+                        case 'video':
+                            var url = self.$fluro.asset.imageUrl(item);
+                            actions.push({
+                                title: 'Watch Video',
+                                click: function() {
+                                    window.open(url)
+                                }
+                            })
+                            break;
+                        case 'audio':
+                            var url = self.$fluro.asset.getUrl(item);
+                            actions.push({
+                                title: 'Listen',
+                                click: function() {
+                                    window.open(url)
+                                }
+                            })
+                            break;
                     }
-                })
-            }
+
+                    if (item.assetType == 'upload') {
+                        var url = self.$fluro.asset.downloadUrl(item);
+                        actions.push({
+                            title: 'Download',
+                            click: function() {
+                                window.open(url)
+                            }
+                        })
+                    }
+                }
+
+                /////////////////////////////////////
+
+                if (canDelete) {
+                    actions.push({
+                        title: 'Delete',
+                        click: function() {
+                            //Fire
+                            if (self.$fluro.global.delete) {
+                                self.$fluro.global.delete(item);
+                            }
+                        }
+                    })
+                }
+            
 
             /////////////////////////////////////
 
@@ -270,7 +274,7 @@ export default {
             switch (item._type) {
                 case 'contact':
                     return '';
-                break;
+                    break;
                 case 'event':
                     pieces.push(self.$fluro.date.readableEventDate(item));
                     if (item.rooms) {
@@ -295,7 +299,7 @@ export default {
 .fluro-list-item {
 
 
-    $border-color: rgba(0, 0, 0, 0.3);//rgba(#000, 0.1);
+    $border-color: rgba(0, 0, 0, 0.3); //rgba(#000, 0.1);
     display: flex;
     // border-bottom: 1px solid $border-color;
     // border-top: none;
@@ -358,7 +362,7 @@ export default {
         border-right: 1px solid $border-color;
 
         &:first-of-type {
-           border-top-left-radius: 3px;
+            border-top-left-radius: 3px;
             border-top-right-radius: 3px;
         }
 
@@ -402,7 +406,7 @@ export default {
         padding: 10px;
         width: 70px;
         line-height: 60px;
-        height:60px;
+        height: 60px;
         display: flex;
         justify-content: center;
         align-items: center;

@@ -317,6 +317,7 @@ td.fixed-w {
 }
 
 .fluro-content-browser {
+    flex:1;
     display: flex;
     flex-direction: column;
     overflow: hidden;

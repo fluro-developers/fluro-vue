@@ -1,8 +1,5 @@
 <template>
-    <!-- <div> -->
-    <!-- <fluro-content-form ref="form" :options="options" v-model="model" :fields="fields"> -->
-    <!-- <template v-slot:form> -->
-    <v-container class="grid-list-xl" pa-0>
+     <v-container class="grid-list-xl" pa-0 v-if="fieldHash">
         <wrapper xs>
 
             <!-- <pre>{{definitions}}</pre> -->
@@ -73,69 +70,6 @@
         <fluro-academic-select :form-fields="formFields" :outline="showOutline" :options="options" @input="update" v-model="model" />
         <!-- <pre>{{model}}</pre> -->
     </v-container>
-    <!-- </template> -->
-    <!-- </fluro-content-form> -->
-    <!--  <v-container class="grid-list-xl" pa-0 v-if="initialized">
-            <v-layout row wrap>
-                <v-flex :class="{'xs12':$vuetify.breakpoint.xsOnly}">
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.firstName" v-model="model"></fluro-content-form-field>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.preferredName" v-model="model" v-if="showPreferredName"></fluro-content-form-field>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.ethnicName" v-model="model" v-if="showEthnicName"></fluro-content-form-field>
-                    <a class="hint" v-if="!showPreferredName" @click="show.preferredName = true">Add Nick/Preferred Name</a>
-                    <a class="hint" v-if="!showEthnicName" @click="show.ethnicName = true">Add Ethnic Name</a>
-                </v-flex>
-                <v-flex :class="{'xs12':$vuetify.breakpoint.xsOnly}" v-if="showMiddleName">
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.middleName" v-model="model"></fluro-content-form-field>
-                </v-flex>
-                <v-flex :class="{'xs12':$vuetify.breakpoint.xsOnly}">
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.lastName" v-model="model"></fluro-content-form-field>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.maidenName" v-model="model" v-if="showMaidenName"></fluro-content-form-field>
-                    <a class="hint" v-if="!showMiddleName" @click="show.middleName = true">Add Middle Name</a>
-                    <a class="hint" v-if="!showMaidenName" @click="show.maidenName = true">Add Maiden Name</a>
-                </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-                <v-flex xs12 sm6>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.gender" v-model="model"></fluro-content-form-field>
-                </v-flex>
-                <v-flex xs12 sm6>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.maritalStatus" v-model="model"></fluro-content-form-field>
-                </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-                <v-flex xs12 sm6>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.emails" v-model="model"></fluro-content-form-field>
-                </v-flex>
-                <v-flex xs12 sm6>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.phoneNumbers" v-model="model"></fluro-content-form-field>
-                </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-                <v-flex xs12 sm6>
-                    <v-layout row>
-                        <v-flex xs6>
-                            <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.dob" v-model="model"></fluro-content-form-field>
-                        </v-flex>
-                        <v-flex xs6>
-                            <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.dobVerified" v-model="model"></fluro-content-form-field>
-                        </v-flex>
-                    </v-layout>
-                </v-flex>
-                <v-flex xs12 sm6>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.timezone" v-model="model"></fluro-content-form-field>
-                </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-                <v-flex xs12 sm6>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.family" v-model="model"></fluro-content-form-field>
-                </v-flex>
-                <v-flex xs12 sm6>
-                    <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options"  :field="fieldHash.householdRole" v-model="model"></fluro-content-form-field>
-                </v-flex>
-            </v-layout>
-            <fluro-academic-select :outline="showOutline" @input="update" :options="options"  v-model="model" />
-        </v-container> -->
-    <!-- </div> -->
 </template>
 <script>
 /////////////////////////////////
