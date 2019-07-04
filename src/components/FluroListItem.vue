@@ -55,7 +55,6 @@
 </template>
 <script>
 
-console.log('LIST ITEM')
 export default {
     props: {
         'draggable': {

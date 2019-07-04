@@ -8,7 +8,7 @@
 //       // Anything added to a mixin will be injected into all components.
 //       // In this case, the mounted() method runs when the component is added to the DOM.
 //       mounted() {
-//         console.log('Mounted!');
+//         //console.log('Mounted!');
 //       }
 //     });
 //   }
@@ -16,7 +16,7 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue v1.2')
+console.log('fluro-vue v1.5')
 // import store from './store'
 import Fluro from 'fluro';
 
@@ -43,6 +43,11 @@ import FluroVideoThumbnail from './components/FluroVideoThumbnail.vue';
 
 import FluroListItem from './components/FluroListItem.vue';
 export { FluroListItem as FluroListItem };
+
+import FluroHTML from './components/FluroHTML.vue';
+export { FluroHTML as FluroHTML };
+
+
 
 
 ////////////////////////////////////////////////////////////////////
@@ -106,6 +111,12 @@ export { FluroEditor as FluroEditor };
 
 import FluroCodeEditor from './components/form/FluroCodeEditor.vue';
 export { FluroCodeEditor as FluroCodeEditor };
+
+
+import FluroCodeHighlight from './components/FluroCodeHighlight.vue';
+export { FluroCodeHighlight as FluroCodeHighlight };
+
+
 
 import FluroContentForm from './components/form/FluroContentForm.vue';
 export { FluroContentForm as FluroContentForm };
@@ -205,7 +216,7 @@ const FluroVue = {
             var json = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
             try {
                 storedUser = JSON.parse(json);
-                // console.log('Got existing user', storedUser)
+                // //console.log('Got existing user', storedUser)
             } catch (e) {
                 WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
             }
@@ -213,6 +224,8 @@ const FluroVue = {
 
 
 
+
+        
 
         /////////////////////////////////////////////////////
 
@@ -360,9 +373,9 @@ const FluroVue = {
         function userUpdated(user, disablePersist) {
             
             // if(user) {
-            //     console.log('__________________________');
-            //     console.log('token', user.token);
-            //     console.log('refresh', user.refreshToken);
+            //     //console.log('__________________________');
+            //     //console.log('token', user.token);
+            //     //console.log('refresh', user.refreshToken);
             // }
             store.commit('fluro/user', user);
             if (!disablePersist) {
@@ -414,7 +427,7 @@ const FluroVue = {
                         storedUser = JSON.parse(json);
                     } catch (e) {
 
-                        console.log(e);
+                        //console.log(e);
                         storedUser = null;
                         WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
                         userUpdated(null, WebStorageContainerEvent);
@@ -426,7 +439,7 @@ const FluroVue = {
                 }
             }
 
-            console.log('LocalStorage Update', storedUser)
+            //console.log('LocalStorage Update', storedUser)
         }
 
         function persistUserToLocalStorage(user) {
@@ -435,21 +448,15 @@ const FluroVue = {
                     WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
                 } else {
                     try {
-                        console.log('PERSIST USER NOW', user)
+                        //console.log('PERSIST USER NOW', user)
                         WebStorageContainer.setItem(LOCAL_STORAGE_KEY, JSON.stringify(user));
                     } catch (err) {
-                        console.log('Error', err)
+                        //console.log('Error', err)
                     }
 
                 }
             }
         }
-
-
-
-
-
-
 
         /////////////////////////////////////////////////////
 
@@ -471,6 +478,7 @@ const FluroVue = {
         Vue.component('fluro-video', FluroVideo);
         Vue.component('fluro-video-thumbnail', FluroVideoThumbnail);
         Vue.component('fluro-page-preloader', FluroPagePreloader);
+        Vue.component('fluro-html', FluroHTML);
 
         /////////////////////////////////////////////////////
 

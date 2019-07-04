@@ -120,7 +120,7 @@ export default {
             return this.$fluro.utils.getStringID(this.target);
         },
         hasErrors() {
-            console.log('Has Errors?', this.errorMessages)
+            // console.log('Has Errors?', this.errorMessages)
             return this.errorMessages.length ? true : false;
         },
 

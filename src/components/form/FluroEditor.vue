@@ -187,6 +187,9 @@
                 <v-btn icon class="hidden-xs-only" :disabled="showSource" small flat @click="commands.redo">
                     <v-icon>redo</v-icon>
                 </v-btn> -->
+                <v-btn icon :disabled="showSource" small flat :class="{ 'active': isActive.code_block() }" @click="commands.code_block">
+                    <v-icon>code</v-icon>
+                </v-btn>
                 <v-menu :fixed="true" transition="slide-y-transition" offset-y>
                     <template v-slot:activator="{ on }">
                         <v-btn small class="hidden-xs-only" icon :disabled="showSource" v-on="on">
@@ -286,7 +289,13 @@ import Image from './tiptap/image';
 // import AutoLinkMark from './tiptap/autolink';
 
 
-import { Editor, EditorContent, EditorMenuBubble, EditorMenuBar, EditorFloatingMenu, Mark} from 'tiptap'
+// import hljs from 'highlight.js/lib/highlight';
+import scss from 'highlight.js/lib/languages/scss';
+import javascript from 'highlight.js/lib/languages/javascript';
+import json from 'highlight.js/lib/languages/json';
+
+
+import { Editor, EditorContent, EditorMenuBubble, EditorMenuBar, EditorFloatingMenu, Mark } from 'tiptap'
 import {
     Blockquote,
     CodeBlock,
@@ -311,6 +320,7 @@ import {
     TableCell,
     TableRow,
     Placeholder,
+    CodeBlockHighlight,
 } from 'tiptap-extensions';
 
 
@@ -471,6 +481,189 @@ export default {
         var placeholderText = self.placeholder;
 
 
+        ///////////////////////////////////
+
+        var enabledExtensions = [
+            // new Alignment(),
+            new Placeholder({
+                emptyClass: 'placeholder-text',
+                emptyNodeText: self.placeholder,
+                showOnlyWhenEditable: true,
+            }),
+            new HorizontalRule(),
+            new Blockquote(),
+            new CodeBlock(),
+            new HardBreak(),
+            new Heading({ levels: [1, 2, 3] }),
+            new BulletList(),
+            new OrderedList(),
+            new ListItem(),
+            // new TodoItem(),
+            // new TodoList(),
+            new Image(),
+            new Bold(),
+            new Code(),
+            new Italic(),
+            new Link(),
+            new Strike(),
+            new Underline(),
+            // new AutoLinkMark(), 
+            new History(),
+            new Table(),
+            new TableHeader(),
+            new TableCell(),
+            new TableRow(),
+            new Mention({
+                // a list of all suggested items
+                items: function() {
+
+
+
+                    // return self.$fluro.content.mention(query);
+
+                    return [];
+                    // return [
+                    //     { id: 1, name: 'Philipp Kühn' },
+                    //     { id: 2, name: 'Hans Pagel' },
+                    //     { id: 3, name: 'Kris Siepert' },
+                    //     { id: 4, name: 'Justin Schueler' },
+                    // ]
+                },
+                // is called when a suggestion starts
+                onEnter: ({
+                    items,
+                    query,
+                    range,
+                    command,
+                    virtualNode,
+                }) => {
+                    this.query = query
+                    this.filteredUsers = items
+                    this.suggestionRange = range
+                    this.renderPopup(virtualNode)
+                    // we save the command for inserting a selected mention
+                    // this allows us to call it inside of our custom popup
+                    // via keyboard navigation and on click
+                    this.insertMention = command
+                },
+                // is called when a suggestion has changed
+                onChange: ({
+                    items,
+                    query,
+                    range,
+                    virtualNode,
+                }) => {
+
+                    var mentionInstance = this;
+
+                    self.$fluro.content.mention(query, self.options.mentions).then(function(personas) {
+                            mentionInstance.query = query
+                            mentionInstance.filteredUsers = personas
+                            mentionInstance.suggestionRange = range
+                            mentionInstance.navigatedUserIndex = 0
+                            mentionInstance.renderPopup(virtualNode)
+                        })
+                        .catch(function(err) {
+                            //console.log('Error', err);
+                            // this.query = query
+                            // this.filteredUsers = items
+                            // this.suggestionRange = range
+                            // this.navigatedUserIndex = 0
+                            // this.renderPopup(virtualNode)
+                        });
+                },
+                // is called when a suggestion is cancelled
+                onExit: () => {
+                    // reset all saved values
+                    this.query = null
+                    this.filteredUsers = []
+                    this.suggestionRange = null
+                    this.navigatedUserIndex = 0
+                    this.destroyPopup()
+                },
+                // is called on every keyDown event while a suggestion is active
+                onKeyDown: ({ event }) => {
+                    // pressing up arrow
+                    if (event.keyCode === 38) {
+                        this.upHandler()
+                        return true
+                    }
+                    // pressing down arrow
+                    if (event.keyCode === 40) {
+                        this.downHandler()
+                        return true
+                    }
+                    // pressing enter
+                    if (event.keyCode === 13) {
+                        this.enterHandler()
+                        return true
+                    }
+                    return false
+                },
+                // is called when a suggestion has changed
+                // this function is optional because there is basic filtering built-in
+                // you can overwrite it if you prefer your own filtering
+                // in this example we use fuse.js with support for fuzzy search
+                // onFilter: (items, query) => {
+
+                //     //console.log('SEARCH', items, query);
+
+                //     if (!query) {
+                //         return items
+                //     }
+                //     const fuse = new Fuse(items, {
+                //         threshold: 0.2,
+                //         keys: ['name'],
+                //     })
+                //     return fuse.search(query)
+                // },
+            }),
+        ];
+        ///////////////////////////////////
+
+
+
+        if (window.hljs) {
+
+
+
+            // var json = function() { return window.hljs.getLanguage('json');} 
+            // var javascript = function() { return window.hljs.getLanguage('javascript');} 
+            // var scss = function() { return window.hljs.getLanguage('scss');} 
+
+            // // console.log('Got him', window.hljs, window.hljs.listLanguages());
+            // // var json = window.hljs.registerLanguage('json');
+            // var json1 = window.hljs.getLanguage('json');
+            // // var scss = window.hljs.registerLanguage('scss');
+            // // var javascript = window.hljs.registerLanguage('javascript');
+
+            // console.log('JSON 1', json1);
+            // console.log('JSON 2', json2);
+
+            // var highlightLanguages = {
+            //     scss,
+            //     javascript,
+            //     json,
+
+            // }
+
+            // var highlightLanguages = {
+            //     javascript,
+            //     json,
+            //     scss,
+            //     html,
+            // }
+
+            // console.log('GOT Languages', window, highlightLanguages)
+            //Add Code highlighting to the extension list
+            enabledExtensions.push(new CodeBlockHighlight({
+                languages:[json, javascript, scss],
+            }))
+        }
+
+        ///////////////////////////////////
+
+
         //Create and set the editor
         this.editor = new Editor({
             // editorProps:[{
@@ -479,142 +672,7 @@ export default {
             //         return string;
             //     }
             // }],
-            extensions: [
-                // new Alignment(),
-                new Placeholder({
-                    emptyClass: 'placeholder-text',
-                    emptyNodeText: self.placeholder,
-                    showOnlyWhenEditable: true,
-                }),
-                new HorizontalRule(),
-                new Blockquote(),
-                new CodeBlock(),
-                new HardBreak(),
-                new Heading({ levels: [1, 2, 3] }),
-                new BulletList(),
-                new OrderedList(),
-                new ListItem(),
-                // new TodoItem(),
-                // new TodoList(),
-                new Image(),
-                new Bold(),
-                new Code(),
-                new Italic(),
-                new Link(),
-                new Strike(),
-                new Underline(),
-                // new AutoLinkMark(), 
-                new History(),
-                new Table(),
-                new TableHeader(),
-                new TableCell(),
-                new TableRow(),
-                new Mention({
-                    // a list of all suggested items
-                    items: function() {
-
-
-
-                        // return self.$fluro.content.mention(query);
-
-                        return [];
-                        // return [
-                        //     { id: 1, name: 'Philipp Kühn' },
-                        //     { id: 2, name: 'Hans Pagel' },
-                        //     { id: 3, name: 'Kris Siepert' },
-                        //     { id: 4, name: 'Justin Schueler' },
-                        // ]
-                    },
-                    // is called when a suggestion starts
-                    onEnter: ({
-                        items,
-                        query,
-                        range,
-                        command,
-                        virtualNode,
-                    }) => {
-                        this.query = query
-                        this.filteredUsers = items
-                        this.suggestionRange = range
-                        this.renderPopup(virtualNode)
-                        // we save the command for inserting a selected mention
-                        // this allows us to call it inside of our custom popup
-                        // via keyboard navigation and on click
-                        this.insertMention = command
-                    },
-                    // is called when a suggestion has changed
-                    onChange: ({
-                        items,
-                        query,
-                        range,
-                        virtualNode,
-                    }) => {
-
-                        var mentionInstance = this;
-
-                        self.$fluro.content.mention(query, self.options.mentions).then(function(personas) {
-                                mentionInstance.query = query
-                                mentionInstance.filteredUsers = personas
-                                mentionInstance.suggestionRange = range
-                                mentionInstance.navigatedUserIndex = 0
-                                mentionInstance.renderPopup(virtualNode)
-                            })
-                            .catch(function(err) {
-                                //console.log('Error', err);
-                                // this.query = query
-                                // this.filteredUsers = items
-                                // this.suggestionRange = range
-                                // this.navigatedUserIndex = 0
-                                // this.renderPopup(virtualNode)
-                            });
-                    },
-                    // is called when a suggestion is cancelled
-                    onExit: () => {
-                        // reset all saved values
-                        this.query = null
-                        this.filteredUsers = []
-                        this.suggestionRange = null
-                        this.navigatedUserIndex = 0
-                        this.destroyPopup()
-                    },
-                    // is called on every keyDown event while a suggestion is active
-                    onKeyDown: ({ event }) => {
-                        // pressing up arrow
-                        if (event.keyCode === 38) {
-                            this.upHandler()
-                            return true
-                        }
-                        // pressing down arrow
-                        if (event.keyCode === 40) {
-                            this.downHandler()
-                            return true
-                        }
-                        // pressing enter
-                        if (event.keyCode === 13) {
-                            this.enterHandler()
-                            return true
-                        }
-                        return false
-                    },
-                    // is called when a suggestion has changed
-                    // this function is optional because there is basic filtering built-in
-                    // you can overwrite it if you prefer your own filtering
-                    // in this example we use fuse.js with support for fuzzy search
-                    // onFilter: (items, query) => {
-
-                    //     //console.log('SEARCH', items, query);
-
-                    //     if (!query) {
-                    //         return items
-                    //     }
-                    //     const fuse = new Fuse(items, {
-                    //         threshold: 0.2,
-                    //         keys: ['name'],
-                    //     })
-                    //     return fuse.search(query)
-                    // },
-                }),
-            ],
+            extensions: enabledExtensions,
             onUpdate: ({ getHTML }) => {
 
 
@@ -674,6 +732,7 @@ $color-white: #fff;
 
 
 
+
     .menububble {
         position: absolute;
         display: flex;
@@ -704,7 +763,7 @@ $color-white: #fff;
             // border: 1px solid #fff;
             border-radius: 3px;
             font-size: 0.8em;
-            padding:2px 4px;
+            padding: 2px 4px;
             color: #fff !important;
 
             &::placeholder {
@@ -897,18 +956,105 @@ $color-white: #fff;
     }
 
 
+
+    pre {
+        margin: 15px 0;
+
+        &::before {
+            content: attr(data-language);
+            text-transform: uppercase;
+            display: block;
+            text-align: right;
+            font-weight: bold;
+            font-size: 0.6rem;
+        }
+
+        code {
+            display: block;
+
+
+            /* Tomorrow Night Eighties Theme */
+            /* Original theme - https://github.com/chriskempson/tomorrow-theme */
+            /* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+
+            /* Tomorrow Comment */
+            .hljs-comment,
+            .hljs-quote {
+                color: #999999;
+            }
+
+            /* Tomorrow Red */
+            .hljs-variable,
+            .hljs-template-variable,
+            .hljs-tag,
+            .hljs-name,
+            .hljs-selector-id,
+            .hljs-selector-class,
+            .hljs-regexp,
+            .hljs-deletion {
+                color: #f2777a;
+            }
+
+            /* Tomorrow Orange */
+            .hljs-number,
+            .hljs-built_in,
+            .hljs-builtin-name,
+            .hljs-literal,
+            .hljs-type,
+            .hljs-params,
+            .hljs-meta,
+            .hljs-link {
+                color: #f99157;
+            }
+
+            /* Tomorrow Yellow */
+            .hljs-attribute {
+                color: #ffcc66;
+            }
+
+            /* Tomorrow Green */
+            .hljs-string,
+            .hljs-symbol,
+            .hljs-bullet,
+            .hljs-addition {
+                color: #99cc99;
+            }
+
+            /* Tomorrow Blue */
+            .hljs-title,
+            .hljs-section {
+                color: #6699cc;
+            }
+
+            /* Tomorrow Purple */
+            .hljs-keyword,
+            .hljs-selector-tag {
+                color: #cc99cc;
+            }
+
+            .hljs {
+                display: block;
+                overflow-x: auto;
+                background: #2d2d2d;
+                color: #cccccc;
+                padding: 0.5em;
+            }
+
+            .hljs-emphasis {
+                font-style: italic;
+            }
+
+            .hljs-strong {
+                font-weight: bold;
+            }
+        }
+    }
+
 }
-
-
-
-
 
 .mention-suggestion {
     color: rgba($color-black, 0.6);
 }
-
-
-
 
 .suggestion-list {
     font-family: 'font-proxima';

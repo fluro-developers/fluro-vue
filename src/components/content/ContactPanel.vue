@@ -4,6 +4,9 @@
     <!-- <template v-slot:form> -->
     <v-container class="grid-list-xl" pa-0>
         <wrapper xs>
+
+            <!-- <pre>{{definitions}}</pre> -->
+            <fluro-content-form-field :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.definition" v-model="model"></fluro-content-form-field>
             <v-layout row wrap>
                 <v-flex :class="{'xs12':$vuetify.breakpoint.xsOnly}">
                     <fluro-content-form-field :autofocus="true" class="right-messages" :form-fields="formFields" :outline="showOutline" @input="update" :options="options" :field="fieldHash.firstName" v-model="model"></fluro-content-form-field>
@@ -60,7 +63,6 @@
         </v-layout>
         <v-label>Family Household</v-label>
         <v-layout row wrap>
-
             <v-flex xs12 sm6>
                 <fluro-content-form-field :form-fields="formFields" :showLabel="false" :outline="showOutline" @input="update" :options="options" :field="fieldHash.family" v-model="model"></fluro-content-form-field>
             </v-flex>
@@ -158,6 +160,19 @@ export default {
 
                 var self = this;
                 var array = [];
+
+
+                ///////////////////////////////////
+
+                addField('definition', {
+                    title: 'Type / Definition',
+                    minimum: 0,
+                    maximum: 1,
+                    type: 'string',
+                    directive: 'select',
+                    options: self.contactDefinitions,
+                })
+
 
                 ///////////////////////////////////
 
@@ -426,10 +441,22 @@ export default {
         if (!self.model.academicGrade) {
             self.$set(self.model, 'academicGrade', '');
         }
+
+
+
+        // self.$fluro.types.retrieve(['contact']).then(function(res) {
+
+        //     self.contactDefinitions = _.chain(res)
+        //     .reduce({
+        //         contact:[],
+        //         detailSheets:[],
+        //     })
+        //     .value();
+        // });
     },
     computed: {
         showOutline() {
-            return true;//false;//true;//false;//true;
+            return true; //false;//true;//false;//true;
         },
         showPreferredName() {
             return (this.model.preferredName && this.model.preferredName.length) || this.show.preferredName;

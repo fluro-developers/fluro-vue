@@ -44,7 +44,7 @@ $title-fraction-sm: $title-fraction;
 $title-fraction-lg: $title-fraction / 3;
 $title-fraction-xl: $title-fraction / 3;
 
-section.wrapper {
+.wrapper {
 
     &[bottom] {
         padding-top:0 !important;

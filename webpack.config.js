@@ -3,10 +3,14 @@ const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
+    // runtimeCompiler: true,
     entry: './src/index.js',
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname, 'dist')
+    },
+    externals: {
+        'fluro':'fluro'
     },
     module: {
         rules: [{
@@ -28,8 +32,9 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
+                    'sass-loader',
                     'vue-style-loader',
-                    'css-loader'
+                    'css-loader',
                 ]
             }
         ]
