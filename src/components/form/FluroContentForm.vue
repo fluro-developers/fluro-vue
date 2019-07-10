@@ -1,6 +1,6 @@
 <template>
     <div class="fluro-content-form">
-        <slot name="form">
+        <slot name="form" :form-fields="formFields" :field-hash="fieldHash" :model="model" :update="update" :options="options">
             <template v-for="field in fields">
                 <!-- <pre>{{model[field.key]}}</pre> -->
                 <!-- <fluro-code-editor v-model="model[field.key]" @input="valueChange" :height="200"></fluro-code-editor> -->

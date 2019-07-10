@@ -362,7 +362,21 @@ export default {
 ```
 
 ```html
+<!-- Will render all of the form fields recursively in the order and layout as specified the definition -->
 <fluro-content-form v-model="model" :fields="definition.fields"></fluro-content-form>
+
+
+
+
+
+<!-- Layout fields with your own custom markup -->
+<fluro-content-form v-model="model" :fields="definition.fields">
+<template v-slot:form="{formFields, fieldHash, model, update, options}">
+    <fluro-content-form-field :form-fields="formFields" @input="update" :options="options" :field="fieldHash.lastName" v-model="model"></fluro-content-form-field>
+</template>
+</fluro-content-form>
+
+
 ```
 
 
@@ -370,7 +384,7 @@ export default {
 
 
 
-## Fluro Content Field
+## Fluro Content Form Field
 Renders a form field as defined within Fluro
 It will render all nested children and embedded fields recursively. This is mainly used 
 within the Fluro Content Form Component
@@ -383,13 +397,13 @@ within the Fluro Content Form Component
 > Example Usage
 
 ```javascript
-import {FluroContentField} from 'fluro-vue';
+import {FluroContentFormField} from 'fluro-vue';
 
 ////////////////////////////////////////////////////////
 
 export default {
     components: {
-        FluroContentField,
+        FluroContentFormField,
     },
     data() {
         return {
@@ -665,13 +679,13 @@ Renders a signature input that allows a user to add their signature for a form
 > Example Usage
 
 ```javascript
-import FluroContentField from 'fluro-vue';
+import FluroContentFormField from 'fluro-vue';
 
 ////////////////////////////////////////////////////////
 
 export default {
     components: {
-        FluroContentField,
+        FluroContentFormField,
     },
     data() {
         return {
