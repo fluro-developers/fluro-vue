@@ -16,7 +16,7 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue v1.0.31')
+console.log('fluro-vue v1.0.32')
 // import store from './store'
 import Fluro from 'fluro';
 

@@ -225,6 +225,7 @@ export default {
 
                 //We already have a value in this field
                 if(existingValue) {
+                    Vue.set(self.model, field.key, existingValue);
                     return;
                 }
 
