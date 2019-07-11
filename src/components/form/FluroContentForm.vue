@@ -220,6 +220,14 @@ export default {
 
             //Recursively create all the default keys for nested fields
             function createDefaults(field) {
+
+                var existingValue = _.get(self.model, field.key);
+
+                //We already have a value in this field
+                if(existingValue) {
+                    return;
+                }
+
                 var blankValue = Fluro.utils.getDefaultValueForField(field);
 
                 //Check if it's just a display group
@@ -227,7 +235,7 @@ export default {
                     (field.fields || []).forEach(createDefaults);
                 }
 
-                // //console.log('SET', field.key, blankValue);
+                console.log('SET DEFAULT', field.key, blankValue);
                 Vue.set(self.model, field.key, blankValue);
             }
 
