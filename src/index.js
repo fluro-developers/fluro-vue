@@ -16,7 +16,9 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue v1.0.32')
+console.log('fluro-vue v1.0.34')
+// process.env.VUE_APP_VERSION = require('./package.json').version
+
 // import store from './store'
 import Fluro from 'fluro';
 

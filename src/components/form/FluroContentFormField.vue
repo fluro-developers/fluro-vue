@@ -1395,6 +1395,8 @@ export default {
                     this.results = (this.defaultValues || []).slice();
                     break;
             }
+
+            console.log('Setting results to ', this.results);
         }
 
         ////////////////////////////////////////////
