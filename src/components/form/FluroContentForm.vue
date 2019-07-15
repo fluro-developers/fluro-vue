@@ -225,7 +225,7 @@ export default {
 
                 //We already have a value in this field
                 if(existingValue) {
-                    console.log('Has existing value', field.key, existingValue);
+                    // console.log('Has existing value', field.key, existingValue);
                     Vue.set(self.model, field.key, existingValue);
                     return;
                 }
@@ -237,7 +237,7 @@ export default {
                     (field.fields || []).forEach(createDefaults);
                 }
 
-                console.log('SET DEFAULT', field.key, blankValue);
+                // console.log('SET DEFAULT', field.key, blankValue);
                 Vue.set(self.model, field.key, blankValue);
             }
 

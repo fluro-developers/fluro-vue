@@ -12,7 +12,6 @@ export default {
             type:String,
         },
         'library':{
-            default:'fas',
             type:String,
         },
         'spin':{
@@ -21,13 +20,13 @@ export default {
     },
     computed: {
         fontLibrary() {
-            return this.library;
+            return this.library || this.$fluro.global.defaultIconLibrary || 'fas';
         },
         iconName() {
             if(this.icon) {
-                return [this.library, this.icon];
+                return [this.fontLibrary, this.icon];
             } else {
-                return this.$fluro.types.icon(this.type, this.library) || [this.library, this.type];
+                return this.$fluro.types.icon(this.type, this.fontLibrary) || [this.fontLibrary, this.type];
             }
         },
     }

@@ -1,6 +1,8 @@
 <template>
     <div class="dots">
-        <span class="dot" :style="{backgroundColor:realm.bgColor}" v-for="realm in colouredRealms"/>
+        <!-- {{filtered}} -->
+        <!-- {{colouredRealms}} {{filtered}} -->
+        <span class="dot" :style="{backgroundColor:realm.bgColor || '#000'}" v-for="realm in filtered"/>
     </div>
 </template>
 <script>
@@ -8,13 +10,35 @@
 export default {
     props:{
         'realms':{
+            default:[],
             type:Array,
         },
     },
     computed:{
-        colouredRealms() {
-            return _.filter(this.realms, 'bgColor');
-        }
+        filtered() {
+            var filtered = _.filter(this.realms, function(realm) {
+                if(realm._discriminatorType) {
+                    return;
+                }
+
+                return true;
+            });
+
+
+            var coloured = _.filter(filtered, 'bgColor');
+
+            if(coloured.length) {
+                return coloured;
+            } else {
+                return filtered.slice(0,1);
+            }
+        },
+        // colouredRealms() {
+        //     var coloured = _.filter(this.filtered, 'bgColor');
+        //     if(!coloured.length) {
+        //         return this.filtered.slice(0,1);
+        //     }
+        // }
     }
 }
 </script>

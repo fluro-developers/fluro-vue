@@ -123,7 +123,7 @@
                 </template>
                 <v-card v-if="modal">
                     <v-toolbar color="primary" dark>
-                        <v-toolbar-title>{{label}}</v-toolbar-title>
+                        <v-toolbar-title>{{displayLabel}}</v-toolbar-title>
                     </v-toolbar>
                     <v-time-picker v-model="sudoModel" full-width>
                         <v-spacer></v-spacer>

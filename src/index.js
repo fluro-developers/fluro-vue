@@ -16,7 +16,7 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue v1.0.34')
+console.log('fluro-vue v1.0.37')
 // process.env.VUE_APP_VERSION = require('./package.json').version
 
 // import store from './store'
@@ -81,6 +81,7 @@ export { FluroSearchBar as FluroSearchBar };
 
 import FluroIcon from './components/ui/FluroIcon.vue';
 import FluroRealmDots from './components/ui/FluroRealmDots.vue';
+import FluroStatusLabel from './components/ui/FluroStatusLabel.vue';
 
 
 
@@ -161,6 +162,23 @@ import FluroStatTotal from './components/FluroStatTotal.vue';
 export { FluroStatTotal as FluroStatTotal };
 
 
+
+//Flex Column
+import FlexColumn from './components/ui/FlexColumn.vue';
+export { FlexColumn as FlexColumn };
+
+//Flex Column Header
+import FlexColumnHeader from './components/ui/FlexColumnHeader.vue';
+export { FlexColumnHeader as FlexColumnHeader };
+
+//Flex Column Header
+import FlexColumnBody from './components/ui/FlexColumnBody.vue';
+export { FlexColumnBody as FlexColumnBody };
+
+
+//Flex Column Footer
+import FlexColumnFooter from './components/ui/FlexColumnFooter.vue';
+export { FlexColumnFooter as FlexColumnFooter };
 
 
 
@@ -474,6 +492,7 @@ const FluroVue = {
         //Add Fluro Components Globally
         Vue.component('fluro-icon', FluroIcon);
         Vue.component('fluro-realm-dots', FluroRealmDots);
+        Vue.component('fluro-status-label', FluroStatusLabel);
         Vue.component('fluro-avatar', FluroAvatar);
         Vue.component('fluro-image', FluroImage);
         Vue.component('fluro-list-item', FluroListItem);
@@ -481,6 +500,11 @@ const FluroVue = {
         Vue.component('fluro-video-thumbnail', FluroVideoThumbnail);
         Vue.component('fluro-page-preloader', FluroPagePreloader);
         Vue.component('fluro-html', FluroHTML);
+        Vue.component('flex-column', FlexColumn);
+        Vue.component('flex-column-body', FlexColumnBody);
+        Vue.component('flex-column-header', FlexColumnHeader);
+        Vue.component('flex-column-footer', FlexColumnFooter);
+
 
         /////////////////////////////////////////////////////
 
