@@ -69,6 +69,7 @@ export default {
         },
         'actions': {
             type: [Array, Boolean],
+            default:[],
         },
         'defaultActions': {
             type: Boolean,
@@ -77,7 +78,7 @@ export default {
     data() {
         return {
             actionsOpen: false,
-            availableActions: [],
+            availableActions:this.actions,
         }
     },
     created() {

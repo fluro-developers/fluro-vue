@@ -1,11 +1,14 @@
 <template>
     <div class="fluro-content-select" :class="{outlined:showOutline}">
-        <pre>{{model}}</pre>
+        <!-- <pre>{{model}}</pre> -->
         <div class="fluro-content-list" v-if="model.length">
             <draggable v-model="model" v-bind="dragOptions" @start="drag=true" @end="drag=false">
                 <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                     <!-- <div v-for="element in myArray" :key="element.id">{{element.name}}</div> -->
-                    <fluro-list-item bordered :item="item" v-for="item in model" :key="item._id" :actions="getActions(item)" />
+                    <!-- <div > -->
+                    <fluro-list-item bordered :item="item" v-for="item in model" :key="item._id"  :actions="getActions(item)" />
+                    <!-- <pre>{{getActions(item)}}</pre> -->
+                <!-- </div> -->
                 </transition-group>
             </draggable>
         </div>
