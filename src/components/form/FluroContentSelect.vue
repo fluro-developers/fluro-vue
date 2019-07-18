@@ -150,7 +150,7 @@ export default {
         if(_.isArray(initialValue)) {
              this.setSelection(initialValue);
          } else {
-            console.log('WHAT IS IS IT IT SHOULD BE AN IBJECT', initialValue.length)
+            // console.log('WHAT IS IS IT IT SHOULD BE AN IBJECT', initialValue.length)
             this.setSelection([initialValue]);
         } 
     },
@@ -279,7 +279,7 @@ export default {
                 }
 
 
-                console.log('OPTIONS', this);
+                // console.log('OPTIONS', this);
 
                 self.$fluro.content.search(searchTerms, params)
                     .then(function(results) {
