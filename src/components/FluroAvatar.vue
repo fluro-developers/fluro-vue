@@ -1,6 +1,7 @@
 <template>
     <div class="avatar">
-        <div class="avatar-inner" v-if="url" :style="{backgroundImage:url}"></div>
+       
+        <div class="avatar-inner"  :style="styles"></div>
 <!--         <pre>{{image}}</pre>
  -->    </div>
 </template>
@@ -24,14 +25,23 @@ export default {
             default: 100,
         },
     },
-    computed: {
-        // classes(){
-        //  return size;
-        // },
-        url() {
-            if (this.id) {
-                return this.$fluro.asset.avatarUrl(this.id, this.type, { w: this.width});
+    computed:{
+        styles() {
+            
+            var styleObject = {};
+
+            if(this.url && this.url.length) {
+                styleObject.backgroundImage = `url(${this.url})`;
             }
+            
+            return styleObject;
+        },
+        url() {
+
+            if(this.id) {
+                return  this.$fluro.asset.avatarUrl(this.id, this.type, { w: this.width});
+            }
+
         },
     },
 }

@@ -23,11 +23,17 @@ export default {
         height: {
             type: Number,
         },
+        imageWidth:{
+            type:Number,
+        },
+        imageHeight:{
+            type:Number,
+        },
     },
     data() {
         return {
-            imageWidth: 0,
-            imageHeight: 0,
+            loadedImageWidth: 0,
+            loadedImageHeight: 0,
             loaded: false,
         }
     },
@@ -58,11 +64,8 @@ export default {
             img.onload = function($event) {
                 self.loaded = true;
                 self.$emit('load', $event);
-
-
-                self.imageWidth = img.width;
-                self.imageHeight = img.height;
-
+                self.loadedImageWidth = img.width;
+                self.loadedImageHeight = img.height;
             }
 
             //Once the image has loaded
@@ -75,7 +78,6 @@ export default {
     },
     computed: {
         style() {
-
             var styles = {
                 backgroundImage:this.backgroundImage,
             }
@@ -88,6 +90,8 @@ export default {
 
             if(this.height) {
                 styles.height = `${this.height}px`;
+            } else {
+                styles.height = 'auto';
             }
 
 
@@ -95,10 +99,10 @@ export default {
             return styles;
         },
         computedWidth() {
-            return _.get(this.item, 'width') || this.width || this.imageWidth || 0;
+            return this.imageWidth || this.loadedImageWidth || this.width || _.get(this.item, 'width') || 1;
         },
         computedHeight() {
-            return _.get(this.item, 'height') || this.height || this.imageHeight || 0;
+            return this.imageHeight || this.loadedImageHeight || this.height || _.get(this.item, 'height') || 1;
         },
         aspectRatio() {
             return (this.computedHeight / this.computedWidth * 100);
@@ -121,7 +125,10 @@ export default {
         url() {
             if (this.imageID) {
                 //Allow the Fluro API to decide the best dimensions based on screensize
-                return this.$fluro.asset.imageUrl(this.imageID, this.width, this.height, { includePublic: true });
+                var requestWidth = this.imageWidth || (this.width ? this.width * 2 : null);
+                 var requestHeight = this.imageHeight || (this.height ? this.height * 2 : null);
+
+                return this.$fluro.asset.imageUrl(this.imageID, requestWidth, requestHeight, { includePublic: true });
             } else {
                 return;
             }

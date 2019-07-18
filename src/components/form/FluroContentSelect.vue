@@ -1,6 +1,6 @@
 <template>
     <div class="fluro-content-select" :class="{outlined:showOutline}">
-        <!-- <pre>{{model}}</pre> -->
+        <pre>{{model}}</pre>
         <div class="fluro-content-list" v-if="model.length">
             <draggable v-model="model" v-bind="dragOptions" @start="drag=true" @end="drag=false">
                 <transition-group type="transition" :name="!drag ? 'flip-list' : null">
@@ -140,15 +140,16 @@ export default {
     },
     created() {
 
-        var initialValue = this.value;
+        var initialValue = this.value || [];
 
 
         // if(this.multiple) {
-        if(_.isObject(initialValue)) {
+        if(_.isArray(initialValue)) {
+             this.setSelection(initialValue);
+         } else {
+            console.log('WHAT IS IS IT IT SHOULD BE AN IBJECT', initialValue.length)
             this.setSelection([initialValue]);
-        } else {
-            this.setSelection(initialValue);
-        }
+        } 
     },
 
     // <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
