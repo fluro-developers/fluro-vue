@@ -1,7 +1,7 @@
 <template>
     <div class="avatar">
        
-        <div class="avatar-inner"  :style="styles"></div>
+        <div class="avatar-inner" :style="styles"></div>
 <!--         <pre>{{image}}</pre>
  -->    </div>
 </template>
@@ -33,7 +33,7 @@ export default {
             if(this.url && this.url.length) {
                 styleObject.backgroundImage = `url(${this.url})`;
             }
-            
+
             return styleObject;
         },
         url() {
