@@ -1,6 +1,6 @@
 <template>
     <div class="avatar">
-        <div class="avatar-inner" :style="{backgroundImage:url}"></div>
+        <div class="avatar-inner" v-if="url" :style="{backgroundImage:url}"></div>
 <!--         <pre>{{image}}</pre>
  -->    </div>
 </template>

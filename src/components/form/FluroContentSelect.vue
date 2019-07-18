@@ -1,6 +1,6 @@
 <template>
     <div class="fluro-content-select" :class="{outlined:showOutline}">
-        <pre>{{model}}</pre>
+        <!-- <pre>{{model}}</pre> -->
         <div class="fluro-content-list" v-if="model.length">
             <draggable v-model="model" v-bind="dragOptions" @start="drag=true" @end="drag=false">
                 <transition-group type="transition" :name="!drag ? 'flip-list' : null">
