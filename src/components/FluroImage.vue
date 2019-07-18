@@ -86,9 +86,9 @@ export default {
                 styles.width = '100%';
             }
 
-            // if(this.height) {
-                // styles.height = `${this.height}px`;
-            // }
+            if(this.height) {
+                styles.height = `${this.height}px`;
+            }
 
 
 

@@ -10,7 +10,9 @@
 export default {
     props:{
         'realms':{
-            default:[],
+            default() {
+                return [];
+            },
             type:Array,
         },
     },
