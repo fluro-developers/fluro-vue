@@ -1,5 +1,6 @@
 <template>
     <div class="fluro-content-select" :class="{outlined:showOutline}">
+        <pre>{{model}}</pre>
         <div class="fluro-content-list" v-if="model.length">
             <draggable v-model="model" v-bind="dragOptions" @start="drag=true" @end="drag=false">
                 <transition-group type="transition" :name="!drag ? 'flip-list' : null">
@@ -111,7 +112,7 @@ export default {
             type: String,
         },
         'value': {
-            type: Array,
+            type: [Array, Object],
             default: function() {
                 return [];
             },
@@ -136,6 +137,18 @@ export default {
             },
             type: Object,
         },
+    },
+    created() {
+
+        var initialValue = this.value;
+
+
+        // if(this.multiple) {
+        if(_.isObject(initialValue)) {
+            this.setSelection([initialValue]);
+        } else {
+            this.setSelection(initialValue);
+        }
     },
 
     // <v-input class="no-flex" :success="success" :label="label" :required="required" :error-messages="errorMessages" :hint="field.description">
@@ -165,6 +178,7 @@ export default {
             // }
         },
         canAddValue() {
+
             if (this.maximum) {
                 return this.total < this.maximum;
             }
@@ -190,9 +204,6 @@ export default {
         // ...mapFields('fluro', [
         //     'realmSelectFullScreen', //The authenticated user if they log in
         // ]),
-    },
-    created() {
-        this.setSelection(this.value);
     },
     methods: {
         closeModal() {
@@ -282,12 +293,23 @@ export default {
         },
         'model': function() {
             var self = this;
-            this.$emit('input', self.model); //[self.key])
+
+            if(!this.multiple) {
+                this.$emit('input', _.first(self.model)); //[self.key])
+            } else {
+                this.$emit('input', self.model);
+            }
+            
         }
     },
     data() {
+
+
+
+
         return {
-            candidates: this.value,
+            selection:[],
+            candidates:[],
             results: [],
             terms: '',
             loading: false,
@@ -349,19 +371,20 @@ export default {
     }
 
 
-     &.outlined {
+    &.outlined {
         & /deep/ .v-input__slot {
             height: 60px;
         }
 
 
         & /deep/ .v-input__prepend-inner {
-            margin-top:16px !important;
+            margin-top: 16px !important;
         }
+
         .content-select-search-bar .content-select-search-buttons {
-            top:6px;
+            top: 6px;
         }
-        
+
     }
 
 
