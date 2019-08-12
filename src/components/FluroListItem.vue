@@ -1,5 +1,6 @@
 <template>
     <div class="fluro-list-item">
+        
         <div class="realm-bar" :style="realmStyle" />
         <!-- <div class="handle" v-if="draggable">
             <v-btn icon flat v-on="on">
@@ -20,7 +21,7 @@
                 <fluro-icon :type="item._type"></fluro-icon>
             </template>
         </div>
-        <component :is="linkType" :to="to" class="item-text">
+        <component :is="linkType" :to="to" :target="target" :href="href" class="item-text">
             <!-- <router-link :to="to" class="item-text"> -->
             <div>
                 <div class="item-title">{{title}}</div>
@@ -30,6 +31,8 @@
             <pre>{{item}}</pre> -->
             <!-- </router-link> -->
         </component>
+        
+        <!-- <pre>{{actionsEnabled}} {{actions}}</pre> -->
         <div class="item-actions" :class="{active:actionsOpen}" v-if="actionsEnabled">
             <v-menu :left="true" v-model="actionsOpen" :fixed="true" transition="slide-y-transition" offset-y>
                 <template v-slot:activator="{ on }">
@@ -62,6 +65,12 @@ export default {
         'to': {
             type: Object
         },
+        'href': {
+            type: String
+        },
+        'target': {
+            type: String
+        },
         'item': [String, Object],
         'model': {
             type: String,
@@ -69,7 +78,9 @@ export default {
         },
         'actions': {
             type: [Array, Boolean],
-            default:[],
+            default:function() {
+                return [];
+            },
         },
         'defaultActions': {
             type: Boolean,
@@ -102,7 +113,7 @@ export default {
 
         /////////////////////////////////////
 
-        if (self.defaultActions && self.actions) {
+        if (self.defaultActions && self.actions !== false) {
 
 
                 //If we can edit this thing
@@ -225,6 +236,10 @@ export default {
         linkType() {
             if (this.to) {
                 return 'router-link'
+            }
+
+            if(this.href) {
+                return 'a';
             }
 
             return 'div'

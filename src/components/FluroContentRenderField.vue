@@ -7,12 +7,12 @@
             <div class="field-group">
                 <label>{{label}}</label>
                 <template v-if="!multiple">
-                    <fluro-list-item :item="fieldModel"></fluro-list-item>
+                    <fluro-list-item :item="fieldModel" :defaultActions="defaultActions(object)"></fluro-list-item>
                 </template>
                 <template v-if="multiple">
                     <template v-for="(object, index) in fieldModel">
                         <!-- <pre>{{object}}</pre> -->
-                        <fluro-list-item :item="object"></fluro-list-item>
+                        <fluro-list-item :item="object" :defaultActions="defaultActions(object)"></fluro-list-item>
                     </template>
                 </template>
             </div>
@@ -421,6 +421,16 @@ export default {
         }
     },
     methods: {
+        defaultActions(object) {
+            switch(object._type) {
+                case 'asset':
+                case 'video':
+                case 'image':
+                case 'audio':
+                return true;
+                break;
+            }
+        },
         groupTitle(object, index) {
             if (object) {
                 if (object.title && object.title.length) {
