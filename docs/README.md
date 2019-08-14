@@ -175,7 +175,125 @@ this.$fluro.content.retrieve(criteria, {
 
 ```
 
+
+# Mixins
+
+## FluroSelectionMixin
+Provides helpful selection/deselection functions to your component including:
+
+| Props | Description |
+| ----------- | ----------- |
+| `this.selection` | An array of the currently selected items |
+| `this.toggle(object)` | Selects/Deselects an object|
+| `this.isSelected(object)` | Returns true if the object is currently selected|
+| `this.select(object)` | A method for selecting an object|
+| `this.deselect(object)` | A method for deselecting an object|
+| `this.deselectAll()` | A method to clear the existing selection|
+| `this.setSelection([Object, Object])` | A method for replacing the selection with a new array of objects|
+| `spinner` | Whether a preloader spinner should show while the image is loading |
+
+
+```javascript
+
+import {FluroSelectionMixin} from 'fluro-vue';
+
+////////////////////////////////////////////////////////
+
+//My Component
+export default {
+    mixins:[FluroSelectionMixin],
+    data:{
+        something:null,
+    },
+    methods:{},
+    
+}
+```
+
+
+
+
 # UI Components
+
+## Fluro Page Preloader
+A simple preloader that can be used to display a spinner while content is loading, 
+by default will appear fixed in the center of the browser window, but the contain attribute can be added if it should be contained within another
+div or element
+
+
+```html
+<!-- Show an extra large avatar for a Fluro global user -->
+<fluro-page-preloader v-if="loading"/>
+
+
+<!-- Show an extra large avatar for a Fluro global user -->
+<fluro-page-preloader v-if="loading" contain/>
+```
+
+
+
+
+## Fluro Realm Dots
+A component that can display coloured dots as defined in an array of realms
+
+
+```html
+<!-- Show an extra large avatar for a Fluro global user -->
+<fluro-realm-dots :realms="[{title:'Realm One', color:'#ff0066',...}...]"/>
+
+```
+
+## Fluro Icon
+A component that makes it easy to show an icon
+
+```html
+<!-- Show the default icon for a 'eventtrack' in Fluro -->
+<fluro-icon type="eventtrack"/>
+
+<!-- Show an icon from the default icon set eg. Font awesome -->
+<fluro-icon icon="home"/>
+
+<!-- Show the home icon from the 'fal' icon library-->
+<fluro-icon icon="home" library="fal"/>
+
+<!-- Spin the icon endlessly -->
+<fluro-icon icon="spinner" spin/>
+```
+
+
+## Flex Column Component
+Wraps the content inside in a Flexbox column display, allowing you to easily create fixed headers and footers
+while allowing an interior element to be scrollable. Works together with the FlexColumnHeader, FlexColumnFooter and FlexColumnBody components
+The Flex Column component can be nested also.
+
+```html
+<flex-column>
+    <flex-column-header>
+        Yay! I am fixed to the top
+    </flex-column-header>
+
+
+
+    <flex-column-body>
+    <div>
+        Yay! I am scrollable.
+    </div>
+    </flex-column-body>
+
+
+    <flex-column-footer>
+    <div>
+        Yay! I am fixed to the bottom.
+    </div>
+    </flex-column-footer>
+
+
+</flex-column>
+```
+
+
+
+
 
 ## Avatar
 A component that makes it quick and easy to show an avatar for a Fluro user, persona or contact 
