@@ -10,7 +10,8 @@ module.exports = {
         path: path.resolve(__dirname, 'dist')
     },
     externals: {
-        'fluro':'fluro'
+        'fluro':'fluro',
+        'vuex-map-fields':'vuex-map-fields',
     },
     module: {
         rules: [{
