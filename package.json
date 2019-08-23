@@ -1,6 +1,6 @@
 {
   "name": "fluro-vue",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A package to make it easy to build Vue applications that interact with Fluro",
   "main": "src/index.js",
   "scripts": {

@@ -12,6 +12,12 @@ module.exports = {
     externals: {
         'fluro':'fluro',
         'vuex-map-fields':'vuex-map-fields',
+        'lodash': {
+            commonjs: 'lodash',
+            commonjs2: 'lodash',
+            amd: 'lodash',
+            root: '_'
+        },
     },
     module: {
         rules: [{
