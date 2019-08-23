@@ -1,4 +1,5 @@
 # Quick Start
+***Important note: Since version 2 All Mixins have now been moved into a seperate package `fluro-vue-ui`***
 
 
 Install the `fluro-vue` package via npm
@@ -7,6 +8,8 @@ Install the `fluro-vue` package via npm
 npm install fluro-vue --save
 
 ```
+
+
 
 Include in your Vue app, and initialize with your `vuex` store
 ```javascript
@@ -174,6 +177,8 @@ this.$fluro.content.retrieve(criteria, {
 
 
 ```
+
+
 
 
 # Mixins

@@ -1,6 +1,6 @@
 {
   "name": "fluro-vue",
-  "version": "1.0.47",
+  "version": "2.0.1",
   "description": "A package to make it easy to build Vue applications that interact with Fluro",
   "main": "src/index.js",
   "scripts": {
@@ -26,18 +26,7 @@
   },
   "homepage": "https://github.com/fluro-developers/fluro-vue#readme",
   "dependencies": {
-    "expression-eval": "^2.0.0",
     "fluro": "^1.0.74",
-    "highlight.js": "^9.15.8",
-    "js-beautify": "^1.9.1",
-    "signature_pad": "^3.0.0-beta.3",
-    "tippy.js": "^4.3.0",
-    "tiptap": "^1.17.0",
-    "tiptap-extensions": "^1.17.0",
-    "vue-vimeo-player": "0.0.9",
-    "vue-youtube": "^1.3.4",
-    "vue2-ace-editor": "0.0.13",
-    "vuedraggable": "^2.20.0",
     "vuex-map-fields": "^1.3.3"
   },
   "devDependencies": {
