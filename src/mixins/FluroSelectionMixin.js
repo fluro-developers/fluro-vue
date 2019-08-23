@@ -17,11 +17,6 @@ export default {
             var self = this;
 
             self.selection = array;
-
-            // self.selection.length = 0;
-            // _.each(array, function(item) {
-            //     self.$set(self.selection, self.selection.length, item);
-            // })
         },
         deselect(item) {
             var self = this;
