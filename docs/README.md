@@ -1,5 +1,5 @@
 # Quick Start
-***Important note: Since version 2 All Mixins have now been moved into a seperate package `fluro-vue-ui`***
+### Important note: Since version 2 All UI Components have now been moved into a seperate package `fluro-vue-ui`
 
 
 Install the `fluro-vue` package via npm
@@ -22,6 +22,12 @@ import store from './store'
 
 import Fluro from 'fluro-vue';
 Vue.use(Fluro, { store });
+
+
+//Include Global UI components
+import FluroVueUI from 'fluro-vue-ui';
+Vue.use(FluroVueUI);
+
 
 ````
 
@@ -403,7 +409,7 @@ mention other users by typing in @their.name and fits in and inherits the styles
 ```
 
 ```javascript
-import {FluroEditor} from 'fluro-vue';
+import {FluroEditor} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -431,7 +437,7 @@ An inline code editor, capable of inputting, rendering, beautifying your JSON, J
 > Example Usage
 
 ```javascript
-import {FluroCodeEditor} from 'fluro-vue';
+import {FluroCodeEditor} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -468,7 +474,7 @@ It will automatically render all of the fields, using the Fluro Content Field co
 > Example Usage
 
 ```javascript
-import {FluroContentForm} from 'fluro-vue';
+import {FluroContentForm} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -520,7 +526,7 @@ within the Fluro Content Form Component
 > Example Usage
 
 ```javascript
-import {FluroContentFormField} from 'fluro-vue';
+import {FluroContentFormField} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -569,7 +575,7 @@ Renders a Fluro interaction definition as a fully working form, complete with va
 > Example Usage
 
 ```javascript
-import {FluroInteractionForm} from 'fluro-vue';
+import {FluroInteractionForm} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -629,7 +635,7 @@ Renders a Fluro post definition as a fully functional form
 > Example Usage
 
 ```javascript
-import {FluroPostForm} from 'fluro-vue';
+import {FluroPostForm} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -679,7 +685,7 @@ Renders a thread of posts for a specified parent item
 > Example Usage
 
 ```javascript
-import {FluroPostThread} from 'fluro-vue';
+import {FluroPostThread} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -722,7 +728,7 @@ As this is for toggling on/off a specific stat, all stats toggled by this compon
 > Example Usage
 
 ```javascript
-import {FluroStatToggle} from 'fluro-vue';
+import {FluroStatToggle} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -762,7 +768,7 @@ Displays a total of stats of a specified type for an item
 > Example Usage
 
 ```javascript
-import {FluroStatToggle} from 'fluro-vue';
+import {FluroStatToggle} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -802,7 +808,7 @@ Renders a signature input that allows a user to add their signature for a form
 > Example Usage
 
 ```javascript
-import FluroContentFormField from 'fluro-vue';
+import FluroContentFormField from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -850,7 +856,7 @@ Allows for data entry of a full Javascript date timestamp as a string or date
 > Example Usage
 
 ```javascript
-import {FluroDateTimePicker} from 'fluro-vue';
+import {FluroDateTimePicker} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 

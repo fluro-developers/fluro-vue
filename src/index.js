@@ -16,7 +16,7 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue 2.0.8')
+console.log('fluro-vue 2.0.11')
 // process.env.VUE_APP_VERSION = require('./package.json').version
 
 // import store from './store'
@@ -149,7 +149,20 @@ const FluroVue = {
 
                     break;
                 case 'global':
-                    //User logs in to the app
+                    //User logs in to the app via the server
+                    if(FluroApplication.requireLogin) {
+                        //The user will already be logged in at this point
+                        var FluroCookieUser = _.get(window, 'applicationUser');
+
+                        if(FluroCookieUser) {
+                            console.log('-- Authenticated via cookie', FluroCookieUser)
+                             fluro.auth.set(FluroCookieUser);
+                        }
+                       
+                    } else {
+                        //It's a global app so it's up to the application
+                        //as to how it handles authentication
+                    }
                     break;
             }
 
@@ -297,6 +310,10 @@ const FluroVue = {
         Vue.filter('readableEventTime', fluro.date.readableEventTime);
         Vue.filter('filesize', fluro.asset.filesize);
         Vue.filter('comma', fluro.utils.comma);
+        Vue.filter('definitionTitle', function(input, plural, backup) {
+            var readable =fluro.types.readable(input, plural);
+            return readable.length ? readable : ( backup ? fluro.types.readable(backup, plural) : '');
+        });
 
         /////////////////////////////////////////////////////
 
