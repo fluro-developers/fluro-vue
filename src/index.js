@@ -16,7 +16,7 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue 2.0.11')
+console.log('fluro-vue 2.0.13')
 // process.env.VUE_APP_VERSION = require('./package.json').version
 
 // import store from './store'
@@ -113,29 +113,54 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
+        var HARDCODE_API;
+
         //Get the development environment (local staging or production)
         var environment = process.env.VUE_APP_FLURO_ENV;
         switch (environment) {
             case 'local':
                 API_URL = process.env.VUE_APP_API_LOCAL;
+                HARDCODE_API = true;
                 break;
             case 'staging':
                 API_URL = process.env.VUE_APP_API_STAGING;
+                HARDCODE_API = true;
                 break;
             default:
                 API_URL = process.env.VUE_APP_API_LIVE;
                 break;
         }
 
+
+
         /////////////////////////////////////////////////////
 
         //If we have application data from fluro set the defaults based on that
         var FluroApplicationData = _.get(window, 'applicationData');
         var FluroApplication = _.get(FluroApplicationData, '_application');
+        var FluroCookieUser;
+
+        /////////////////////////////////////////////////////
 
         //If we are running in the context of being deployed on Fluro
         //we should adhere to the settings set from the Application
         if (FluroApplication) {
+
+
+            /////////////////////////////////////////////////////
+
+            //Set the default timezone from our application data
+            DEFAULT_TIMEZONE = FluroApplication.timezone;
+
+            /////////////////////////////////////////////////////
+
+            if (environment == 'production') {
+                //Use the API Specified in the application
+                API_URL = FluroApplication.apipath || API_URL;
+            }
+
+            /////////////////////////////////////////////////////
+
             switch (FluroApplication.authenticationStyle) {
                 case 'application':
                     var protocol = 'http:';
@@ -152,13 +177,7 @@ const FluroVue = {
                     //User logs in to the app via the server
                     if(FluroApplication.requireLogin) {
                         //The user will already be logged in at this point
-                        var FluroCookieUser = _.get(window, 'applicationUser');
-
-                        if(FluroCookieUser) {
-                            console.log('-- Authenticated via cookie', FluroCookieUser)
-                             fluro.auth.set(FluroCookieUser);
-                        }
-                       
+                        FluroCookieUser = _.get(window, 'applicationUser');
                     } else {
                         //It's a global app so it's up to the application
                         //as to how it handles authentication
@@ -166,17 +185,8 @@ const FluroVue = {
                     break;
             }
 
+            
             /////////////////////////////////////////////////////
-
-            if (environment == 'production') {
-                //Use the API Specified in the application
-                API_URL = FluroApplication.apipath || API_URL;
-            }
-
-            /////////////////////////////////////////////////////
-
-            //Set the default timezone from our application data
-            DEFAULT_TIMEZONE = FluroApplication.timezone;
 
             //Need this workaround it seems otherwise the app doesn't get set
             setTimeout(function() {
@@ -197,6 +207,7 @@ const FluroVue = {
             apiURL: API_URL,
             applicationToken: APPLICATION_TOKEN,
             domain: APPLICATION_REMOTE_URL,
+            withCredentials:FluroCookieUser, //If we are using cookies
         });
 
         /////////////////////////////////////////////////////
@@ -215,8 +226,22 @@ const FluroVue = {
         // fluro.auth.debug = true;
         fluro.auth.addEventListener('change', userUpdated);
 
-        //Set the user from the vuex store if we have it
-        fluro.auth.set(store.getters['fluro/user']);
+        /////////////////////////////////////////////////////
+
+        //Check if our user session is in localStorage
+        var localStorageUser = store.getters['fluro/user'];
+
+        if(localStorageUser) {
+            //Authenticate with the user session stored locally
+            fluro.auth.set(localStorageUser);
+        } else {
+
+            //If we are authenticated with a cookie
+            if(FluroCookieUser) {
+                console.log('-- Authenticated via cookie', FluroCookieUser)
+                 fluro.auth.set(FluroCookieUser);
+            }
+        }
 
         /////////////////////////////////////////////////////
 
