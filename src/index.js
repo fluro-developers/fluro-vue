@@ -16,7 +16,7 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue 2.0.14')
+console.log('fluro-vue 2.0.15')
 // process.env.VUE_APP_VERSION = require('./package.json').version
 
 // import store from './store'
@@ -325,6 +325,8 @@ const FluroVue = {
             }
         }
 
+       
+        
         /////////////////////////////////////////////////////
 
         //Add Fluro Filters Globally 
@@ -340,8 +342,20 @@ const FluroVue = {
             return readable.length ? readable : ( backup ? fluro.types.readable(backup, plural) : '');
         });
 
+
+         /////////////////////////////////////////////////////
+
+        //Helper function for resetting the cache
+        fluro.resetCache = function() {
+            console.log('RESET GLOBAL CACHE')
+            fluro.cache.reset();
+            fluro.dispatch('cache.reset')
+        }
+
+
         /////////////////////////////////////////////////////
 
+       
         //Attach Fluro to the main Vue Instance
         Vue.prototype.$fluro = fluro;
 
