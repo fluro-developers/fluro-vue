@@ -6,6 +6,7 @@ Install the `fluro-vue` package via npm
 
 ```bash
 npm install fluro-vue --save
+npm install fluro-vue-ui --save
 
 ```
 
@@ -226,6 +227,8 @@ export default {
 
 # UI Components
 
+
+
 ## Fluro Page Preloader
 A simple preloader that can be used to display a spinner while content is loading, 
 by default will appear fixed in the center of the browser window, but the contain attribute can be added if it should be contained within another
@@ -244,15 +247,63 @@ div or element
 
 
 
+## Fluro Tabset
+A component that makes it easy to add a responsive tabset to the screen
+
+```javascript
+import {FluroTabset, FluroTab} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroTabset,
+        FluroTab,
+    },
+}
+```
+
+
+```html
+<tabset :justified="true" :vertical="true">
+	 <tab heading="Tab One">
+        <slot>
+        	Your tabbed content
+    	</slot>
+    </tab>
+    <tab heading="Tab Two">
+        <slot>
+        	Your tabbed content
+    	</slot>
+    </tab>
+</tabset>
+
+```
+
+
+
+## Fluro Realm Tags
+A component that can display coloured tags as defined in an array of realms
+
+
+```html
+<fluro-realm-dots :realms="[{title:'Realm One', color:'#ff0066',...}...]"/>
+
+```
+
+
+
+
 ## Fluro Realm Dots
 A component that can display coloured dots as defined in an array of realms
 
 
 ```html
-<!-- Show an extra large avatar for a Fluro global user -->
 <fluro-realm-dots :realms="[{title:'Realm One', color:'#ff0066',...}...]"/>
 
 ```
+
+
 
 ## Fluro Icon
 A component that makes it easy to show an icon
@@ -321,6 +372,37 @@ A component that makes it quick and easy to show an avatar for a Fluro user, per
 <fluro-avatar class="xl" :id="user.persona" type="persona"></fluro-avatar>
 
 ```
+
+## Fluro Avatar Update
+A component that makes it quick and easy to show an avatar where the user can click and upload a new image
+
+```javascript
+import {FluroAvatarUpdate} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroAvatarUpdate,
+    },
+}
+```
+
+
+```html
+<fluro-avatar-update :id="model._id" type="contact" />
+
+```
+
+| Props | Description |
+| ----------- | ----------- |
+| `id` | An object or object id representing the contact or persona |
+| `type` | Set whether the avatar is for a 'contact' or a 'persona' *defaults to 'contact'* |
+
+
+
+
+
 
 
 ## Image
