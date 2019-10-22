@@ -16,7 +16,7 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue 2.0.16')
+console.log('fluro-vue 2.0.21')
 // process.env.VUE_APP_VERSION = require('./package.json').version
 
 // import store from './store'
@@ -337,6 +337,7 @@ const FluroVue = {
         Vue.filter('readableEventTime', fluro.date.readableEventTime);
         Vue.filter('filesize', fluro.asset.filesize);
         Vue.filter('comma', fluro.utils.comma);
+        
         Vue.filter('definitionTitle', function(input, plural, backup) {
             var readable =fluro.types.readable(input, plural);
             return readable.length ? readable : ( backup ? fluro.types.readable(backup, plural) : '');
@@ -345,12 +346,23 @@ const FluroVue = {
 
          /////////////////////////////////////////////////////
 
-        //Helper function for resetting the cache
-        fluro.resetCache = function() {
-            console.log('RESET GLOBAL CACHE')
-            fluro.cache.reset();
-            fluro.dispatch('cache.reset')
-        }
+        // //Helper function for resetting the cache
+        // fluro.resetCache = function() {
+        //     console.log('RESET GLOBAL CACHE')
+        //     fluro.cache.reset();
+        //     fluro.dispatch('cache.reset')
+        // }
+
+        // //Listen out for when the cache clears
+
+         Vue.set(fluro.global, 'CACHE_KEY', Math.random()); 
+         
+        fluro.addEventListener('cache.reset', function() {
+        //     //Update to a new random number
+            Vue.set(fluro.global, 'CACHE_KEY', Math.random()); 
+            console.log('GLOBAL CACHE RESET', fluro.global.CACHE_KEY);
+        });
+
 
 
         /////////////////////////////////////////////////////
