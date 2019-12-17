@@ -7,7 +7,8 @@ module.exports = {
     entry: './src/index.js',
     output: {
         filename: 'index.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
+        globalObject: "this"
     },
     externals: {
         'fluro':'fluro',
