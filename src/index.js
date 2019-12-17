@@ -16,7 +16,14 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue 2.0.26');
+console.log('fluro-vue 2.0.30');
+
+
+var WindowObject;
+
+if (typeof window !== 'undefined') {
+    WindowObject = window;
+}
 
 // process.env.VUE_APP_VERSION = require('./package.json').version
 
@@ -137,7 +144,7 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         //If we have application data from fluro set the defaults based on that
-        var FluroApplicationData = _.get(window, 'applicationData');
+        var FluroApplicationData = _.get(WindowObject, 'applicationData');
         var FluroApplication = _.get(FluroApplicationData, '_application');
         var FluroCookieUser;
 
@@ -165,8 +172,8 @@ const FluroVue = {
             switch (FluroApplication.authenticationStyle) {
                 case 'application':
                     var protocol = 'http:';
-                    if (window && window.location && window.location.protocol) {
-                        protocol = window.location.protocol;
+                    if (WindowObject && WindowObject.location && WindowObject.location.protocol) {
+                        protocol = WindowObject.location.protocol;
                     }
 
                     // Set the static application token
@@ -178,7 +185,7 @@ const FluroVue = {
                     //User logs in to the app via the server
                     if(FluroApplication.requireLogin) {
                         //The user will already be logged in at this point
-                        FluroCookieUser = _.get(window, 'applicationUser');
+                        FluroCookieUser = _.get(WindowObject, 'applicationUser');
                     } else {
                         //It's a global app so it's up to the application
                         //as to how it handles authentication
@@ -266,8 +273,8 @@ const FluroVue = {
         // }
 
         // function startLocalStorageListening() {
-        if (window) {
-            window.addEventListener('storage', retrieveUserFromLocalStorage)
+        if (WindowObject) {
+            WindowObject.addEventListener('storage', retrieveUserFromLocalStorage)
 
             /////////////////////////////////////////////////////
 
