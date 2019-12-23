@@ -16,13 +16,12 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue 2.0.32');
+console.log('fluro-vue 2.0.41');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 
-let window = {};
 
 var WindowObject;
 var WebStorageContainer;
@@ -30,19 +29,17 @@ var WebStorageContainer;
 
 if (typeof window !== 'undefined') {
     WindowObject = window;
-   
+
 }
 
 if (typeof localStorage !== 'undefined') {
-     WebStorageContainer = localStorage;
+    WebStorageContainer = localStorage;
 }
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
-
-
 
 // process.env.VUE_APP_VERSION = require('./package.json').version
 
@@ -63,6 +60,8 @@ var LOCAL_STORAGE_KEY = 'fluro.user';
 const FluroVue = {
     install: function(Vue, options) {
 
+        console.log('Install Fluro Vue')
+
         /////////////////////////////////////////////////////
 
         if (!options || !options.store) {
@@ -70,7 +69,7 @@ const FluroVue = {
         }
 
         /////////////////////////////////////////////////////
-        
+
         //Give this window session a unique name
         if (sessionStorage) {
             var windowID = Fluro.utils.guid()
@@ -201,7 +200,7 @@ const FluroVue = {
                     break;
                 case 'global':
                     //User logs in to the app via the server
-                    if(FluroApplication.requireLogin) {
+                    if (FluroApplication.requireLogin) {
                         //The user will already be logged in at this point
                         FluroCookieUser = _.get(WindowObject, 'applicationUser');
                     } else {
@@ -211,7 +210,7 @@ const FluroVue = {
                     break;
             }
 
-            
+
             /////////////////////////////////////////////////////
 
             //Need this workaround it seems otherwise the app doesn't get set
@@ -233,7 +232,7 @@ const FluroVue = {
             apiURL: API_URL,
             applicationToken: APPLICATION_TOKEN,
             domain: APPLICATION_REMOTE_URL,
-            withCredentials:FluroCookieUser, //If we are using cookies
+            withCredentials: FluroCookieUser, //If we are using cookies
         });
 
         /////////////////////////////////////////////////////
@@ -257,15 +256,15 @@ const FluroVue = {
         //Check if our user session is in localStorage
         var localStorageUser = store.getters['fluro/user'];
 
-        if(localStorageUser) {
+        if (localStorageUser) {
             //Authenticate with the user session stored locally
             fluro.auth.set(localStorageUser);
         } else {
 
             //If we are authenticated with a cookie
-            if(FluroCookieUser) {
+            if (FluroCookieUser) {
                 console.log('-- Authenticated via cookie', FluroCookieUser)
-                 fluro.auth.set(FluroCookieUser);
+                fluro.auth.set(FluroCookieUser);
             }
         }
 
@@ -351,8 +350,8 @@ const FluroVue = {
             }
         }
 
-       
-        
+
+
         /////////////////////////////////////////////////////
 
         //Add Fluro Filters Globally 
@@ -363,14 +362,14 @@ const FluroVue = {
         Vue.filter('readableEventTime', fluro.date.readableEventTime);
         Vue.filter('filesize', fluro.asset.filesize);
         Vue.filter('comma', fluro.utils.comma);
-        
+
         Vue.filter('definitionTitle', function(input, plural, backup) {
-            var readable =fluro.types.readable(input, plural);
-            return readable.length ? readable : ( backup ? fluro.types.readable(backup, plural) : '');
+            var readable = fluro.types.readable(input, plural);
+            return readable.length ? readable : (backup ? fluro.types.readable(backup, plural) : '');
         });
 
 
-         /////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////
 
         // //Helper function for resetting the cache
         // fluro.resetCache = function() {
@@ -381,11 +380,11 @@ const FluroVue = {
 
         // //Listen out for when the cache clears
 
-         Vue.set(fluro.global, 'CACHE_KEY', Math.random()); 
-         
+        Vue.set(fluro.global, 'CACHE_KEY', Math.random());
+
         fluro.addEventListener('cache.reset', function() {
-        //     //Update to a new random number
-            Vue.set(fluro.global, 'CACHE_KEY', Math.random()); 
+            //     //Update to a new random number
+            Vue.set(fluro.global, 'CACHE_KEY', Math.random());
             console.log('GLOBAL CACHE RESET', fluro.global.CACHE_KEY);
         });
 
@@ -393,7 +392,7 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
-       
+
         //Attach Fluro to the main Vue Instance
         Vue.prototype.$fluro = fluro;
 
