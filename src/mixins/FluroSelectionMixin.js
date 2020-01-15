@@ -1,4 +1,13 @@
 export default {
+    // props:{
+    //     maximum:{
+    //         type:Number,
+    //         default() {
+    //             console.log('DEFAULT MAXIMUM TO')
+    //             return 0;
+    //         },
+    //     },
+    // },
     data() {
         return {
             selection: [],
@@ -7,27 +16,29 @@ export default {
     methods: {
         select(item) {
             var self = this;
+            console.log('SELECTIES', item);
+
             if (!self.isSelected(item)) {
                 self.$set(self.selection, self.selection.length, item);
                 console.log('Select', self.selection.length, item);
             }
+
+
         },
         setSelection(array) {
-
             var self = this;
-
             self.selection = array;
         },
         deselect(item) {
             var self = this;
 
-            if(!item) {
+            if (!item) {
                 return;
             }
 
             //Get the item ID
 
-            
+
             var itemID = self.$fluro.utils.getStringID(item);
 
             //Find the index of the matching item
