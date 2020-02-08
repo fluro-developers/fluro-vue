@@ -16,11 +16,11 @@ export default {
     methods: {
         select(item) {
             var self = this;
-            console.log('SELECTIES', item);
+            // console.log('SELECTIES', item);
 
             if (!self.isSelected(item)) {
                 self.$set(self.selection, self.selection.length, item);
-                console.log('Select', self.selection.length, item);
+                // console.log('Select', self.selection.length, item);
             }
 
 

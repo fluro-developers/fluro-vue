@@ -16,7 +16,7 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue 2.0.45');
+console.log('fluro-vue 2.0.47');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -60,8 +60,6 @@ var LOCAL_STORAGE_KEY = 'fluro.user';
 const FluroVue = {
     install: function(Vue, options) {
 
-        console.log('Install Fluro Vue')
-
         /////////////////////////////////////////////////////
 
         if (!options || !options.store) {
@@ -84,8 +82,9 @@ const FluroVue = {
             var json = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
             try {
                 storedUser = JSON.parse(json);
-                // //console.log('Got existing user', storedUser)
-            } catch (e) {
+                console.log('Loaded from local storage', storedUser)
+            } catch (err) {
+                console.log('Error loading user from local storage', err)
                 WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
             }
         }
@@ -273,6 +272,7 @@ const FluroVue = {
         function userUpdated(user, disablePersist) {
             store.commit('fluro/user', user);
             if (!disablePersist) {
+                console.log('PERSIST NOW', user);
                 persistUserToLocalStorage(user);
             }
 
@@ -315,6 +315,7 @@ const FluroVue = {
                 //If it is
                 var json = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
                 if (json) {
+                    console.log('Retrieved user from local storage', json);
                     try {
                         storedUser = JSON.parse(json);
                     } catch (e) {
@@ -337,13 +338,25 @@ const FluroVue = {
         function persistUserToLocalStorage(user) {
             if (WebStorageContainer) {
                 if (!user) {
+                    // console.log('REMOVE USER FROM LOCAL')
                     WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
                 } else {
                     try {
-                        //console.log('PERSIST USER NOW', user)
-                        WebStorageContainer.setItem(LOCAL_STORAGE_KEY, JSON.stringify(user));
+                       
+                        var userString = JSON.stringify(user);
+                        WebStorageContainer.setItem(LOCAL_STORAGE_KEY, userString);
+                        console.log('*** Persisted ***');
+
+                        // setTimeout(function() {
+
+
+                        // console.log('**>>', WebStorageContainer.getItem(LOCAL_STORAGE_KEY));
+
+                    // }, 6000)
+
+
                     } catch (err) {
-                        //console.log('Error', err)
+                        console.log('*** Persist Error', err)
                     }
 
                 }
