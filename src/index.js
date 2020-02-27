@@ -16,7 +16,8 @@
 
 // export default FluroVue;
 
-console.log('fluro-vue 2.0.47');
+
+console.log('fluro-vue 2.0.48');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -69,7 +70,7 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         //Give this window session a unique name
-        if (sessionStorage) {
+        if (typeof sessionStorage !== 'undefined') {
             var windowID = Fluro.utils.guid()
             sessionStorage.setItem('window.id', windowID);
         }
@@ -94,38 +95,40 @@ const FluroVue = {
         var store = options.store;
 
         //Register a new Vuex Module
-        store.registerModule('fluro', {
-            namespaced: true,
-            state: {
-                user: storedUser, //The Current Fluro User
-                application: null, //The Current Fluro Application
-                realmSelectFullScreen: false, //Realm Select Widget
-            },
-            mutations: {
-                updateField,
-                user(state, payload) {
-                    state.user = payload;
+        if (store && store.registerModule) {
+            store.registerModule('fluro', {
+                namespaced: true,
+                state: {
+                    user: storedUser, //The Current Fluro User
+                    application: null, //The Current Fluro Application
+                    realmSelectFullScreen: false, //Realm Select Widget
                 },
-                application(state, payload) {
-                    state.application = payload;
+                mutations: {
+                    updateField,
+                    user(state, payload) {
+                        state.user = payload;
+                    },
+                    application(state, payload) {
+                        state.application = payload;
+                    },
+                    realmSelectFullScreen(state, payload) {
+                        state.realmSelectFullScreen = payload;
+                    },
                 },
-                realmSelectFullScreen(state, payload) {
-                    state.realmSelectFullScreen = payload;
+                getters: {
+                    getField,
+                    user(state, getters) {
+                        return state.user;
+                    },
+                    application(state, getters) {
+                        return state.application;
+                    },
+                    realmSelectFullScreen(state, getters) {
+                        return state.realmSelectFullScreen;
+                    },
                 },
-            },
-            getters: {
-                getField,
-                user(state, getters) {
-                    return state.user;
-                },
-                application(state, getters) {
-                    return state.application;
-                },
-                realmSelectFullScreen(state, getters) {
-                    return state.realmSelectFullScreen;
-                },
-            },
-        })
+            })
+        }
         //, { preserveState: true });
 
         /////////////////////////////////////////////////////
@@ -160,8 +163,8 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         //If we have application data from fluro set the defaults based on that
-        var FluroApplicationData = _.get(WindowObject, 'applicationData');
-        var FluroApplication = _.get(FluroApplicationData, '_application');
+        var FluroApplicationData = WindowObject ? WindowObject.applicationData : null;
+        var FluroApplication = FluroApplicationData ? FluroApplicationData._application : null;
         var FluroCookieUser;
 
         /////////////////////////////////////////////////////
@@ -201,7 +204,7 @@ const FluroVue = {
                     //User logs in to the app via the server
                     if (FluroApplication.requireLogin) {
                         //The user will already be logged in at this point
-                        FluroCookieUser = _.get(WindowObject, 'applicationUser');
+                        FluroCookieUser = WindowObject ? WindowObject.applicationUser : null;
                     } else {
                         //It's a global app so it's up to the application
                         //as to how it handles authentication
@@ -213,15 +216,27 @@ const FluroVue = {
             /////////////////////////////////////////////////////
 
             //Need this workaround it seems otherwise the app doesn't get set
-            setTimeout(function() {
-                store.commit('fluro/application', FluroApplication);
-            })
+
+            if (store && store.commit) {
+                setTimeout(function() {
+
+                    store.commit('fluro/application', FluroApplication);
+
+                })
+            }
+
 
         } else {
             //Need this workaround it seems otherwise the app doesn't get set
-            setTimeout(function() {
-                store.commit('fluro/application', null);
-            })
+
+            if (store && store.commit) {
+                setTimeout(function() {
+
+                    store.commit('fluro/application', null);
+
+                })
+            }
+
         }
 
         /////////////////////////////////////////////////////
@@ -253,7 +268,7 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         //Check if our user session is in localStorage
-        var localStorageUser = store.getters['fluro/user'];
+        var localStorageUser = store && store.getters ? store.getters['fluro/user'] : null;
 
         if (localStorageUser) {
             //Authenticate with the user session stored locally
@@ -270,7 +285,7 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         function userUpdated(user, disablePersist) {
-            store.commit('fluro/user', user);
+            store ? store.commit('fluro/user', user) : null;
             if (!disablePersist) {
                 console.log('PERSIST NOW', user);
                 persistUserToLocalStorage(user);
@@ -342,7 +357,7 @@ const FluroVue = {
                     WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
                 } else {
                     try {
-                       
+
                         var userString = JSON.stringify(user);
                         WebStorageContainer.setItem(LOCAL_STORAGE_KEY, userString);
                         console.log('*** Persisted ***');
@@ -352,7 +367,7 @@ const FluroVue = {
 
                         // console.log('**>>', WebStorageContainer.getItem(LOCAL_STORAGE_KEY));
 
-                    // }, 6000)
+                        // }, 6000)
 
 
                     } catch (err) {
