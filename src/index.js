@@ -17,7 +17,7 @@
 // export default FluroVue;
 
 
-console.log('fluro-vue 2.0.48');
+console.log('fluro-vue 2.0.51');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -60,6 +60,13 @@ var LOCAL_STORAGE_KEY = 'fluro.user';
 
 const FluroVue = {
     install: function(Vue, options) {
+
+        var ApplicationContext;
+        if(options.ApplicationContext) {
+            ApplicationContext = options.ApplicationContext;
+        } else {
+            ApplicationContext = WindowObject;
+        }
 
         /////////////////////////////////////////////////////
 
@@ -163,7 +170,7 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         //If we have application data from fluro set the defaults based on that
-        var FluroApplicationData = WindowObject ? WindowObject.applicationData : null;
+        var FluroApplicationData = (ApplicationContext ? ApplicationContext.applicationData : null);
         var FluroApplication = FluroApplicationData ? FluroApplicationData._application : null;
         var FluroCookieUser;
 
