@@ -17,7 +17,7 @@
 // export default FluroVue;
 
 
-console.log('fluro-vue 2.0.57');
+console.log('fluro-vue 2.0.58');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -61,8 +61,14 @@ var LOCAL_STORAGE_KEY = 'fluro.user';
 const FluroVue = {
     install: function(Vue, options) {
 
+        if (!options) {
+            options = {
+                // store:Vue.prototype.$store,
+            };
+        }
+
         var ApplicationContext;
-        if(options.ApplicationContext) {
+        if (options.ApplicationContext) {
             ApplicationContext = options.ApplicationContext;
         } else {
             ApplicationContext = WindowObject;
@@ -99,47 +105,6 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
-        var store = options.store;
-
-        //Register a new Vuex Module
-        if (store && store.registerModule) {
-            store.registerModule('fluro', {
-                namespaced: true,
-                state: {
-                    user: storedUser, //The Current Fluro User
-                    application: null, //The Current Fluro Application
-                    realmSelectFullScreen: false, //Realm Select Widget
-                },
-                mutations: {
-                    updateField,
-                    user(state, payload) {
-                        state.user = payload;
-                    },
-                    application(state, payload) {
-                        state.application = payload;
-                    },
-                    realmSelectFullScreen(state, payload) {
-                        state.realmSelectFullScreen = payload;
-                    },
-                },
-                getters: {
-                    getField,
-                    user(state, getters) {
-                        return state.user;
-                    },
-                    application(state, getters) {
-                        return state.application;
-                    },
-                    realmSelectFullScreen(state, getters) {
-                        return state.realmSelectFullScreen;
-                    },
-                },
-            })
-        }
-        //, { preserveState: true });
-
-        /////////////////////////////////////////////////////
-
         let API_URL;
         let APPLICATION_TOKEN;
         let DEFAULT_TIMEZONE;
@@ -173,6 +138,58 @@ const FluroVue = {
         var FluroApplicationData = (ApplicationContext ? ApplicationContext.applicationData : null);
         var FluroApplication = FluroApplicationData ? FluroApplicationData._application : null;
         var FluroCookieUser;
+
+
+        /////////////////////////////////////////////////////
+
+        var store = options.store;
+
+        //Register a new Vuex Module
+        if (store && store.registerModule) {
+            store.registerModule('fluro', {
+                // actions: {
+                //     nuxtServerInit({ commit }, { req }) {
+
+                //         console.log('NUXT INITIALISE', req);
+                //         // if (req.session.user) {
+                //         //     commit('user', req.session.user)
+                //         // }
+                //     },
+                // },
+                namespaced: true,
+                state: {
+                    user: storedUser, //The Current Fluro User
+                    application: FluroApplication, //The Current Fluro Application
+                    realmSelectFullScreen: false, //Realm Select Widget
+                },
+                mutations: {
+                    updateField,
+                    user(state, payload) {
+                        state.user = payload;
+                    },
+                    application(state, payload) {
+                        state.application = payload;
+                    },
+                    realmSelectFullScreen(state, payload) {
+                        state.realmSelectFullScreen = payload;
+                    },
+                },
+                getters: {
+                    getField,
+                    user(state, getters) {
+                        return state.user;
+                    },
+                    application(state, getters) {
+                        return state.application;
+                    },
+                    realmSelectFullScreen(state, getters) {
+                        return state.realmSelectFullScreen;
+                    },
+                },
+            })
+        }
+        //, { preserveState: true });
+
 
         /////////////////////////////////////////////////////
 
@@ -226,9 +243,7 @@ const FluroVue = {
 
             if (store && store.commit) {
                 setTimeout(function() {
-
                     store.commit('fluro/application', FluroApplication);
-
                 })
             }
 
@@ -238,9 +253,7 @@ const FluroVue = {
 
             if (store && store.commit) {
                 setTimeout(function() {
-
                     store.commit('fluro/application', null);
-
                 })
             }
 

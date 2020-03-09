@@ -1,8 +1,8 @@
 {
   "name": "fluro-vue",
-  "version": "2.0.57",
+  "version": "2.0.58",
   "description": "A package to make it easy to build Vue applications that interact with Fluro",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "webpack --mode=production && webpack --mode=production && npm run test",
     "dev": "webpack --mode=development --progress --colors --watch",
