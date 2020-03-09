@@ -5,10 +5,18 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 module.exports = {
     // runtimeCompiler: true,
     entry: './src/index.js',
+    // output: {
+    //     filename: 'index.js',
+    //     path: path.resolve(__dirname, 'dist'),
+    //     globalObject: "this"
+    // },
     output: {
         filename: 'index.js',
+        library: 'fluro-vue',
+        libraryTarget: 'umd',
+        libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
-        globalObject: "this"
+        globalObject: 'typeof self !== \'undefined\' ? self : this',
     },
     externals: {
         'fluro':'fluro',
