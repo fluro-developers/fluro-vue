@@ -19,6 +19,7 @@ module.exports = {
         globalObject: 'typeof self !== \'undefined\' ? self : this',
     },
     externals: {
+        'vue':'vue',
         'fluro':'fluro',
         'vuex-map-fields':'vuex-map-fields',
         'lodash': {

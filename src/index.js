@@ -17,7 +17,7 @@
 // export default FluroVue;
 
 
-console.log('fluro-vue 2.0.59');
+console.log('fluro-vue 2.0.61');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -146,6 +146,8 @@ const FluroVue = {
 
         //Register a new Vuex Module
         if (store && store.registerModule) {
+
+            console.log('INITIALIZE FLURO-VUE MODULE', typeof store, storedUser, FluroApplication)
             store.registerModule('fluro', {
                 // actions: {
                 //     nuxtServerInit({ commit }, { req }) {
@@ -157,17 +159,21 @@ const FluroVue = {
                 //     },
                 // },
                 namespaced: true,
-                state: {
-                    user: storedUser, //The Current Fluro User
-                    application: FluroApplication, //The Current Fluro Application
-                    realmSelectFullScreen: false, //Realm Select Widget
+                state() {
+                    return {
+                        user: storedUser, //The Current Fluro User
+                        application: FluroApplication, //The Current Fluro Application
+                        realmSelectFullScreen: false, //Realm Select Widget
+                    }
                 },
                 mutations: {
                     updateField,
                     user(state, payload) {
+                        console.log('SET USER TO VUEX', typeof state);
                         state.user = payload;
                     },
                     application(state, payload) {
+                        console.log('SET APPLICATION TO VUEX', typeof state);
                         state.application = payload;
                     },
                     realmSelectFullScreen(state, payload) {
@@ -177,9 +183,11 @@ const FluroVue = {
                 getters: {
                     getField,
                     user(state, getters) {
+                        console.log('GET USER FROM VUEX', typeof state);
                         return state.user;
                     },
                     application(state, getters) {
+                         console.log('GET APPLICAITION FROM VUEX', typeof state);
                         return state.application;
                     },
                     realmSelectFullScreen(state, getters) {
