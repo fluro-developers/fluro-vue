@@ -19,9 +19,9 @@ module.exports = {
         globalObject: 'typeof self !== \'undefined\' ? self : this',
     },
     externals: {
-        'vue':'vue',
-        'fluro':'fluro',
-        'vuex-map-fields':'vuex-map-fields',
+        'vue': 'vue',
+        'fluro': 'fluro',
+        'vuex-map-fields': 'vuex-map-fields',
         'lodash': {
             commonjs: 'lodash',
             commonjs2: 'lodash',
@@ -40,20 +40,24 @@ module.exports = {
                 test: /\.js$/,
                 loader: 'babel-loader'
             },
-            {
-                test: /\.scss$/,
-                loader: 'sass-loader'
-            },
+            // {
+            //     test: /\.scss$/,
+            //     loader: 'sass-loader'
+            // },
             // this will apply to both plain `.css` files
             // AND `<style>` blocks in `.vue` files
             {
-                test: /\.css$/,
+                test: /\.s[ac]ss$/i,
                 use: [
-                    'sass-loader',
+                    // Creates `style` nodes from JS strings
                     'vue-style-loader',
+                    // Translates CSS into CommonJS
                     'css-loader',
-                ]
-            }
+                    // Compiles Sass to CSS
+                    'sass-loader',
+                    
+                ],
+            },
         ]
     },
     plugins: [

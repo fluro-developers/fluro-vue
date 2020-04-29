@@ -8,7 +8,7 @@
 //       // Anything added to a mixin will be injected into all components.
 //       // In this case, the mounted() method runs when the component is added to the DOM.
 //       mounted() {
-//         //console.log('Mounted!');
+//         ////console.log('Mounted!');
 //       }
 //     });
 //   }
@@ -17,7 +17,7 @@
 // export default FluroVue;
 
 
-console.log('fluro-vue 2.0.61');
+console.log('fluro-vue 2.0.70');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ import { getField, updateField } from 'vuex-map-fields';
 
 /////////////////////////////////////////////////////
 
-var LOCAL_STORAGE_KEY = 'fluro.user';
+var LOCAL_STORAGE_KEY = 'fluro_user';
 
 /////////////////////////////////////////////////////
 
@@ -96,9 +96,9 @@ const FluroVue = {
             var json = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
             try {
                 storedUser = JSON.parse(json);
-                console.log('Loaded from local storage', storedUser)
+                // //console.log('Loaded from local storage', storedUser)
             } catch (err) {
-                console.log('Error loading user from local storage', err)
+                // //console.log('Error loading user from local storage', err)
                 WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
             }
         }
@@ -147,7 +147,7 @@ const FluroVue = {
         //Register a new Vuex Module
         if (store && store.registerModule) {
 
-            console.log('INITIALIZE FLURO-VUE MODULE', typeof store, storedUser, FluroApplication)
+
             store.registerModule('fluro', {
                 // actions: {
                 //     nuxtServerInit({ commit }, { req }) {
@@ -169,11 +169,11 @@ const FluroVue = {
                 mutations: {
                     updateField,
                     user(state, payload) {
-                        console.log('SET USER TO VUEX', typeof state);
+                        //console.log('SET USER TO VUEX', typeof state);
                         state.user = payload;
                     },
                     application(state, payload) {
-                        console.log('SET APPLICATION TO VUEX', typeof state);
+                        //console.log('SET APPLICATION TO VUEX', typeof state);
                         state.application = payload;
                     },
                     realmSelectFullScreen(state, payload) {
@@ -183,11 +183,11 @@ const FluroVue = {
                 getters: {
                     getField,
                     user(state, getters) {
-                        console.log('GET USER FROM VUEX', typeof state);
+                        //console.log('GET USER FROM VUEX', typeof state);
                         return state.user;
                     },
                     application(state, getters) {
-                         console.log('GET APPLICAITION FROM VUEX', typeof state);
+                        //console.log('GET APPLICAITION FROM VUEX', typeof state);
                         return state.application;
                     },
                     realmSelectFullScreen(state, getters) {
@@ -195,6 +195,9 @@ const FluroVue = {
                     },
                 },
             })
+
+
+            // console.log('INITIALIZE FLURO-VUE MODULE', store)
         }
         //, { preserveState: true });
 
@@ -305,7 +308,7 @@ const FluroVue = {
 
             //If we are authenticated with a cookie
             if (FluroCookieUser) {
-                console.log('-- Authenticated via cookie', FluroCookieUser)
+                //console.log('-- Authenticated via cookie', FluroCookieUser)
                 fluro.auth.set(FluroCookieUser);
             }
         }
@@ -313,11 +316,15 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         function userUpdated(user, disablePersist) {
+
+            console.log('VUE USER UPDATED', user)
             store ? store.commit('fluro/user', user) : null;
             if (!disablePersist) {
-                console.log('PERSIST NOW', user);
+                // //console.log('PERSIST NOW', user);
                 persistUserToLocalStorage(user);
             }
+
+            console.log('UPDATE VUEX');
 
             //Update all of the stat stores
             //as we are now a different user
@@ -326,51 +333,59 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
-        // function stopLocalStorageListening() {
-        //     if (window) {
-        //         window.removeEventListener('storage', retrieveUserFromLocalStorage)
-        //     }
-        // }
-
-        // function startLocalStorageListening() {
-        if (WindowObject) {
-            WindowObject.addEventListener('storage', retrieveUserFromLocalStorage)
-
-            /////////////////////////////////////////////////////
-
-            // retrieveUserFromLocalStorage();
+        function stopLocalStorageListening() {
+            if (WindowObject) {
+                WindowObject.removeEventListener('storage', retrieveUserFromLocalStorage)
+            }
         }
+
+        function startLocalStorageListening() {
+            if (WindowObject) {
+                WindowObject.addEventListener('storage', retrieveUserFromLocalStorage)
+            }
+        }
+
+
+        retrieveUserFromLocalStorage();
+        startLocalStorageListening
 
 
         /////////////////////////////////////////////////////
 
         function retrieveUserFromLocalStorage(WebStorageContainerEvent) {
 
-
+        	
             if (WebStorageContainerEvent) {
                 if (WebStorageContainerEvent.key != LOCAL_STORAGE_KEY) {
                     return;
                 }
             }
 
+            console.log('Retrieve user from local storage', typeof WebStorageContainerEvent);
+
             //Check if our user is already in local storage
             if (WebStorageContainer) {
+
                 //If it is
                 var json = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
                 if (json) {
-                    console.log('Retrieved user from local storage', json);
+                    //console.log('Retrieved user from local storage');
                     try {
                         storedUser = JSON.parse(json);
+                        console.log('Got stored user!', storedUser)
                     } catch (e) {
 
-                        //console.log(e);
+                        console.log(e);
                         storedUser = null;
                         WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
-                        userUpdated(null, WebStorageContainerEvent);
+                        console.log('fluro-vue: remove from local storage');
+                        userUpdated(storedUser, WebStorageContainerEvent);
                     } finally {
+                        console.log('fluro-vue: update from stored user');
                         userUpdated(storedUser, WebStorageContainerEvent);
                     }
                 } else {
+                    console.log('fluro-vue: no local storage user');
                     userUpdated(null, WebStorageContainerEvent);
                 }
             }
@@ -379,31 +394,30 @@ const FluroVue = {
         /////////////////////////////////////////////////////
 
         function persistUserToLocalStorage(user) {
+
+            stopLocalStorageListening();
+
+            ///////////////////////////////////////
+
             if (WebStorageContainer) {
                 if (!user) {
-                    // console.log('REMOVE USER FROM LOCAL')
+                    console.log('remove user from local storage')
                     WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
                 } else {
                     try {
-
                         var userString = JSON.stringify(user);
+                        console.log('set user into local storage', user)
                         WebStorageContainer.setItem(LOCAL_STORAGE_KEY, userString);
-                        console.log('*** Persisted ***');
-
-                        // setTimeout(function() {
-
-
-                        // console.log('**>>', WebStorageContainer.getItem(LOCAL_STORAGE_KEY));
-
-                        // }, 6000)
-
-
                     } catch (err) {
-                        console.log('*** Persist Error', err)
+
                     }
 
                 }
             }
+
+            ///////////////////////////////////////
+
+            startLocalStorageListening();
         }
 
 
@@ -429,7 +443,7 @@ const FluroVue = {
 
         // //Helper function for resetting the cache
         // fluro.resetCache = function() {
-        //     console.log('RESET GLOBAL CACHE')
+        //     //console.log('RESET GLOBAL CACHE')
         //     fluro.cache.reset();
         //     fluro.dispatch('cache.reset')
         // }
@@ -441,7 +455,7 @@ const FluroVue = {
         fluro.addEventListener('cache.reset', function() {
             //     //Update to a new random number
             Vue.set(fluro.global, 'CACHE_KEY', Math.random());
-            console.log('GLOBAL CACHE RESET', fluro.global.CACHE_KEY);
+            //console.log('GLOBAL CACHE RESET', fluro.global.CACHE_KEY);
         });
 
 
