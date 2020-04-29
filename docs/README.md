@@ -1,6 +1,4 @@
 # Quick Start
-### Important note: Since version 2 All UI Components have now been moved into a seperate package `fluro-vue-ui`
-
 
 Install the `fluro-vue` package via npm
 
@@ -74,6 +72,7 @@ They are accessible from your components from the global `this.$fluro` namespace
 | `this.$fluro.types` | A helper service for retrieving, translating and rendering content types and definitions defined within Fluro. |
 | `this.$fluro.utils` | Provides helper functions for working with Fluro data |
 | `this.$fluro.cache` | Provides a cache service, used for creating, clearing and storing API requests and other information in memory, rarely used directly |
+| `this.$fluro.app` | Provides a service for app and website based services, including the current page the user is viewing and other app specific api functions |
 
 For more information and up to date functionality checkout the [Fluro Javascript API Documentation](https://fluro-developers.github.io/fluro/)
 
@@ -306,7 +305,8 @@ A component that can display coloured dots as defined in an array of realms
 
 
 ## Fluro Icon
-A component that makes it easy to show an icon
+A component that makes it easy to show an icon, for more information and to find out
+icons that can be used checkout [The Font Awesome Icon Library](https://fontawesome.com/icons?d=gallery)
 
 ```html
 <!-- Show the default icon for a 'eventtrack' in Fluro -->
@@ -315,15 +315,17 @@ A component that makes it easy to show an icon
 <!-- Show an icon from the default icon set eg. Font awesome -->
 <fluro-icon icon="home"/>
 
-<!-- Show the home icon from the 'fal' icon library-->
-<fluro-icon icon="home" library="fal"/>
+<!-- Show the home icon from the 'fab' (font awesome brand) library-->
+<fluro-icon icon="facebook" library="fab"/>
 
 <!-- Spin the icon endlessly -->
 <fluro-icon icon="spinner" spin/>
+
+
 ```
 
 
-## Flex Column Component
+## Flex Column Layout
 Wraps the content inside in a Flexbox column display, allowing you to easily create fixed headers and footers
 while allowing an interior element to be scrollable. Works together with the FlexColumnHeader, FlexColumnFooter and FlexColumnBody components
 The Flex Column component can be nested also.
