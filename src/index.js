@@ -17,7 +17,7 @@
 // export default FluroVue;
 
 
-console.log('fluro-vue 2.0.70');
+console.log('fluro-vue 2.0.90');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -26,6 +26,7 @@ console.log('fluro-vue 2.0.70');
 
 var WindowObject;
 var WebStorageContainer;
+var listening;
 
 
 if (typeof window !== 'undefined') {
@@ -53,7 +54,7 @@ import { getField, updateField } from 'vuex-map-fields';
 
 /////////////////////////////////////////////////////
 
-var LOCAL_STORAGE_KEY = 'fluro_user';
+var LOCAL_STORAGE_KEY = '_fluro_user';
 
 /////////////////////////////////////////////////////
 
@@ -90,16 +91,19 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
+        //See if we know anything about the user already
         var storedUser;
 
+        //If we are in the browser
         if (WebStorageContainer) {
+            //Try and get the user from local storage
             var json = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
             try {
                 storedUser = JSON.parse(json);
-                // //console.log('Loaded from local storage', storedUser)
             } catch (err) {
-                // //console.log('Error loading user from local storage', err)
                 WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
+            } finally {
+                // console.log('Initial stored user object is', storedUser);
             }
         }
 
@@ -146,18 +150,7 @@ const FluroVue = {
 
         //Register a new Vuex Module
         if (store && store.registerModule) {
-
-
             store.registerModule('fluro', {
-                // actions: {
-                //     nuxtServerInit({ commit }, { req }) {
-
-                //         console.log('NUXT INITIALISE', req);
-                //         // if (req.session.user) {
-                //         //     commit('user', req.session.user)
-                //         // }
-                //     },
-                // },
                 namespaced: true,
                 state() {
                     return {
@@ -197,7 +190,7 @@ const FluroVue = {
             })
 
 
-            // console.log('INITIALIZE FLURO-VUE MODULE', store)
+            // console.log('Initialize Fluro VUEX', store, storedUser)
         }
         //, { preserveState: true });
 
@@ -207,9 +200,6 @@ const FluroVue = {
         //If we are running in the context of being deployed on Fluro
         //we should adhere to the settings set from the Application
         if (FluroApplication) {
-
-
-            /////////////////////////////////////////////////////
 
             //Set the default timezone from our application data
             DEFAULT_TIMEZONE = FluroApplication.timezone;
@@ -253,9 +243,9 @@ const FluroVue = {
             //Need this workaround it seems otherwise the app doesn't get set
 
             if (store && store.commit) {
-                setTimeout(function() {
-                    store.commit('fluro/application', FluroApplication);
-                })
+                // setTimeout(function() {
+                store.commit('fluro/application', FluroApplication);
+                // })
             }
 
 
@@ -263,9 +253,9 @@ const FluroVue = {
             //Need this workaround it seems otherwise the app doesn't get set
 
             if (store && store.commit) {
-                setTimeout(function() {
-                    store.commit('fluro/application', null);
-                })
+                // setTimeout(function() {
+                store.commit('fluro/application', null);
+                // })
             }
 
         }
@@ -291,40 +281,36 @@ const FluroVue = {
 
         fluro.access.setDefaultApplication(FluroApplication);
 
-        //Listen for when the user session changes
-        // fluro.auth.onChange = userUpdated;
-        // fluro.auth.debug = true;
-        fluro.auth.addEventListener('change', userUpdated);
-
+        
+        
         /////////////////////////////////////////////////////
 
-        //Check if our user session is in localStorage
-        var localStorageUser = store && store.getters ? store.getters['fluro/user'] : null;
-
-        if (localStorageUser) {
-            //Authenticate with the user session stored locally
-            fluro.auth.set(localStorageUser);
+        if (storedUser) {
+            //Set the stored user as our auth user
+            fluro.auth.set(storedUser);
         } else {
-
             //If we are authenticated with a cookie
             if (FluroCookieUser) {
                 //console.log('-- Authenticated via cookie', FluroCookieUser)
+                // console.log('We have a cookie user')
                 fluro.auth.set(FluroCookieUser);
             }
         }
 
         /////////////////////////////////////////////////////
 
-        function userUpdated(user, disablePersist) {
+        //Listen for when the authentication has been updated
+        fluro.auth.addEventListener('change', userUpdated);
 
-            console.log('VUE USER UPDATED', user)
-            store ? store.commit('fluro/user', user) : null;
-            if (!disablePersist) {
-                // //console.log('PERSIST NOW', user);
-                persistUserToLocalStorage(user);
+        /////////////////////////////////////////////////////
+
+        function userUpdated(user) {
+            persistUserToLocalStorage(user);
+
+            if (store) {
+                // console.log('commit to vuex', !!user);
+                store.commit('fluro/user', user)
             }
-
-            console.log('UPDATE VUEX');
 
             //Update all of the stat stores
             //as we are now a different user
@@ -333,60 +319,86 @@ const FluroVue = {
 
         /////////////////////////////////////////////////////
 
+        function userRetrieved(user) {
+            // console.log('user retrieved!', user);
+            fluro.auth.set(user);
+        }
+
+        /////////////////////////////////////////////////////
+
         function stopLocalStorageListening() {
+            if (!listening) {
+                return;
+            }
+
             if (WindowObject) {
+                // console.log('stop listening')
                 WindowObject.removeEventListener('storage', retrieveUserFromLocalStorage)
             }
+
+            listening = false;
         }
 
         function startLocalStorageListening() {
+
+            if (listening) {
+                return;
+            }
+
             if (WindowObject) {
+                // console.log('start listening')
                 WindowObject.addEventListener('storage', retrieveUserFromLocalStorage)
             }
+
+            listening = true;
         }
 
 
-        retrieveUserFromLocalStorage();
-        startLocalStorageListening
+        // console.log('retrieve manually')
+        // retrieveUserFromLocalStorage();
+
+        // console.log('start listening')
+        startLocalStorageListening();
 
 
         /////////////////////////////////////////////////////
 
         function retrieveUserFromLocalStorage(WebStorageContainerEvent) {
 
-        	
             if (WebStorageContainerEvent) {
                 if (WebStorageContainerEvent.key != LOCAL_STORAGE_KEY) {
                     return;
                 }
             }
 
-            console.log('Retrieve user from local storage', typeof WebStorageContainerEvent);
+            // console.log('Retrieve user from local storage', WebStorageContainerEvent);
 
             //Check if our user is already in local storage
             if (WebStorageContainer) {
 
+                var retrievedUser;
+
                 //If it is
                 var json = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
                 if (json) {
-                    //console.log('Retrieved user from local storage');
+                    // console.log('Retrieved user from local storage', LOCAL_STORAGE_KEY);
                     try {
-                        storedUser = JSON.parse(json);
-                        console.log('Got stored user!', storedUser)
+                        retrievedUser = JSON.parse(json);
+                        // console.log('Got stored user!', retrievedUser)
                     } catch (e) {
 
                         console.log(e);
-                        storedUser = null;
+                        retrievedUser = null;
                         WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
-                        console.log('fluro-vue: remove from local storage');
-                        userUpdated(storedUser, WebStorageContainerEvent);
+                        console.log('fluro-vue: removed from local storage');
+                        userRetrieved(retrievedUser, WebStorageContainerEvent);
                     } finally {
                         console.log('fluro-vue: update from stored user');
-                        userUpdated(storedUser, WebStorageContainerEvent);
+                        userRetrieved(retrievedUser, WebStorageContainerEvent);
                     }
                 } else {
-                    console.log('fluro-vue: no local storage user');
-                    userUpdated(null, WebStorageContainerEvent);
+                    console.log('fluro-vue: no local storage user', json);
+                    userRetrieved(null, WebStorageContainerEvent);
                 }
             }
         }
@@ -401,21 +413,37 @@ const FluroVue = {
 
             if (WebStorageContainer) {
                 if (!user) {
-                    console.log('remove user from local storage')
-                    WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
-                } else {
-                    try {
-                        var userString = JSON.stringify(user);
-                        console.log('set user into local storage', user)
-                        WebStorageContainer.setItem(LOCAL_STORAGE_KEY, userString);
-                    } catch (err) {
-
+                    // console.log('remove user from local storage')
+                    var current = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
+                    if (current) {
+                        console.log('Remove existing user from local storage')
+                        WebStorageContainer.removeItem(LOCAL_STORAGE_KEY);
+                    } else {
+                        // console.log('already no user in local')
                     }
 
+                } else {
+
+                    var userString;
+                    try {
+                        userString = JSON.stringify(user);
+                    } catch (err) {
+                        console.log('Local Storage Error', err);
+                    } finally {
+
+
+                        var current = WebStorageContainer.getItem(LOCAL_STORAGE_KEY);
+                        if (current != userString) {
+                            console.log('save new user to local storage')
+                            WebStorageContainer.setItem(LOCAL_STORAGE_KEY, userString);
+                        }
+
+                    }
                 }
             }
 
             ///////////////////////////////////////
+
 
             startLocalStorageListening();
         }

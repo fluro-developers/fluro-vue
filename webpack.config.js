@@ -60,6 +60,17 @@ module.exports = {
             },
         ]
     },
+
+  //   resolve: { 
+ 	// 	alias: { 
+ 	// 		// allows to use the compiler 
+ 	// 		// without this, cli will overload the alias and use runtime esm 
+ 	// 		vue$: 'vue/dist/vue.esm.js', 
+ 	// 		// '@': path.resolve(__dirname, '../src'), 
+ 	// 	}, 
+ 	// }, 
+
+ 	
     plugins: [
         new VueLoaderPlugin()
     ],
