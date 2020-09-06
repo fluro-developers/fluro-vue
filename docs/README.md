@@ -545,6 +545,112 @@ export default {
 
 
 
+
+## Fluro Content List
+This is essentially a renderless component that provides all the necessary functionality for retrieving a filtered list of a certain type of content
+while allowing you to render it using your own html markup. It is a reactive Vue wrapper for a FluroContentListService, complete with pagination and Filtering
+
+### Props
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `type` | String | The definition or type name of the content you want to list |
+| `index` | Number | The starting page index upon creation (defaults to 0 which is the first page) |
+| `perPage` | Number | The number of items to show per page |
+| `criteria` | Object | Specifies the filter criteria for which items should return in the results |
+| `fields` | Array | The array of fields to retrieve from the backed, if none provided the full objects will be returned |
+
+
+### Scoped Properties
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `page` | Array | The array of all items on the current page|
+| `items` | Array | The array of all items returned from the backend |
+| `nextPage` | Function | A function for navigating to the next page of results |
+| `previousPage` | Function | A function for navigating to the previous page of results |
+| `previousPageEnabled` | Boolean | Whether there is a page available before the current page |
+| `nextPageEnabled` | Boolean | Whether there is a page available after the current page |
+| `setPage` | Function | A function for navigating to a specified page |
+| `pageIndex` | Number | The current page index  eg. '0' |
+| `currentPage` | Number | The human readable page eg. '1' |
+| `perPage` | Number | The number of items per page |
+| `totalPages` | Number | The total number of pages available |
+
+
+> Example Usage
+
+```javascript
+import {FluroContentList} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentList,
+    },
+    data() {
+        return {
+            fieldsToSelect:['title', 'startDate', 'firstLine'],
+            // startDate:new Date(), //Crop results based on dates
+            // endDate:new Date(),
+            criteria:{
+                sort:{
+                    key:'startDate', //The field to sort on
+                    type:'date', //How to sort
+                    direction:'dsc', //Descending or Ascending
+                },
+                search:'My search keywords', //Add any extra search keywords
+                filter: { //Complex Fluro Filter Criteria
+                    operator: 'and',
+                    filters: [
+                    {
+                        key: 'title',
+                        comparator: 'contains',
+                        value: 'Service',
+                    }, 
+                    {
+                        key: 'status',
+                        comparator: '==',
+                        value: 'active',
+                    }, 
+                    ]
+                }
+            }
+        }
+    }
+}
+```
+
+```html
+<!-- Destructuring slot scope properties -->
+<fluro-content-list type="event" :fields="fieldsToSelect" :criteria="criteria" :perPage="2">
+    <template v-slot="{nextPage, previousPage, currentPage, page, totalPages, items, previousPageEnabled, nextPageEnabled}">
+        <pre v-for="event in page">{{event.title}}</pre>
+        <a :disabled="!previousPageEnabled" @click="previousPage()">Previous</a>
+        <a :disabled="!nextPageEnabled" @click="nextPage()">Next</a>
+
+        <div>{{currentPage}} of {{totalPages}}</div>
+    </template>
+</fluro-content-list>
+
+
+<!-- OR -->
+<fluro-content-list type="event" :fields="fieldsToSelect" :criteria="criteria" :perPage="2">
+    <template v-slot="props">
+        <pre v-for="event in props.page">{{event.title}}</pre>
+        <a :disabled="!props.previousPageEnabled" @click="props.previousPage()">Previous</a>
+        <a :disabled="!props.nextPageEnabled" @click="props.nextPage()">Next</a>
+
+        <div>{{props.currentPage}} of {{props.totalPages}}</div>
+    </template>
+</fluro-content-list>
+
+```
+
+
+
+
+
+
 ## Fluro Content Form
 Renders a selection of form fields from your types, queries, components or definitions in Fluro. 
 It will automatically render all of the fields, using the Fluro Content Field component.
