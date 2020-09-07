@@ -1,6 +1,11 @@
 # Quick Start
 
-Install the `fluro-vue` package via npm
+If you are building your app or website using the Fluro Web Builder, The Fluro API and UI Library is already included by default.
+
+
+# Installation
+
+If you are building your own app outside of the Fluro Web Builder you can install the `fluro-vue` package to your project via npm
 
 ```bash
 npm install fluro-vue --save
@@ -8,9 +13,7 @@ npm install fluro-vue-ui --save
 
 ```
 
-
-
-Include in your Vue app, and initialize with your `vuex` store
+Include in your custom Vue app, and initialize with your `vuex` store
 ```javascript
 // main.js
 
@@ -31,7 +34,7 @@ Vue.use(FluroVueUI);
 ````
 
 
-## Basic Usage
+# **Basic Usage**
 The `fluro` javascript API is registered on the root Vue instance, and is injected into all child components of the root and will be available on them as `this.$fluro`.
 
 ```javascript
@@ -56,7 +59,7 @@ export default {
 }
 ```
 
-# Fluro Services
+# **Fluro Services**
 `fluro-vue` includes the `fluro` and all of it's services
 They are accessible from your components from the global `this.$fluro` namespace or by importing directly into your code.
 
@@ -154,7 +157,13 @@ this.$fluro.content.retrieve(criteria, {
     this.$fluro.asset.getUrl(item._id);
 ```
 
-# Filters
+
+
+
+
+
+
+# **Filters**
 `fluro-vue` registers a few helpful filters on the global scope
 
 | Filter | Input  | Description |
@@ -187,7 +196,7 @@ this.$fluro.content.retrieve(criteria, {
 
 
 
-# Mixins
+# **Mixins**
 
 ## FluroSelectionMixin
 Provides helpful selection/deselection functions to your component including:
@@ -224,9 +233,7 @@ export default {
 
 
 
-# UI Components
-
-
+# **UI Components**
 
 ## Fluro Page Preloader
 A simple preloader that can be used to display a spinner while content is loading, 
@@ -242,6 +249,71 @@ div or element
 <!-- Show an extra large avatar for a Fluro global user -->
 <fluro-page-preloader v-if="loading" contain/>
 ```
+
+
+
+
+
+## Fluro Link
+A simple element used to create links to pages within your application
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `to` | Object | Link to page within your app by providing name, params, query data|
+| `href` | String | A url (relative or absolute) to link to|
+| `target` | String | The target window to open the link in|
+
+
+**Examples** 
+```html
+<!-- Link to a url (simple <a> tag) -->
+<fluro-link href="/watch/1234" target="_blank">Click me</fluro-link>
+
+<!-- Link to a page with some dynamic parameters -->
+<fluro-link :to="{name:'home', params:{article:'1234'}}">Click me</fluro-link>
+
+```
+
+
+
+## Fluro Button
+A simple button that extends `<fluro-link>` and respects the visual styles and settings specified in your application.
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `to` | Object | Link to page within your app by providing name, params, query data|
+| `href` | String | A url (relative or absolute) to link to|
+| `target` | String | The target window to open the link in|
+| `loading` | Boolean | Whether to disable the button and show a loading spinner|
+| `disabled` | Boolean | Whether to disable the button or not|
+| `block` | Boolean | Whether to make the button display as a block element|
+| `size` | String | The size of the button `xxs`, `xs`, `sm`, `lg`, `xl`, `xxl` |
+| `color` | String | Specify a color class to add to the button|
+| `outline` | Boolean | Whether this button should display as an outlined style button|
+| `link` | Boolean | Whether this button should display as a simple text link|
+| `round` | Number | Set the corner radius for the button|
+| `options` | Object | Specify all of the props in a single object|
+| `tag` | String | Set the html tag that should be used to render this button eg `span`, `div`, `a`|
+| `type` | String | Set the type for this button eg. `standard`, `link`, `outline`|
+
+
+**Examples** 
+```html
+<!-- Link to a url (simple <a> tag) -->
+<fluro-button href="/watch/1234" target="_blank">Click me</fluro-button>
+
+<!-- Link to a page with some dynamic parameters -->
+<fluro-button :to="{name:'home', params:{article:'1234'}}">Click me</fluro-button>
+
+<!-- Display as a block element -->
+<fluro-button block>Click me</fluro-button>
+
+<!-- Display as a small outlined button -->
+<fluro-button outline size="sm">Click me</fluro-button>
+
+```
+
+
 
 
 
@@ -982,6 +1054,115 @@ export default {
 
 
 
+## Fluro Content Render
+Renders all defined fields for a specified data object
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Object | The model data to render |
+| `fields` | Array | An array of all fields to render |
+
+> Example Usage
+
+```javascript
+import {FluroContentRender} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentRender,
+    },
+    data() {
+        return {
+            item:{
+                title:'My Item',
+                data:{
+                    myField:['one', 'two']
+                }
+            },
+            definition:{
+                title:'My Definition',
+                fields:[{
+                    key:'myField',
+                    minimum:1,
+                    maximum:3,
+                    type:'string',
+                    directive:'select',
+                    defaultValues:[]
+                    allowedValues:[],
+                    options:[{
+                        name:'Option 1',
+                        value:'one',
+                    },
+                    ...
+                    ]
+                }]
+            }
+        }
+    }
+}
+```
+
+```html
+<fluro-content-render v-model="item.data" :fields="definition.fields"/>
+```
+
+
+
+
+## Fluro Content Render Field
+Render the data for a specified field
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Object | The model data to render |
+| `field` | Object | A fluro field definition object |
+
+> Example Usage
+
+```javascript
+import {FluroContentRenderField} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentRenderField,
+    },
+    data() {
+        return {
+            item:{
+                title:'My Item',
+                data:{
+                    myField:['one', 'two']
+                }
+            },
+            myField:{
+                key:'myField',
+                minimum:1,
+                maximum:3,
+                type:'string',
+                directive:'select',
+                defaultValues:[]
+                allowedValues:[],
+                options:[{
+                    name:'Option 1',
+                    value:'one',
+                }
+            }
+        }
+    }
+}
+```
+
+```html
+<fluro-content-render-field v-model="item.data.myField" :fields="myField"/>
+```
+
+
+
+
 
 
 ## Fluro Signature Field
@@ -998,7 +1179,7 @@ Renders a signature input that allows a user to add their signature for a form
 > Example Usage
 
 ```javascript
-import FluroContentFormField from 'fluro-vue-ui';
+import {FluroContentFormField} from 'fluro-vue-ui';
 
 ////////////////////////////////////////////////////////
 
@@ -1066,5 +1247,257 @@ export default {
 <fluro-date-time-picker format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="date" />
 ```
 
+
+
+
+
+
+# **Services**
+## **$fluro.app**
+A reactive Vue service available only within apps and websites via `this.$fluro.app` built with the Fluro Web Builder. It provides helpful functions for navigating around your app, accessing native mobile APIs and playback of media content.
+
+### Properties
+
+| Property | Description |
+| ----------- | ----------- |
+| `this.$fluro.app.user` | The current logged in user for your app|
+| `this.$fluro.app.site` | The entire site model of your app|
+| `this.$fluro.app.themes` | All Themes (Block Styles) that have been defined in your app|
+| `this.$fluro.app.menu` | A dictionary of all 'Menus' that have been defined in your app|
+| `this.$fluro.app.page` | The current page the user is viewing on your app, including all relative contextual data (params, query string, items etc.)|
+| `this.$fluro.app.device` | The current context and information about the device and viewport used to display the app, including screen sizes, breakpoints etc.|
+| `this.$fluro.app.layers` | All currently rendered layers (modals, sidebar drawers etc)|
+| `this.$fluro.app.global` | A reactive object literal that can be used to store data and communicate between blocks and components|
+| `this.$fluro.app.audioPlayer` | A global Audio DOM element that can be used to play a global audio track while navigating between pages|
+| `this.$fluro.app.notifications` | An array of all Push notifications recieved during the current user session|
+| `this.$fluro.app.breadcrumb` | The fluro breadcrumb service for keeping track of user history and page heirarchy|
+| `this.$fluro.app.native` | Provides access to native APIs and plugins if run within the context of a compiled custom mobile app|
+
+**Examples**
+
+
+```js
+console.log(this.$fluro.app.themes);
+/**
+
+//Returns 
+{
+  "17399ea2-9d29-4000-81da-eaa1a287a000": {
+    "title": "Dark",
+    "key": "17399ea2-9d29-4000-81da-eaa1a287a000",
+    "items": [],
+    "buttonTextColor": "#fff",
+    "body": {
+      "fontSize": "1",
+      "letterSpacing": "0"
+    },
+    "h1": {},
+    "h2": {},
+    "h3": {},
+    "h4": {},
+    "h5": {},
+    "h6": {},
+    "headingColor": "#FFFFFFFF",
+    "accentColor": "#FFFFFFFF",
+    "buttonColor": "#FFFFFFFF",
+    "bgColor": "#222222FF",
+    "color": "#FFFFFFFF",
+    "css": ""
+  }
+}
+/**/
+```
+
+```js
+
+console.log(this.$fluro.app.menu);
+/**
+{
+  "mainMenu": {
+    "title": "Main Menu",
+    "key": "mainMenu",
+    "items": [
+      {
+        "title": "Home",
+        "type": "page",
+        "page": "home",
+        "items": [],
+        "icon": {
+          "icon": "home"
+        }
+      },
+      {
+        "title": "Browse",
+        "type": "page",
+        "page": "browse",
+        "items": [
+          {
+            "type": "page",
+            "icon": {},
+            "title": "Test",
+            "items": []
+          }
+        ],
+        "icon": {
+          "icon": "list-alt"
+        }
+      },
+      ...
+    ]
+  },
+  "browseMenu": {
+    "title": "Browse Menu",
+    "key": "browseMenu",
+    "items": [
+      {
+        "type": "page",
+        "icon": {
+          "icon": "calendar-alt",
+          "library": "far"
+        },
+        "title": "Upcoming Events",
+        "page": "events",
+        "items": []
+      }
+    ]
+  }
+}
+/**/
+```
+
+```js
+console.log(this.$fluro.app.device);
+/**
+//Returns 
+{
+    "mounted": true,
+    "screen":{
+        "width": 310,
+        "height": 590
+    },
+    "limits":{
+        "xs": 600,
+        "sm": 960,
+        "md": 1264,
+        "lg": 1904
+    },
+    "breakpoint":{
+        "mobile": true,
+        "tablet": false,
+        "desktop": false,
+        "xs": true,
+        "sm": false,
+        "md": false,
+        "lg": false,
+        "xl": false,
+        "xsOnly": true,
+        "smOnly": false,
+        "smAndDown": true,
+        "smAndUp": false,
+        "mdOnly": false,
+        "mdAndDown": true,
+        "mdAndUp": false,
+        "lgOnly": false,
+        "lgAndDown": true,
+        "lgAndUp": false,
+        "xlOnly": false,
+        "point": 0
+    },
+    "point": 0
+}
+/**/
+
+```
+
+
+```js
+console.log(this.$fluro.app.breadcrumb.tree);
+/**
+//Returns an array of routes based on the heirarchy of the current href.
+
+[
+  {
+    "title": "Home",
+    "url": "/",
+    "state": "home",
+    ...
+  },
+  {
+    "title": "Media",
+    "url": "/media",
+    "state": "media",
+    ...
+  },
+  {
+    "title": "Category",
+    "url": "/media/category",
+    "state": "category",
+    ...
+  },
+]
+
+/**/
+
+
+console.log(this.$fluro.app.breadcrumb.tree);
+/**
+//Returns an array of routes based on the browsing history of the user, (recording each page)
+[
+  {
+    "title": "Media",
+    "name": "media",
+    "query": {},
+    "params": {
+      "id": "5ef4505264230503fa38b4af",
+      "slug": "example-series",
+      "series": "5ef4505264230503fa38b4af"
+    }
+  },
+  {
+    "title": "Series",
+    "name": "series",
+    "query": {},
+    "params": {
+      "series": "5ef4505264230503fa38b4af",
+      "id": "5ef4505264230503fa38b4af",
+      "slug": "example-series"
+    }
+  }
+]
+
+/**/
+
+```
+
+
+
+
+### Methods
+
+| Method | Description |
+| ----------- | ----------- |
+| `this.$fluro.app.to` | Navigate the user to another page within your app|
+| `this.$fluro.app.addLayer()` | A function used to add and render an extra layer (modals, sidebar drawers) to your interface |
+| `this.$fluro.app.removeLayer()` | A function used to remove layers (modals, sidebar drawers) from your interface |
+| `this.$fluro.app.clearLayers()` | A function used to remove all layers from your interface |
+
+**$fluro.app.to()**
+`this.$fluro.app.to` makes it each to navigate a user to a new page. You can provide context by providing dynamic parameters and query arguments.
+
+```js
+
+//Equivalent of linking manually to something like '/blog/my-awesome-blog?sortRelevant=created'
+this.$fluro.app.to({
+    name:'blogDetail', 
+    params:{ 
+        slug:'my-awesome-blog',
+    },
+    query:{
+        sortRelevant:'created',
+    }
+})
+
+
+```
 
 
