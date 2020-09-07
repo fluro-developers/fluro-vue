@@ -888,6 +888,7 @@ while allowing you to render it using your own html markup. It is a reactive Vue
 ### Scoped Properties
 | Props | Type | Description |
 | ----------- | ----------- | ----------- |
+| `cumulative` | Boolean | Whether to append items to the current page instead of replacing|
 | `page` | Array | The array of all items on the current page|
 | `items` | Array | The array of all items returned from the backend |
 | `nextPage` | Function | A function for navigating to the next page of results |
