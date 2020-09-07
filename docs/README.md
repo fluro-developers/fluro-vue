@@ -233,1023 +233,6 @@ export default {
 
 
 
-# **UI Components**
-
-## Fluro Page Preloader
-A simple preloader that can be used to display a spinner while content is loading, 
-by default will appear fixed in the center of the browser window, but the contain attribute can be added if it should be contained within another
-div or element
-
-
-```html
-<!-- Show an extra large avatar for a Fluro global user -->
-<fluro-page-preloader v-if="loading"/>
-
-
-<!-- Show an extra large avatar for a Fluro global user -->
-<fluro-page-preloader v-if="loading" contain/>
-```
-
-
-
-
-
-## Fluro Link
-A simple element used to create links to pages within your application
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `to` | Object | Link to page within your app by providing name, params, query data|
-| `href` | String | A url (relative or absolute) to link to|
-| `target` | String | The target window to open the link in|
-
-
-**Examples** 
-```html
-<!-- Link to a url (simple <a> tag) -->
-<fluro-link href="/watch/1234" target="_blank">Click me</fluro-link>
-
-<!-- Link to a page with some dynamic parameters -->
-<fluro-link :to="{name:'home', params:{article:'1234'}}">Click me</fluro-link>
-
-```
-
-
-
-## Fluro Button
-A simple button that extends `<fluro-link>` and respects the visual styles and settings specified in your application.
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `to` | Object | Link to page within your app by providing name, params, query data|
-| `href` | String | A url (relative or absolute) to link to|
-| `target` | String | The target window to open the link in|
-| `loading` | Boolean | Whether to disable the button and show a loading spinner|
-| `disabled` | Boolean | Whether to disable the button or not|
-| `block` | Boolean | Whether to make the button display as a block element|
-| `size` | String | The size of the button `xxs`, `xs`, `sm`, `lg`, `xl`, `xxl` |
-| `color` | String | Specify a color class to add to the button|
-| `outline` | Boolean | Whether this button should display as an outlined style button|
-| `link` | Boolean | Whether this button should display as a simple text link|
-| `round` | Number | Set the corner radius for the button|
-| `options` | Object | Specify all of the props in a single object|
-| `tag` | String | Set the html tag that should be used to render this button eg `span`, `div`, `a`|
-| `type` | String | Set the type for this button eg. `standard`, `link`, `outline`|
-
-
-**Examples** 
-```html
-<!-- Link to a url (simple <a> tag) -->
-<fluro-button href="/watch/1234" target="_blank">Click me</fluro-button>
-
-<!-- Link to a page with some dynamic parameters -->
-<fluro-button :to="{name:'home', params:{article:'1234'}}">Click me</fluro-button>
-
-<!-- Display as a block element -->
-<fluro-button block>Click me</fluro-button>
-
-<!-- Display as a small outlined button -->
-<fluro-button outline size="sm">Click me</fluro-button>
-
-```
-
-
-
-
-
-
-## Fluro Tabset
-A component that makes it easy to add a responsive tabset to the screen
-
-```javascript
-import {FluroTabset, FluroTab} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroTabset,
-        FluroTab,
-    },
-}
-```
-
-
-```html
-<tabset :justified="true" :vertical="true">
-	 <tab heading="Tab One">
-        <slot>
-        	Your tabbed content
-    	</slot>
-    </tab>
-    <tab heading="Tab Two">
-        <slot>
-        	Your tabbed content
-    	</slot>
-    </tab>
-</tabset>
-
-```
-
-
-
-## Fluro Realm Tags
-A component that can display coloured tags as defined in an array of realms
-
-
-```html
-<fluro-realm-dots :realms="[{title:'Realm One', color:'#ff0066',...}...]"/>
-
-```
-
-
-
-
-## Fluro Realm Dots
-A component that can display coloured dots as defined in an array of realms
-
-
-```html
-<fluro-realm-dots :realms="[{title:'Realm One', color:'#ff0066',...}...]"/>
-
-```
-
-
-
-## Fluro Icon
-A component that makes it easy to show an icon, for more information and to find out
-icons that can be used checkout [The Font Awesome Icon Library](https://fontawesome.com/icons?d=gallery)
-
-```html
-<!-- Show the default icon for a 'eventtrack' in Fluro -->
-<fluro-icon type="eventtrack"/>
-
-<!-- Show an icon from the default icon set eg. Font awesome -->
-<fluro-icon icon="home"/>
-
-<!-- Show the home icon from the 'fab' (font awesome brand) library-->
-<fluro-icon icon="facebook" library="fab"/>
-
-<!-- Spin the icon endlessly -->
-<fluro-icon icon="spinner" spin/>
-
-
-```
-
-
-## Flex Column Layout
-Wraps the content inside in a Flexbox column display, allowing you to easily create fixed headers and footers
-while allowing an interior element to be scrollable. Works together with the FlexColumnHeader, FlexColumnFooter and FlexColumnBody components
-The Flex Column component can be nested also.
-
-```html
-<flex-column>
-    <flex-column-header>
-        Yay! I am fixed to the top
-    </flex-column-header>
-
-
-
-    <flex-column-body>
-    <div>
-        Yay! I am scrollable.
-    </div>
-    </flex-column-body>
-
-
-    <flex-column-footer>
-    <div>
-        Yay! I am fixed to the bottom.
-    </div>
-    </flex-column-footer>
-
-
-</flex-column>
-```
-
-
-
-
-
-## Avatar
-A component that makes it quick and easy to show an avatar for a Fluro user, persona or contact 
-
-
-```html
-<!-- Show an extra large avatar for a Fluro global user -->
-<fluro-avatar class="xl" :id="user._id" type="user"></fluro-avatar>
-
-<!-- Show an extra small avatar for a Fluro contact -->
-<fluro-avatar class="xs" :id="contact._id" type="contact"></fluro-avatar>
-
-<!-- Show the avatar for a Fluro persona -->
-<fluro-avatar class="xl" :id="user.persona" type="persona"></fluro-avatar>
-
-```
-
-## Fluro Avatar Update
-A component that makes it quick and easy to show an avatar where the user can click and upload a new image
-
-```javascript
-import {FluroAvatarUpdate} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroAvatarUpdate,
-    },
-}
-```
-
-
-```html
-<fluro-avatar-update :id="model._id" type="contact" />
-
-```
-
-| Props | Description |
-| ----------- | ----------- |
-| `id` | An object or object id representing the contact or persona |
-| `type` | Set whether the avatar is for a 'contact' or a 'persona' *defaults to 'contact'* |
-
-
-
-
-
-
-
-## Image
-A component that makes it easy to render an image from Fluro
-
-
-| Props | Description |
-| ----------- | ----------- |
-| `item` | An object representing a Fluro image, *can also just be a string _id of the image* |
-| `width` | Set an explict width for the image *if not provided then width will be inferred from the user's screen size* |
-| `height` | Set an explict height for the image *if not provided then height will be inferred from the user's screen size* |
-| `spinner` | Whether a preloader spinner should show while the image is loading |
-
-
-| Attributes | Description |
-| ----------- | ----------- |
-| `cover` | The image will cover the entire area |
-| `contain` | The entire image will be contained within the box |
-
-
-| Events | Description |
-| ----------- | ----------- |
-| `load` | Fires when the image has finished loading |
-| `error` | If there was an error loading the image |
-
-> Example Usage
-
-```html
-<!-- Renders an image with a preloading spinner -->
-<fluro-image contain :item="image" :spinner="true" @load="onLoad" @error="onError"/>
-
-
-```
-
-
-
-
-## Video
-A component that makes it easy to render a video from Fluro. Depending on
-whether the video is an uploaded file, embed code or provided from an external service
-like youtube or vimeo. If possible it will also render the poster image before playback
-
-
-| Props | Description |
-| ----------- | ----------- |
-| `item` | An object representing the Fluro video, usually loaded from the API|
-| `options` | Extra parameters that can be passed into the player |
-
-> Example Usage
-
-```html
-<!-- Renders a video depending on the media provider -->
-<fluro-video :item="video" :options="{}"></fluro-video>
-
-
-```
-
-
-## Video Thumbnail
-A component that makes it easy to render a thumbnail image of a video from Fluro
-
-| Props | Description |
-| ----------- | ----------- |
-| `item` | An object representing the Fluro video, or the video ID|
-
-> Example Usage
-
-```html
-<!-- Renders an image with a preloading spinner -->
-<fluro-video-thumbnail :item="video"></fluro-video-thumbnail>
-```
-
-## Fluro WYSIWYG Editor
-A component that makes it quick and easy to show render a rich text editor, complete with code beautifying, the ability to
-mention other users by typing in @their.name and fits in and inherits the styles of the rest of your app
-
-| Props | Description |
-| ----------- | ----------- |
-| `v-model` | Bind the html string to edit|
-| `placeholder` | Add a placeholder|
-
-> Example Usage
-
-```html
-<fluro-editor v-model="html" placeholder="Type your text in here"></fluro-editor>
-```
-
-```javascript
-import {FluroEditor} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroEditor,
-    },
-    data() {
-        return {
-            html:'',
-        }
-    }
-}
-```
-
-## Fluro Code Editor
-An inline code editor, capable of inputting, rendering, beautifying your JSON, Javascript, HTML or SCSS/CSS code input
-
-| Props | Description |
-| ----------- | ----------- |
-| `v-model` | Bind the string to edit|
-| `lang` | Select the language/syntax format, Can be `json` `html` `js` or `css`|
-| `height` | The starting height for the editor|
-
-> Example Usage
-
-```javascript
-import {FluroCodeEditor} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroCodeEditor,
-    },
-    data() {
-        return {
-            script:'',
-        }
-    }
-}
-```
-
-
-```html
-<fluro-code-editor v-model="script" lang="json" :height="200"></fluro-code-editor>
-```
-
-
-
-
-
-## Fluro Content List
-This is essentially a renderless component that provides all the necessary functionality for retrieving a filtered list of a certain type of content
-while allowing you to render it using your own html markup. It is a reactive Vue wrapper for a FluroContentListService, complete with pagination and Filtering
-
-### Props
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `type` | String | The definition or type name of the content you want to list |
-| `index` | Number | The starting page index upon creation (defaults to 0 which is the first page) |
-| `perPage` | Number | The number of items to show per page |
-| `criteria` | Object | Specifies the filter criteria for which items should return in the results |
-| `fields` | Array | The array of fields to retrieve from the backed, if none provided the full objects will be returned |
-
-
-### Scoped Properties
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `page` | Array | The array of all items on the current page|
-| `items` | Array | The array of all items returned from the backend |
-| `nextPage` | Function | A function for navigating to the next page of results |
-| `previousPage` | Function | A function for navigating to the previous page of results |
-| `previousPageEnabled` | Boolean | Whether there is a page available before the current page |
-| `nextPageEnabled` | Boolean | Whether there is a page available after the current page |
-| `setPage` | Function | A function for navigating to a specified page |
-| `pageIndex` | Number | The current page index  eg. '0' |
-| `currentPage` | Number | The human readable page eg. '1' |
-| `perPage` | Number | The number of items per page |
-| `totalPages` | Number | The total number of pages available |
-
-
-> Example Usage
-
-```javascript
-import {FluroContentList} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroContentList,
-    },
-    data() {
-        return {
-            fieldsToSelect:['title', 'startDate', 'firstLine'],
-            // startDate:new Date(), //Crop results based on dates
-            // endDate:new Date(),
-            criteria:{
-                sort:{
-                    key:'startDate', //The field to sort on
-                    type:'date', //How to sort
-                    direction:'dsc', //Descending or Ascending
-                },
-                search:'My search keywords', //Add any extra search keywords
-                filter: { //Complex Fluro Filter Criteria
-                    operator: 'and',
-                    filters: [
-                    {
-                        key: 'title',
-                        comparator: 'contains',
-                        value: 'Service',
-                    }, 
-                    {
-                        key: 'status',
-                        comparator: '==',
-                        value: 'active',
-                    }, 
-                    ]
-                }
-            }
-        }
-    }
-}
-```
-
-```html
-<!-- Destructuring slot scope properties -->
-<fluro-content-list type="event" :fields="fieldsToSelect" :criteria="criteria" :perPage="2">
-    <template v-slot="{nextPage, previousPage, currentPage, page, totalPages, items, previousPageEnabled, nextPageEnabled}">
-        <pre v-for="event in page">{{event.title}}</pre>
-        <a :disabled="!previousPageEnabled" @click="previousPage()">Previous</a>
-        <a :disabled="!nextPageEnabled" @click="nextPage()">Next</a>
-
-        <div>{{currentPage}} of {{totalPages}}</div>
-    </template>
-</fluro-content-list>
-
-
-<!-- OR -->
-<fluro-content-list type="event" :fields="fieldsToSelect" :criteria="criteria" :perPage="2">
-    <template v-slot="props">
-        <pre v-for="event in props.page">{{event.title}}</pre>
-        <a :disabled="!props.previousPageEnabled" @click="props.previousPage()">Previous</a>
-        <a :disabled="!props.nextPageEnabled" @click="props.nextPage()">Next</a>
-
-        <div>{{props.currentPage}} of {{props.totalPages}}</div>
-    </template>
-</fluro-content-list>
-
-```
-
-
-
-
-
-
-## Fluro Content Form
-Renders a selection of form fields from your types, queries, components or definitions in Fluro. 
-It will automatically render all of the fields, using the Fluro Content Field component.
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `v-model` | Object | The model to edit |
-| `fields` | Array | The array of fields to render, (Usually the array from a definition) |
-| `options` | Object | Extra configuration and options for the form fields |
-
-> Example Usage
-
-```javascript
-import {FluroContentForm} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroContentForm,
-    },
-    data() {
-        return {
-            model:{},
-        }
-    }
-}
-```
-
-```html
-<!-- Will render all of the form fields recursively in the order and layout as specified the definition -->
-<fluro-content-form v-model="model" :fields="definition.fields"></fluro-content-form>
-
-
-
-
-
-<!-- Layout fields with your own custom markup -->
-<fluro-content-form v-model="model" :fields="definition.fields">
-<template v-slot:form="{formFields, fieldHash, model, update, options}">
-    <fluro-content-form-field :form-fields="formFields" @input="update" :options="options" :field="fieldHash.lastName" v-model="model"></fluro-content-form-field>
-</template>
-</fluro-content-form>
-
-
-```
-
-
-
-
-
-
-## Fluro Content Form Field
-Renders a form field as defined within Fluro
-It will render all nested children and embedded fields recursively. This is mainly used 
-within the Fluro Content Form Component
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `v-model` | Object | The model to edit |
-| `field` | Object | The field description object from fluro |
-
-> Example Usage
-
-```javascript
-import {FluroContentFormField} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroContentFormField,
-    },
-    data() {
-        return {
-            model:{},
-            field:{
-                minimum:1,
-                maximum:3,
-                type:'string',
-                directive:'select',
-                defaultValues:[]
-                allowedValues:[],
-                options:[{
-                    name:'Option 1',
-                    value:'one',
-                }]
-            }
-        }
-    }
-}
-```
-
-```html
-<fluro-content-field :field="field" v-model="model"></fluro-content-field>
-```
-
-
-
-## Fluro Interaction Form
-Renders a Fluro interaction definition as a fully working form, complete with validation, submission, resetting and payments
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `title` | String | An optional display title for the form |
-| `definition` | Object | The Form/Definition from Fluro to render |
-| `linkedProcess` | String or Object | The process card to link to if applicable |
-| `linkedEvent` | String or Object | The event to register tickets for if applicable |
-| `debugMode` | Boolean | Whether the form should be rendered in 'debug/test' mode |
-| `options` | Object | Extra configuration for the form and it's fields |
-
-> Example Usage
-
-```javascript
-import {FluroInteractionForm} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroInteractionForm,
-    },
-    asyncComputed: {
-        form: {
-            get() {
-                var self = this;
-                //Retrieve a form from the API
-                return self.$fluro.content.form('58dca35c21228d2d045a1cf7');
-            }
-        }
-    }
-}
-```
-
-```html
-<fluro-interaction-form :definition="form">
-    <template v-slot:info>
-        <h1>My Awesome Form</h1>
-    </template>
-
-    <template v-slot:success="{result, reset}">
-        
-        <div> Form submitted successfully!</div>
-        <v-btn @click="reset()">
-            Back to form
-        </v-btn>
-    </template>
-
-    <template v-slot:error="{result}">
-        There was an error!
-
-        <v-btn @click="reset()">
-            Back to form
-        </v-btn>
-    </template>
-</fluro-interaction-form>
-```
-
-
-
-
-## Fluro Post Form
-Renders a Fluro post definition as a fully functional form
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `title` | String | An optional display title for the form |
-| `type` | String | The definition name of the type of post you want to create. Eg. 'comment' |
-| `target` | String or Object | The target parent you want to attach this post to |
-| `options` | Object | Extra configuration for the form and it's fields |
-
-> Example Usage
-
-```javascript
-import {FluroPostForm} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroPostForm,
-    },
-}
-```
-
-```html
-<fluro-post-form title="Join the conversation" :options="{labels:{'body':''}, editor:{mentions:{managed:true}}}" :target="item" @created="commentAdded" type="comment">
-    
-    <template v-slot:authenticated>
-        <div class="text-xs-center">
-            You don't have permission to join this conversation
-        </div>
-    </template>
-
-    <template v-slot:unauthenticated>
-        <div class="text-xs-center">
-            <h5>Join the conversation</h5>
-            <v-btn color="primary" :to="{name:'user.login'}">
-                Login
-            </v-btn>
-            <v-btn color="primary" :to="{name:'user.signup'}">
-                Signup
-            </v-btn>
-        </div>
-    </template>
-
-</fluro-post-form>
-```
-
-
-
-## Fluro Post Thread
-Renders a thread of posts for a specified parent item
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `v-model` | Array | An array of comments |
-| `type` | String | The definition name of the type of post you want to create. Eg. 'comment' |
-| `target` | String or Object | The target parent you want to attach this post to |
-| `options` | Object | Extra configuration for the form and it's fields |
-
-> Example Usage
-
-```javascript
-import {FluroPostThread} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroPostThread,
-    },
-    asyncComputed: {
-        comments: {
-            get() {
-                var self = this;
-                return self.$fluro.content.thread(self.item, 'comment');
-            },
-            default: [],
-        },
-}
-```
-
-```html
-<fluro-post-thread v-model="comments">
-    <template v-slot:post="{post}">
-        <pre>{{post}}</pre>
-    </template>
-</fluro-post-thread>
-```
-
-
-
-
-
-
-## Fluro Stat Toggle
-Makes it easy to add a stat toggle component, that can 'like', 'upvote', 'bookmark', 'favorite' a specified item.
-As this is for toggling on/off a specific stat, all stats toggled by this component will be considered 'unique' stats
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `target` | String, Object | The item to check |
-| `stat` | String | The name of the stat you want to toggle |
-
-> Example Usage
-
-```javascript
-import {FluroStatToggle} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroStatToggle,
-    },
-}
-```
-
-```html
-<fluro-stat-toggle :target="item" stat="subscribe">
-    <template v-slot="{statting, toggle, statted, store}">
-        <v-btn depressed block @click="toggle" :class="{primary:statted}">
-            <div v-if="statted">
-                <span>Following</span>
-                <font-awesome-icon right :icon="['fas', 'rss']"></font-awesome-icon>
-            </div>
-            <div v-if="!statted">
-                <span>Follow</span>
-                <font-awesome-icon right :icon="['far', 'rss']"></font-awesome-icon>
-            </div>
-        </v-btn>
-    </template>
-</fluro-stat-toggle>
-```
-
-
-
-## Fluro Stat Total
-Displays a total of stats of a specified type for an item
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `target` | String, Object | The item to retrieve stats for |
-| `stat` | String | The name of the stat you want to display a total for |
-| `unique` | Boolean | Whether the stat is a unique stat or a cumulative stat |
-> Example Usage
-
-```javascript
-import {FluroStatToggle} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroStatToggle,
-    },
-}
-```
-
-```html
-<fluro-stat-total :target="item" :unique="true" stat="subscribe">
-    <template v-slot="{total, processing}">
-        <span v-if="!processing">{{total}}</span>
-        <span v-if="processing">
-            <font-awesome-icon spin :icon="['far', 'spinner-third']"></font-awesome-icon>
-        </span>
-    </template>
-</fluro-stat-total>
-```
-
-
-
-## Fluro Content Render
-Renders all defined fields for a specified data object
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `v-model` | Object | The model data to render |
-| `fields` | Array | An array of all fields to render |
-
-> Example Usage
-
-```javascript
-import {FluroContentRender} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroContentRender,
-    },
-    data() {
-        return {
-            item:{
-                title:'My Item',
-                data:{
-                    myField:['one', 'two']
-                }
-            },
-            definition:{
-                title:'My Definition',
-                fields:[{
-                    key:'myField',
-                    minimum:1,
-                    maximum:3,
-                    type:'string',
-                    directive:'select',
-                    defaultValues:[]
-                    allowedValues:[],
-                    options:[{
-                        name:'Option 1',
-                        value:'one',
-                    },
-                    ...
-                    ]
-                }]
-            }
-        }
-    }
-}
-```
-
-```html
-<fluro-content-render v-model="item.data" :fields="definition.fields"/>
-```
-
-
-
-
-## Fluro Content Render Field
-Render the data for a specified field
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `v-model` | Object | The model data to render |
-| `field` | Object | A fluro field definition object |
-
-> Example Usage
-
-```javascript
-import {FluroContentRenderField} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroContentRenderField,
-    },
-    data() {
-        return {
-            item:{
-                title:'My Item',
-                data:{
-                    myField:['one', 'two']
-                }
-            },
-            myField:{
-                key:'myField',
-                minimum:1,
-                maximum:3,
-                type:'string',
-                directive:'select',
-                defaultValues:[]
-                allowedValues:[],
-                options:[{
-                    name:'Option 1',
-                    value:'one',
-                }
-            }
-        }
-    }
-}
-```
-
-```html
-<fluro-content-render-field v-model="item.data.myField" :fields="myField"/>
-```
-
-
-
-
-
-
-## Fluro Signature Field
-Renders a signature input that allows a user to add their signature for a form
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `v-model` | Object | The model to edit |
-| `label` | String | The label to show above the signature |
-| `required` | Boolean | Whether or not this field should show an error if no input is added |
-| `errorMessages` | Array | An array of error messages to display to the user |
-| `hint` | String | Hint or descriptive text to show below the field |
-
-> Example Usage
-
-```javascript
-import {FluroContentFormField} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroContentFormField,
-    },
-    data() {
-        return {
-            model:{},
-            field:{
-                minimum:1,
-                maximum:3,
-                type:'string',
-                directive:'select',
-                defaultValues:[]
-                allowedValues:[],
-                options:[{
-                    name:'Option 1',
-                    value:'one',
-                }]
-            }
-        }
-    }
-}
-```
-
-```html
-<fluro-signature-field :label="label" v-model="fieldModel" :required="required" :error-messages="errorMessages" :hint="field.description"/>
-```
-
-
-
-
-## Fluro Date+Time Picker
-Renders an input that allows a user to quickly select a time and date.
-Allows for data entry of a full Javascript date timestamp as a string or date
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `v-model` | Object | The date to edit |
-| `label` | String | The label to show above the signature |
-| `format` | String | The format to display for the date when rendered in the text input |
-
-> Example Usage
-
-```javascript
-import {FluroDateTimePicker} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroDateTimePicker,
-    },
-    data() {
-        return {
-            date:'2016-04-03T07:10:11.004Z',
-        }
-    }
-}
-```
-
-```html
-<fluro-date-time-picker format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="date" />
-```
-
-
-
-
 
 
 # **Services**
@@ -1498,6 +481,978 @@ this.$fluro.app.to({
 })
 
 
+```
+
+
+
+
+# **UI Components**
+
+## Page Preloader
+A simple preloader that can be used to display a spinner while content is loading, 
+by default will appear fixed in the center of the browser window, but the contain attribute can be added if it should be contained within another
+div or element
+
+
+```html
+<!-- Show an extra large avatar for a Fluro global user -->
+<fluro-page-preloader v-if="loading"/>
+
+
+<!-- Show an extra large avatar for a Fluro global user -->
+<fluro-page-preloader v-if="loading" contain/>
+```
+
+
+
+
+
+## Link
+A simple element used to create links to pages within your application
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `to` | Object | Link to page within your app by providing name, params, query data|
+| `href` | String | A url (relative or absolute) to link to|
+| `target` | String | The target window to open the link in|
+
+
+**Examples** 
+```html
+<!-- Link to a url (simple <a> tag) -->
+<fluro-link href="/watch/1234" target="_blank">Click me</fluro-link>
+
+<!-- Link to a page with some dynamic parameters -->
+<fluro-link :to="{name:'home', params:{article:'1234'}}">Click me</fluro-link>
+
+```
+
+
+
+## Button
+A simple button that extends `<fluro-link>` and respects the visual styles and settings specified in your application.
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `to` | Object | Link to page within your app by providing name, params, query data|
+| `href` | String | A url (relative or absolute) to link to|
+| `target` | String | The target window to open the link in|
+| `loading` | Boolean | Whether to disable the button and show a loading spinner|
+| `disabled` | Boolean | Whether to disable the button or not|
+| `block` | Boolean | Whether to make the button display as a block element|
+| `size` | String | The size of the button `xxs`, `xs`, `sm`, `lg`, `xl`, `xxl` |
+| `color` | String | Specify a color class to add to the button|
+| `outline` | Boolean | Whether this button should display as an outlined style button|
+| `link` | Boolean | Whether this button should display as a simple text link|
+| `round` | Number | Set the corner radius for the button|
+| `options` | Object | Specify all of the props in a single object|
+| `tag` | String | Set the html tag that should be used to render this button eg `span`, `div`, `a`|
+| `type` | String | Set the type for this button eg. `standard`, `link`, `outline`|
+
+
+**Examples** 
+```html
+<!-- Link to a url (simple <a> tag) -->
+<fluro-button href="/watch/1234" target="_blank">Click me</fluro-button>
+
+<!-- Link to a page with some dynamic parameters -->
+<fluro-button :to="{name:'home', params:{article:'1234'}}">Click me</fluro-button>
+
+<!-- Display as a block element -->
+<fluro-button block>Click me</fluro-button>
+
+<!-- Display as a small outlined button -->
+<fluro-button outline size="sm">Click me</fluro-button>
+
+```
+
+
+
+
+
+
+## Tabset
+A component that makes it easy to add a responsive tabset to the screen
+
+```javascript
+import {FluroTabset, FluroTab} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroTabset,
+        FluroTab,
+    },
+}
+```
+
+
+```html
+<tabset :justified="true" :vertical="true">
+	 <tab heading="Tab One">
+        <slot>
+        	Your tabbed content
+    	</slot>
+    </tab>
+    <tab heading="Tab Two">
+        <slot>
+        	Your tabbed content
+    	</slot>
+    </tab>
+</tabset>
+
+```
+
+
+
+## Realm Tags
+A component that can display coloured tags as defined in an array of realms
+
+
+```html
+<fluro-realm-dots :realms="[{title:'Realm One', color:'#ff0066',...}...]"/>
+
+```
+
+
+
+
+## Realm Dots
+A component that can display coloured dots as defined in an array of realms
+
+
+```html
+<fluro-realm-dots :realms="[{title:'Realm One', color:'#ff0066',...}...]"/>
+
+```
+
+
+
+## Icon
+A component that makes it easy to show an icon, for more information and to find out
+icons that can be used checkout [The Font Awesome Icon Library](https://fontawesome.com/icons?d=gallery)
+
+```html
+<!-- Show the default icon for a 'eventtrack' in Fluro -->
+<fluro-icon type="eventtrack"/>
+
+<!-- Show an icon from the default icon set eg. Font awesome -->
+<fluro-icon icon="home"/>
+
+<!-- Show the home icon from the 'fab' (font awesome brand) library-->
+<fluro-icon icon="facebook" library="fab"/>
+
+<!-- Spin the icon endlessly -->
+<fluro-icon icon="spinner" spin/>
+
+
+```
+
+
+## Flex Column Layout
+Wraps the content inside in a Flexbox column display, allowing you to easily create fixed headers and footers
+while allowing an interior element to be scrollable. Works together with the FlexColumnHeader, FlexColumnFooter and FlexColumnBody components
+The Flex Column component can be nested also.
+
+```html
+<flex-column>
+    <flex-column-header>
+        Yay! I am fixed to the top
+    </flex-column-header>
+
+
+
+    <flex-column-body>
+    <div>
+        Yay! I am scrollable.
+    </div>
+    </flex-column-body>
+
+
+    <flex-column-footer>
+    <div>
+        Yay! I am fixed to the bottom.
+    </div>
+    </flex-column-footer>
+
+
+</flex-column>
+```
+
+
+
+
+
+## Avatar
+A component that makes it quick and easy to show an avatar for a Fluro user, persona or contact 
+
+
+```html
+<!-- Show an extra large avatar for a Fluro global user -->
+<fluro-avatar class="xl" :id="user._id" type="user"></fluro-avatar>
+
+<!-- Show an extra small avatar for a Fluro contact -->
+<fluro-avatar class="xs" :id="contact._id" type="contact"></fluro-avatar>
+
+<!-- Show the avatar for a Fluro persona -->
+<fluro-avatar class="xl" :id="user.persona" type="persona"></fluro-avatar>
+
+```
+
+## Avatar Update
+A component that makes it quick and easy to show an avatar where the user can click and upload a new image
+
+```javascript
+import {FluroAvatarUpdate} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroAvatarUpdate,
+    },
+}
+```
+
+
+```html
+<fluro-avatar-update :id="model._id" type="contact" />
+
+```
+
+| Props | Description |
+| ----------- | ----------- |
+| `id` | An object or object id representing the contact or persona |
+| `type` | Set whether the avatar is for a 'contact' or a 'persona' *defaults to 'contact'* |
+
+
+
+
+
+
+
+## Image
+A component that makes it easy to render an image from Fluro
+
+
+| Props | Description |
+| ----------- | ----------- |
+| `item` | An object representing a Fluro image, *can also just be a string _id of the image* |
+| `width` | Set an explict width for the image *if not provided then width will be inferred from the user's screen size* |
+| `height` | Set an explict height for the image *if not provided then height will be inferred from the user's screen size* |
+| `spinner` | Whether a preloader spinner should show while the image is loading |
+
+
+| Attributes | Description |
+| ----------- | ----------- |
+| `cover` | The image will cover the entire area |
+| `contain` | The entire image will be contained within the box |
+
+
+| Events | Description |
+| ----------- | ----------- |
+| `load` | Fires when the image has finished loading |
+| `error` | If there was an error loading the image |
+
+> Example Usage
+
+```html
+<!-- Renders an image with a preloading spinner -->
+<fluro-image contain :item="image" :spinner="true" @load="onLoad" @error="onError"/>
+
+
+```
+
+
+
+
+## Video
+A component that makes it easy to render a video from Fluro. Depending on
+whether the video is an uploaded file, embed code or provided from an external service
+like youtube or vimeo. If possible it will also render the poster image before playback
+
+
+| Props | Description |
+| ----------- | ----------- |
+| `item` | An object representing the Fluro video, usually loaded from the API|
+| `options` | Extra parameters that can be passed into the player |
+
+> Example Usage
+
+```html
+<!-- Renders a video depending on the media provider -->
+<fluro-video :item="video" :options="{}"></fluro-video>
+
+
+```
+
+
+## Video Thumbnail
+A component that makes it easy to render a thumbnail image of a video from Fluro
+
+| Props | Description |
+| ----------- | ----------- |
+| `item` | An object representing the Fluro video, or the video ID|
+
+> Example Usage
+
+```html
+<!-- Renders an image with a preloading spinner -->
+<fluro-video-thumbnail :item="video"></fluro-video-thumbnail>
+```
+
+## WYSIWYG Editor
+A component that makes it quick and easy to show render a rich text editor, complete with code beautifying, the ability to
+mention other users by typing in @their.name and fits in and inherits the styles of the rest of your app
+
+| Props | Description |
+| ----------- | ----------- |
+| `v-model` | Bind the html string to edit|
+| `placeholder` | Add a placeholder|
+
+> Example Usage
+
+```html
+<fluro-editor v-model="html" placeholder="Type your text in here"></fluro-editor>
+```
+
+```javascript
+import {FluroEditor} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroEditor,
+    },
+    data() {
+        return {
+            html:'',
+        }
+    }
+}
+```
+
+## Code Editor
+An inline code editor, capable of inputting, rendering, beautifying your JSON, Javascript, HTML or SCSS/CSS code input
+
+| Props | Description |
+| ----------- | ----------- |
+| `v-model` | Bind the string to edit|
+| `lang` | Select the language/syntax format, Can be `json` `html` `js` or `css`|
+| `height` | The starting height for the editor|
+
+> Example Usage
+
+```javascript
+import {FluroCodeEditor} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroCodeEditor,
+    },
+    data() {
+        return {
+            script:'',
+        }
+    }
+}
+```
+
+
+```html
+<fluro-code-editor v-model="script" lang="json" :height="200"></fluro-code-editor>
+```
+
+
+
+
+
+## Content List
+This is essentially a renderless component that provides all the necessary functionality for retrieving a filtered list of a certain type of content
+while allowing you to render it using your own html markup. It is a reactive Vue wrapper for a FluroContentListService, complete with pagination and Filtering
+
+### Props
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `type` | String | The definition or type name of the content you want to list |
+| `index` | Number | The starting page index upon creation (defaults to 0 which is the first page) |
+| `perPage` | Number | The number of items to show per page |
+| `criteria` | Object | Specifies the filter criteria for which items should return in the results |
+| `fields` | Array | The array of fields to retrieve from the backed, if none provided the full objects will be returned |
+
+
+### Scoped Properties
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `page` | Array | The array of all items on the current page|
+| `items` | Array | The array of all items returned from the backend |
+| `nextPage` | Function | A function for navigating to the next page of results |
+| `previousPage` | Function | A function for navigating to the previous page of results |
+| `previousPageEnabled` | Boolean | Whether there is a page available before the current page |
+| `nextPageEnabled` | Boolean | Whether there is a page available after the current page |
+| `setPage` | Function | A function for navigating to a specified page |
+| `pageIndex` | Number | The current page index  eg. '0' |
+| `currentPage` | Number | The human readable page eg. '1' |
+| `perPage` | Number | The number of items per page |
+| `totalPages` | Number | The total number of pages available |
+
+
+> Example Usage
+
+```javascript
+import {FluroContentList} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentList,
+    },
+    data() {
+        return {
+            fieldsToSelect:['title', 'startDate', 'firstLine'],
+            // startDate:new Date(), //Crop results based on dates
+            // endDate:new Date(),
+            criteria:{
+                sort:{
+                    key:'startDate', //The field to sort on
+                    type:'date', //How to sort
+                    direction:'dsc', //Descending or Ascending
+                },
+                search:'My search keywords', //Add any extra search keywords
+                filter: { //Complex Fluro Filter Criteria
+                    operator: 'and',
+                    filters: [
+                    {
+                        key: 'title',
+                        comparator: 'contains',
+                        value: 'Service',
+                    }, 
+                    {
+                        key: 'status',
+                        comparator: '==',
+                        value: 'active',
+                    }, 
+                    ]
+                }
+            }
+        }
+    }
+}
+```
+
+```html
+<!-- Destructuring slot scope properties -->
+<fluro-content-list type="event" :fields="fieldsToSelect" :criteria="criteria" :perPage="2">
+    <template v-slot="{nextPage, previousPage, currentPage, page, totalPages, items, previousPageEnabled, nextPageEnabled}">
+        <pre v-for="event in page">{{event.title}}</pre>
+        <a :disabled="!previousPageEnabled" @click="previousPage()">Previous</a>
+        <a :disabled="!nextPageEnabled" @click="nextPage()">Next</a>
+
+        <div>{{currentPage}} of {{totalPages}}</div>
+    </template>
+</fluro-content-list>
+
+
+<!-- OR -->
+<fluro-content-list type="event" :fields="fieldsToSelect" :criteria="criteria" :perPage="2">
+    <template v-slot="props">
+        <pre v-for="event in props.page">{{event.title}}</pre>
+        <a :disabled="!props.previousPageEnabled" @click="props.previousPage()">Previous</a>
+        <a :disabled="!props.nextPageEnabled" @click="props.nextPage()">Next</a>
+
+        <div>{{props.currentPage}} of {{props.totalPages}}</div>
+    </template>
+</fluro-content-list>
+
+```
+
+
+
+
+
+
+## Content Form
+Renders a selection of form fields from your types, queries, components or definitions in Fluro. 
+It will automatically render all of the fields, using the Fluro Content Field component.
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Object | The model to edit |
+| `fields` | Array | The array of fields to render, (Usually the array from a definition) |
+| `options` | Object | Extra configuration and options for the form fields |
+
+> Example Usage
+
+```javascript
+import {FluroContentForm} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentForm,
+    },
+    data() {
+        return {
+            model:{},
+        }
+    }
+}
+```
+
+```html
+<!-- Will render all of the form fields recursively in the order and layout as specified the definition -->
+<fluro-content-form v-model="model" :fields="definition.fields"></fluro-content-form>
+
+
+
+
+
+<!-- Layout fields with your own custom markup -->
+<fluro-content-form v-model="model" :fields="definition.fields">
+<template v-slot:form="{formFields, fieldHash, model, update, options}">
+    <fluro-content-form-field :form-fields="formFields" @input="update" :options="options" :field="fieldHash.lastName" v-model="model"></fluro-content-form-field>
+</template>
+</fluro-content-form>
+
+
+```
+
+
+
+
+
+
+## Content Form Field
+Renders a form field as defined within Fluro
+It will render all nested children and embedded fields recursively. This is mainly used 
+within the Fluro Content Form Component
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Object | The model to edit |
+| `field` | Object | The field description object from fluro |
+
+> Example Usage
+
+```javascript
+import {FluroContentFormField} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentFormField,
+    },
+    data() {
+        return {
+            model:{},
+            field:{
+                minimum:1,
+                maximum:3,
+                type:'string',
+                directive:'select',
+                defaultValues:[]
+                allowedValues:[],
+                options:[{
+                    name:'Option 1',
+                    value:'one',
+                }]
+            }
+        }
+    }
+}
+```
+
+```html
+<fluro-content-field :field="field" v-model="model"></fluro-content-field>
+```
+
+
+
+## Interaction Form
+Renders a Fluro interaction definition as a fully working form, complete with validation, submission, resetting and payments
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `title` | String | An optional display title for the form |
+| `definition` | Object | The Form/Definition from Fluro to render |
+| `linkedProcess` | String or Object | The process card to link to if applicable |
+| `linkedEvent` | String or Object | The event to register tickets for if applicable |
+| `debugMode` | Boolean | Whether the form should be rendered in 'debug/test' mode |
+| `options` | Object | Extra configuration for the form and it's fields |
+
+> Example Usage
+
+```javascript
+import {FluroInteractionForm} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroInteractionForm,
+    },
+    asyncComputed: {
+        form: {
+            get() {
+                var self = this;
+                //Retrieve a form from the API
+                return self.$fluro.content.form('58dca35c21228d2d045a1cf7');
+            }
+        }
+    }
+}
+```
+
+```html
+<fluro-interaction-form :definition="form">
+    <template v-slot:info>
+        <h1>My Awesome Form</h1>
+    </template>
+
+    <template v-slot:success="{result, reset}">
+        
+        <div> Form submitted successfully!</div>
+        <v-btn @click="reset()">
+            Back to form
+        </v-btn>
+    </template>
+
+    <template v-slot:error="{result}">
+        There was an error!
+
+        <v-btn @click="reset()">
+            Back to form
+        </v-btn>
+    </template>
+</fluro-interaction-form>
+```
+
+
+
+
+## Post Form
+Renders a Fluro post definition as a fully functional form
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `title` | String | An optional display title for the form |
+| `type` | String | The definition name of the type of post you want to create. Eg. 'comment' |
+| `target` | String or Object | The target parent you want to attach this post to |
+| `options` | Object | Extra configuration for the form and it's fields |
+
+> Example Usage
+
+```javascript
+import {FluroPostForm} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroPostForm,
+    },
+}
+```
+
+```html
+<fluro-post-form title="Join the conversation" :options="{labels:{'body':''}, editor:{mentions:{managed:true}}}" :target="item" @created="commentAdded" type="comment">
+    
+    <template v-slot:authenticated>
+        <div class="text-xs-center">
+            You don't have permission to join this conversation
+        </div>
+    </template>
+
+    <template v-slot:unauthenticated>
+        <div class="text-xs-center">
+            <h5>Join the conversation</h5>
+            <v-btn color="primary" :to="{name:'user.login'}">
+                Login
+            </v-btn>
+            <v-btn color="primary" :to="{name:'user.signup'}">
+                Signup
+            </v-btn>
+        </div>
+    </template>
+
+</fluro-post-form>
+```
+
+
+
+## Post Thread
+Renders a thread of posts for a specified parent item
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Array | An array of comments |
+| `type` | String | The definition name of the type of post you want to create. Eg. 'comment' |
+| `target` | String or Object | The target parent you want to attach this post to |
+| `options` | Object | Extra configuration for the form and it's fields |
+
+> Example Usage
+
+```javascript
+import {FluroPostThread} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroPostThread,
+    },
+    asyncComputed: {
+        comments: {
+            get() {
+                var self = this;
+                return self.$fluro.content.thread(self.item, 'comment');
+            },
+            default: [],
+        },
+}
+```
+
+```html
+<fluro-post-thread v-model="comments">
+    <template v-slot:post="{post}">
+        <pre>{{post}}</pre>
+    </template>
+</fluro-post-thread>
+```
+
+
+
+
+
+
+## Stat Toggle
+Makes it easy to add a stat toggle component, that can 'like', 'upvote', 'bookmark', 'favorite' a specified item.
+As this is for toggling on/off a specific stat, all stats toggled by this component will be considered 'unique' stats
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `target` | String, Object | The item to check |
+| `stat` | String | The name of the stat you want to toggle |
+
+> Example Usage
+
+```javascript
+import {FluroStatToggle} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroStatToggle,
+    },
+}
+```
+
+```html
+<fluro-stat-toggle :target="item" stat="subscribe">
+    <template v-slot="{statting, toggle, statted, store}">
+        <v-btn depressed block @click="toggle" :class="{primary:statted}">
+            <div v-if="statted">
+                <span>Following</span>
+                <fluro-icon right library="fas" icon="rss"/>
+            </div>
+            <div v-if="!statted">
+                <span>Follow</span>
+                <fluro-icon right library="far" icon="rss"/>
+            </div>
+        </v-btn>
+    </template>
+</fluro-stat-toggle>
+```
+
+
+
+## Stat Total
+Displays a total of stats of a specified type for an item
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `target` | String, Object | The item to retrieve stats for |
+| `stat` | String | The name of the stat you want to display a total for |
+| `unique` | Boolean | Whether the stat is a unique stat or a cumulative stat |
+> Example Usage
+
+```javascript
+import {FluroStatToggle} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroStatToggle,
+    },
+}
+```
+
+```html
+<fluro-stat-total :target="item" :unique="true" stat="subscribe">
+    <template v-slot="{total, processing}">
+        <span v-if="!processing">{{total}}</span>
+        <span v-if="processing">
+            <fluro-icon spin icon="spinner-third"/>
+        </span>
+    </template>
+</fluro-stat-total>
+```
+
+
+
+## Content Render
+Renders all defined fields for a specified data object
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Object | The model data to render |
+| `fields` | Array | An array of all fields to render |
+
+> Example Usage
+
+```javascript
+import {FluroContentRender} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentRender,
+    },
+    data() {
+        return {
+            item:{
+                title:'My Item',
+                data:{
+                    myField:['one', 'two']
+                }
+            },
+            definition:{
+                title:'My Definition',
+                fields:[{
+                    key:'myField',
+                    minimum:1,
+                    maximum:3,
+                    type:'string',
+                    directive:'select',
+                    defaultValues:[]
+                    allowedValues:[],
+                    options:[{
+                        name:'Option 1',
+                        value:'one',
+                    },
+                    ...
+                    ]
+                }]
+            }
+        }
+    }
+}
+```
+
+```html
+<fluro-content-render v-model="item.data" :fields="definition.fields"/>
+```
+
+
+
+
+## Content Render Field
+Render the data for a specified field
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Object | The model data to render |
+| `field` | Object | A fluro field definition object |
+
+> Example Usage
+
+```javascript
+import {FluroContentRenderField} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroContentRenderField,
+    },
+    data() {
+        return {
+            item:{
+                title:'My Item',
+                data:{
+                    myField:['one', 'two']
+                }
+            },
+            myField:{
+                key:'myField',
+                minimum:1,
+                maximum:3,
+                type:'string',
+                directive:'select',
+                defaultValues:[]
+                allowedValues:[],
+                options:[{
+                    name:'Option 1',
+                    value:'one',
+                }
+            }
+        }
+    }
+}
+```
+
+```html
+<fluro-content-render-field v-model="item.data.myField" :fields="myField"/>
+```
+
+
+
+
+
+
+
+
+
+
+## Date+Time Picker
+Renders an input that allows a user to quickly select a time and date.
+Allows for data entry of a full Javascript date timestamp as a string or date
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | Object | The date to edit |
+| `label` | String | The label to show above the signature |
+| `format` | String | The format to display for the date when rendered in the text input |
+
+> Example Usage
+
+```javascript
+import {FluroDateTimePicker} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroDateTimePicker,
+    },
+    data() {
+        return {
+            date:'2016-04-03T07:10:11.004Z',
+        }
+    }
+}
+```
+
+```html
+<fluro-date-time-picker format="h:mma - dddd D MMMM YYYY" timePickerFormat="ampm" :label="label" v-model="date" />
 ```
 
 
