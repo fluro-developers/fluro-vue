@@ -776,13 +776,15 @@ like youtube or vimeo. If possible it will also render the poster image before p
 | Props | Description |
 | ----------- | ----------- |
 | `item` | An object representing the Fluro video, usually loaded from the API|
+| `posterWidth` | If using a poster that is not a 16:9 aspect ratio specify a specific width|
+| `posterHeight` | If using a poster that is not a 16:9 aspect ratio specify a specific height|
 | `options` | Extra parameters that can be passed into the player |
 
 > Example Usage
 
 ```html
 <!-- Renders a video depending on the media provider -->
-<fluro-video :item="video" :options="{}"></fluro-video>
+<fluro-video :item="video" :options="{}"/>
 
 
 ```
@@ -1236,10 +1238,13 @@ export default {
 ## Stat Toggle
 Makes it easy to add a stat toggle component, that can 'like', 'upvote', 'bookmark', 'favorite' a specified item.
 As this is for toggling on/off a specific stat, all stats toggled by this component will be considered 'unique' stats
+
 | Props | Type | Description |
 | ----------- | ----------- | ----------- |
-| `target` | String, Object | The item to check |
-| `stat` | String | The name of the stat you want to toggle |
+| `target` | String,Object | The item to check |
+| `stat` | String | The name of the stat you want to toggle eg. 'like', 'heart', 'downvote' |
+
+
 
 > Example Usage
 
@@ -1276,11 +1281,18 @@ export default {
 
 ## Stat Total
 Displays a total of stats of a specified type for an item
+
+
 | Props | Type | Description |
 | ----------- | ----------- | ----------- |
-| `target` | String, Object | The item to retrieve stats for |
 | `stat` | String | The name of the stat you want to display a total for |
 | `unique` | Boolean | Whether the stat is a unique stat or a cumulative stat |
+
+
+
+
+
+
 > Example Usage
 
 ```javascript
