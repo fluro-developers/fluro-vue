@@ -1027,6 +1027,34 @@ export default {
 ```
 
 
+## Fluro Compile HTML
+Compiles and renders a dynamic html string. A context object can be passed through as a prop to provide extra variables to compiled with the template.
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `template` | String | The HTML content to render |
+| `context` | Object | An object that provides scope to the rendered template when compiling |
+
+> Example Usage
+
+```javascript
+
+export default {
+    data() {
+        return {
+            things:{
+                foo:'Hello',
+                bar:'World',
+            },
+            html:'<div>{{foo}} {{bar}}</div>',
+        }
+    }
+}
+```
+
+```html
+<fluro-content-render :template="html" :context="things"/>
+```
 
 
 
