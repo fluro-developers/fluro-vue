@@ -28,7 +28,11 @@
   "dependencies": {
     "vuex-map-fields": "^1.4.0"
   },
+  "peerDependencies": {
+    "fluro": "*"
+  },
   "devDependencies": {
+
     "@babel/core": "^7.4.3",
     "@vue/cli-plugin-babel": "^3.3.0",
     "@vue/cli-plugin-eslint": "^3.3.0",

@@ -979,6 +979,104 @@ export default {
 
 
 
+
+## Fluro Compile HTML
+Compiles and renders a dynamic html string. A context object can be passed through as a prop to provide extra variables to compiled with the template.
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `template` | String | The HTML content to render |
+| `context` | Object | An object that provides scope to the rendered template when compiling |
+
+> Example Usage
+
+```javascript
+
+export default {
+    data() {
+        return {
+            things:{
+                foo:'Hello',
+                bar:'World',
+            },
+            html:'<div>{{foo}} {{bar}}</div>',
+        }
+    }
+}
+```
+
+```html
+<fluro-compile-html :template="html" :context="things"/>
+```
+
+
+
+
+
+
+## Fluro Parallax
+A multi-layered parallax component, that can be activated based on scroll or cursor position 
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `source` | String | 'mouse' if to activate on mouse move, (defaults to 'scroll') |
+| `options` | Object | Options for configuring behaviour |
+| `options.minX` | Number | A minimum percentage to constrain movement on the X axis|
+| `options.minY` | Number | A minimum percentage to constrain movement on the Y axis|
+| `options.maxX` | Number | A maximum percentage to constrain movement on the X axis|
+| `options.maxY` | Number | A maximum percentage to constrain movement on the Y axis|
+| `options.enableX` | Boolean | Whether to enable the effect on the X axis (defaults to true, in scrolling mode, false in mouse cursor mode)|
+| `options.enableY` | Boolean | Whether to enable the effect on the Y axis (defaults to true)|
+| `options.global` | Boolean | Whether or not to use the scrollable parent container as a global perspective point |
+
+
+### Fluro Parallax Item
+A layer for the Fluro Parallax component
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `depth` | Number | The Z axis value for this layer, (higher is further away) |
+| `scale` | Number | A scale value for animating a 'zoom' effect aswell as motion |
+| `inverseScale` | Boolean | Whether to scale the image larger as you scroll down instead of scaling smaller |
+
+
+
+> Example Usage
+
+```html
+
+<!-- minY:45, and maxY:55, would result in the effect only moving layers between 45% and 55% of the usual moving distance, for a more subtle effect  -->
+<fluro-parallax source="mouse" :options="{minY:45, maxY:55, minX:45, maxX:55}">
+    <template v-slot:default>
+        <div style="max-width:500px; margin:200px auto;">
+            <h1>Here is some text content</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus eget tempus metus.
+            </p>
+            
+        </div>
+    </template>
+    <template v-slot:items>
+        <fluro-parallax-item class="background" :depth="4"/>
+        <fluro-parallax-item class="midground" :depth="3" :scale="1">
+            <p>
+                Ut magna velit, posuere vel congue et, hendrerit vel nibh. Aliquam malesuada, dui posuere elementum tempor, mauris augue hendrerit enim, et laoreet ligula arcu ut sapien. Nunc orci lorem, gravida at tristique vel, sodales sit amet nibh. Vivamus ante augue, blandit nec justo sed, posuere finibus nunc. Mauris risus nibh, dictum eu lobortis in, semper eu libero.
+            </p>
+        </fluro-parallax-item>
+         <fluro-parallax-item class="foreground" :depth="2"/>
+    </template>
+</fluro-parallax>
+
+```
+
+
+
+
+
+
+
+
+
+
 ## Content Form
 Renders a selection of form fields from your types, queries, components or definitions in Fluro. 
 It will automatically render all of the fields, using the Fluro Content Field component.
@@ -1027,35 +1125,6 @@ export default {
 ```
 
 
-## Fluro Compile HTML
-Compiles and renders a dynamic html string. A context object can be passed through as a prop to provide extra variables to compiled with the template.
-
-| Props | Type | Description |
-| ----------- | ----------- | ----------- |
-| `template` | String | The HTML content to render |
-| `context` | Object | An object that provides scope to the rendered template when compiling |
-
-> Example Usage
-
-```javascript
-
-export default {
-    data() {
-        return {
-            things:{
-                foo:'Hello',
-                bar:'World',
-            },
-            html:'<div>{{foo}} {{bar}}</div>',
-        }
-    }
-}
-```
-
-```html
-<fluro-content-render :template="html" :context="things"/>
-```
-
 
 
 
@@ -1103,6 +1172,8 @@ export default {
 ```html
 <fluro-content-field :field="field" v-model="model"></fluro-content-field>
 ```
+
+
 
 
 
