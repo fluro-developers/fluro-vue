@@ -1170,7 +1170,7 @@ export default {
 ```
 
 ```html
-<fluro-content-field :field="field" v-model="model"></fluro-content-field>
+<fluro-content-form-field :field="field" v-model="model"></fluro-content-form-field>
 ```
 
 
