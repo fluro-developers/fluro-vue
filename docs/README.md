@@ -571,38 +571,9 @@ A simple button that extends `<fluro-link>` and respects the visual styles and s
 
 
 
-## Tabset
-A component that makes it easy to add a responsive tabset to the screen
-
-```javascript
-import {FluroTabset, FluroTab} from 'fluro-vue-ui';
-
-////////////////////////////////////////////////////////
-
-export default {
-    components: {
-        FluroTabset,
-        FluroTab,
-    },
-}
-```
 
 
-```html
-<tabset :justified="true" :vertical="true">
-	 <tab heading="Tab One">
-        <slot>
-        	Your tabbed content
-    	</slot>
-    </tab>
-    <tab heading="Tab Two">
-        <slot>
-        	Your tabbed content
-    	</slot>
-    </tab>
-</tabset>
 
-```
 
 
 
@@ -870,6 +841,216 @@ export default {
 ```
 
 
+
+
+
+## Fluro Audio
+An element for managing an audio object
+
+### Props
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `value/v-model` | Object | The Fluro Audio Item that you want to play |
+| `volume` | Number | The starting volume for this audio object |
+| `global` | Boolean | Whether or not this audio object should be using the global audio (single instance across the app. This is usually recommended) |
+
+
+:volume="playerVolume" :muted="muted" :play="play" :pause="pause" :toggle="toggle" :mute="mute" :toggleMute="toggleMute" :unmute="unmute" :playing="playing"
+
+### Scoped Properties
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `volume` | Number | The current volume of this player|
+| `muted` | Boolean | Whether the player is muted or not|
+| `play` | Function | A function to start the audio playing |
+| `pause` | Function | A function to pause the audio |
+| `toggle` | Function | A function to toggle the audio between play/pause |
+| `mute` | Function | A function to mute the audio |
+| `unmute` | Function | A function to unmute the audio |
+| `toggleMute` | Function | A function to toggle between muted/unmuted |
+| `playing` | Boolean | Whether or not the player is currently playing a track |
+
+
+
+```javascript
+import {FluroAudio} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroAudio,
+    },
+    data() {
+        return {
+            playing:false,
+            progress:0,
+            time:'',
+
+            //This should be an audio object with an _id from Fluro
+            currentTrack:{
+                _id:'FLUROAUDIOID',
+                _type:'audio',
+                //...
+            },,
+        }
+    },
+    computed:{
+        playIcon() {
+            if (this.playing) {
+                return 'pause';
+            } else {
+                return 'play';
+            }
+        },
+    },
+    methods:{
+        toggle() {
+            this.$refs.player.toggle();
+        },
+        timeUpdated(event) {
+                this.progress = event.progress;
+                console.log('PROGRESS', event.progress, event.currentTime);
+
+                //Use the fluro.video service to get the hhmmss value from the time
+                var time = this.$fluro.video.hhmmss(event.currentTime);
+                if (_.startsWith(time, '00:')) {
+                    time = time.slice(3);
+                }
+                this.time = time;
+                //parseFloat(time / this.$refs.player.duration);
+                // console.log('global player time', event.time / event.duration)
+            },,
+        volumeUpdated(event) {
+            console.log('current volume changed', event.volume);
+        },
+        backward() {
+            this.$refs.player.currentTime += 10;
+        },
+        forward() {
+            this.$refs.player.currentTime += 30;
+        },
+        played() {
+            this.playing = true;
+        },
+        paused() {
+            this.playing = false;
+        }
+    },
+}
+```
+
+```html
+<h5>Now Playing {{currentTrack.title}}</h5>
+<div> {{time}}</div>
+
+<fluro-button @click="toggle()">
+<fluro-icon :icon="playIcon"/>
+</fluro-button>
+
+<fluro-audio :global="true" ref="player" @pause="paused" @play="played" @time="timeUpdated" @volume="volumeUpdated" v-model="currentTrack" />
+
+
+//OR with scoped properties for your player
+<fluro-audio :global="true" ref="player" @pause="paused" @play="played" @time="timeUpdated" @volume="volumeUpdated" v-model="currentTrack">
+    <template v-slot="props">
+        <!-- create your interface for the player in here -->
+
+        <a @click="props.play()">Play</a> <a @click="props.pause()">Pause</a>
+    </template>
+
+</fluro-audio>
+
+
+```
+
+
+## Table
+A data table that provides pagination, sorting and rendering of a dataset
+
+```javascript
+import {FluroTable} from 'fluro-vue-ui';
+
+////////////////////////////////////////////////////////
+
+export default {
+    components: {
+        FluroTable,
+    },
+    methods:{
+        clicked(row) {
+            console.log('Row was clicked', row);
+        }
+    },
+    data() {
+        return {
+            items:[
+            {
+                firstName:'Jeff',
+                lastName:'Johnson',
+                age:5,
+                created:new Date(),
+                registered:true,
+            }],
+            columns: [
+                {
+                    title: "First Name",
+                    key: "firstName"
+                },
+                {
+                    title: "Last Name",
+                    key: "lastName"
+                },
+
+                {
+                    title: "Age",
+                    key: "age",
+                    type:'number',
+                    sortType:'number',
+                },
+                {
+                    title: "Is Registered",
+                    key: "registered",
+                    type:'boolean',
+                },
+                {
+                    title: "Date Created",
+                    key: "created",
+                    type: "date",
+                    sortType:'date',
+                },
+                {
+                    title: "When",
+                    key: "created",
+                    sortType: "date",
+                    renderer: "timeago"
+                },
+                {
+                    title: '',
+                    key: '_id',
+                    renderer: 'button',
+                    button: {
+                    icon: 'trash-alt',
+                    shrink: true,
+                    action(row) {
+                        return new Promise(function(resolve, reject) {
+                            console.log('Do something with the row')
+                            resolve();
+                        });
+                    },
+                },
+                   
+            },
+            ]
+        }
+    }
+}
+```
+
+
+```html
+<fluro-table trackingKey="_id" :clicked="clicked" defaultSort="firstName" :pageSize="50" :items="items" :columns="columns" />
+```
 
 
 
@@ -1172,6 +1353,113 @@ export default {
 ```html
 <fluro-content-form-field :field="field" v-model="model"></fluro-content-form-field>
 ```
+### Form Field API
+Form fields are defined using a certain structure in Fluro, this matches how they are created within definitions, but can also be used within your interface to quickly and easily
+create forms programmatically. Each field should have a unique key and follows the following format
+
+
+| Property | Type | Description |
+| ----------- | ----------- | ----------- |
+| `title` | String | The title/label for this field as displayed to the user |
+| `key` | String | The property key to store the input on the data model |
+| `type` | String | The type of data to store on this field. Options include: 'string', 'date', 'number', 'boolean', 'email', 'url', 'reference', 'integer', 'decimal', 'float', 'void', 'object' |
+| `directive` | String | The input/widget type used for this field. Options include: 'input','textarea',  'select', 'button-select', 'wysiwyg', 'upload', 'embedded', 'reference-select', currency', 'code',  'order-select',  'search-select',  'time-select',  'color', 'signature', 'date-select', 'datetime-select', 'dob-select', value', custom'|
+| `minimum` | Number | The minimum number of answers required for this field |
+| `maximum` | Number | The maximum number of answers required for this field |
+| `defaultValues` | Array | An array of default values, if maximum is 1 the first value will be used |
+| `allowedValues` | Array | An array of values that can be entered |
+| `defaultReferences` | Array | An array of default references, if maximum is 1 the first value will be used |
+| `allowedReferences` | Array | An array of items that can be referenced |
+| `options` | Array | An array of options that a user can select from for 'select' inputs |
+| `options.name` | String | The option name that is displayed to the user|
+| `options.value` | Anything | The value that is stored if the user selects this option |
+| `expressions` | Object | An object that details any expressions for this field |
+| `asObject` | Boolean | For Groups, whether the group is for display purposes or should store it's own object in the data model and append its child fields data to it |
+| `askCount` | Number | How many inputs should be presented to the user by default, will be ignored if less than the minimum or greater than the maximum |
+| `sameLine` | Boolean | If a group, whether it's child fields should be rendered on the same line |
+| `fields` | Array | An array of child fields for this group (can be endlessly recursive) |
+
+> Example
+
+```javascript
+
+
+
+//An example of a field
+var field = {
+    title:'My Field',
+    key:'myFieldKey',
+    minimum:1,
+    maximum:3,
+    type:'string',
+    directive:'select',
+    defaultValues:[]
+    allowedValues:[],
+    options:[{
+        name:'Option 1',
+        value:'one',
+    },
+    {
+        name:'Option 2',
+        value:'two',
+    }],
+    expressions:{
+        //Expressions can either be a string to evaluate
+        show:'data.anotherField == true',
+        //Or a function
+        show() {
+            return 5 + 6 == 11;
+        },
+        hide:'data.someField != 5',
+        hide() {
+            return true;
+        },
+        //transform expression allows you to change the value
+        //when it is set for example, if the user enters 5 and you want to store 7, you can intercept it as it's saving
+        transform:{
+            get(value) {
+                var newValue = value + 2;
+                return newValue;
+            },
+            set(value) {
+                return value;
+            }
+        },
+    },
+}
+
+
+//An example reference selector
+var field = {
+    title:'My Referenced Item',
+    key:'myReference',
+    minimum:0,
+    maximum:3,
+    type:'reference',
+    params:{
+        restrictType:'article', //could be 'photo', 'service', 'video' etc...
+        allDefinitions:true, //If a basic type should we include all the defined types in the selectable options
+    },
+}
+
+var fieldGroup = {
+    title:'My Field Group',
+    key:'myGroup',
+    minimum:1,
+    maximum:3,
+    askCount:2,
+    asObject:true, //Whether the key for this group should be added to the path
+    sameLine:true, //Whether you want the fields inside this group to be rendered on the same line
+    type:'group',
+    fields:[{
+        //...sub field
+    },
+    {
+        //...sub field
+    }]
+}
+```
+
 
 
 
