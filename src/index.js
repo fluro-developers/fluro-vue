@@ -17,7 +17,7 @@
 // export default FluroVue;
 
 
-console.log('fluro-vue 2.0.94');
+console.log('fluro-vue 2.0.95');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -133,6 +133,7 @@ const FluroVue = {
                 API_URL = process.env.VUE_APP_API_LIVE;
                 break;
         }
+
 
 
 
@@ -264,7 +265,7 @@ const FluroVue = {
 
         //Create a new Fluro instance
         const fluro = new Fluro({
-            apiURL: API_URL,
+            apiURL: options.API_URL || API_URL,
             applicationToken: APPLICATION_TOKEN,
             domain: APPLICATION_REMOTE_URL,
             withCredentials: FluroCookieUser, //If we are using cookies

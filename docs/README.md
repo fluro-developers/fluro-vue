@@ -1194,6 +1194,65 @@ export default {
 
 
 
+## Fluro Tabset
+A multi-layered parallax component, that can be activated based on scroll or cursor position 
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `v-model` | String | The current tab index to be activated. You can use this to programmatically select tabs, and to set the default opening tab |
+| `justified` | Boolean | Whether or not to set the tabs equally sized on the menu |
+| `vertical` | Boolean | Whether to render the tab menu vertically (Defaults to false) |
+| `persist` | Boolean | Whether to show the tab menu even if there is only one tab, (Defaults to false) |
+
+
+## Fluro Tab
+A multi-layered parallax component, that can be activated based on scroll or cursor position 
+
+| Props | Type | Description |
+| ----------- | ----------- | ----------- |
+| `heading` | String | The text label heading for this tab |
+| `tooltip` | String | Tooltip text to show on hover |
+| `index` | String | A textual id for the tab allowing you programattically select the tab using the tabset v-model |
+| `muted` | Boolean | Whether to fade the tab on the menu |
+| `enabled` | Boolean | Whether to enable the tab or not (Defaults to true) |
+| `icon` | String | An icon to display for the tab |
+
+> Example Usage
+
+```javascript
+
+import FluroTab from '../ui/tabset/FluroTab.vue'
+import FluroTabset from '../ui/tabset/FluroTabset.vue'
+
+
+export default {
+    data() {
+        return {
+            activeTab:'mytab',
+        }
+    },
+    components:{
+        'tab':FluroTab,
+        'tabset':FluroTabset,
+        'fluro-tab':FluroTab,
+        'fluro-tabset':FluroTabset,
+    },
+}
+```
+
+```html
+<fluro-tabset v-model="activeTab" :justified="true" :vertical="true">
+    <fluro-tab heading="Tab One">
+        Content for the First Tab
+    </fluro-tab>
+    <fluro-tab heading="Tab Two" index="mytab">
+        Content for the First Tab
+    </fluro-tab>
+</fluro-tabset>
+
+```
+
+
 
 ## Fluro Parallax
 A multi-layered parallax component, that can be activated based on scroll or cursor position 
