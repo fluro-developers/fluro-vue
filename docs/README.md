@@ -486,6 +486,168 @@ this.$fluro.app.to({
 
 
 
+### Modals, Prompts and Dialogs
+
+| Method | Description |
+| ----------- | ----------- |
+| `this.$fluro.app.confirm(title, description, options)` | Prompt the user to confirm an action|
+| `this.$fluro.app.prompt(fields, title, model, description, options)` | Prompt the user with an ad-hoc form and return their input |
+| `this.$fluro.app.options(options, title, description)` | Prompt the user with a list of options and return the one they select |
+| `this.$fluro.app.modal(options)` | Show a custom component in a modal window |
+
+**$fluro.app.confirm()**
+`this.$fluro.app.confirm` Will show modal window to the user asking them to confirm an action. This is commonly used to ensure a user didn't accidentally click a button or make an action without fully understanding the consequences.
+
+```js
+
+this.$fluro.app.confirm('Confirm Delete', `Are you sure you want to delete these items?`, {
+    confirmColor: 'error', //Set the color of the confirm button
+    confirmText: 'Yes i want to delete!', //Set the text for the confirm button
+})
+.then(function(res) {
+    //The user confirmed the action
+})
+.catch(function(err) {
+    //The user cancelled/decided not to confirm
+})
+
+```
+
+
+**$fluro.app.prompt()**
+`this.$fluro.app.prompt` Render an ad-hoc form in a modal window and resolve the input provided by the user.
+
+```js
+
+this.$fluro.app.prompt([{
+    title: 'Title',
+    description: `eg. 'My Favorite Photos'`,
+    key: 'title',
+    minimum: 1,
+    maximum: 1,
+    type: 'string',
+    params: { 
+        autofocus: true //Set the focus to this field by default
+    }
+},
+{
+    title: 'Select Realms',
+    description: `Which realm/s should this collection be stored in`,
+    key: 'realms',
+    minimum: 1,
+    maximum: 0,
+    type: 'reference',
+    directive: 'realm-select',
+    params: {
+        restrictType: 'realm',
+    }
+},
+{
+    title: 'Select items',
+    description: `Select items to put in this collection`,
+    key: 'items',
+    minimum: 0,
+    maximum: 0,
+    type: 'reference',
+    directive: 'content-select-button',
+},
+{
+    title: 'Archive / Expire on',
+    description: `Set an archive date for this collection`,
+    key: 'archiveDate',
+    minimum: 0,
+    maximum: 1,
+    type: 'date',
+    directive: 'datetimepicker',
+    params: {
+        // minDate:new Date(),
+    }
+},
+], 'Create a new collection')
+.then(function(response) {
+    //response contains all the answers the user provided
+    /**
+    {
+        title:'the title...',
+        realms:[...],
+    }
+    /**/
+})
+.catch(function() {
+    //they cancelled/closed the modal
+})
+
+```
+
+
+**$fluro.app.options()**
+`this.$fluro.app.options` Prompt the user with a modal showing an array of options and resolve with the option the user selects.
+
+```js
+
+this.$fluro.app.options([
+{
+    title:'Option One',
+    description:'Some more information',
+    value:'one',
+},
+{
+    title:'Option Two',
+    description:'Some more information',
+    value:'two',
+},
+{
+    title:'Option Three',
+    description:'Some more information',
+    value:'three',
+    data:{some:'other data'},
+},
+], `Please select`, 'Please select an option below')
+.then(function(answer) {
+    /**
+    answer is the literal object provided in the array
+    {
+        title:'Option Three',
+        description:'Some more information',
+        value:'three',
+        data:{some:'other data'},
+    }
+    /**/
+})
+.catch(function(err) {
+    //The user cancelled/decided not to select an option
+})
+
+```
+
+
+**$fluro.app.modal()**
+`this.$fluro.app.modal` Render a custom ui component in a modal window. The custom component will have two methods augmented onto it.
+`close()` and `dismiss()`. Once your user has finished interaction with your component you should call the `close(result)` method with any result you want to pass back to the caller, this will resolve the promise with the argument provided
+If you wish to simple cancel or dismiss the modal call the `dismiss()` function which will reject the modal promise.
+
+```js
+
+this.$fluro.app.modal({
+    options:{
+        custom:'input',
+        other:{
+            data:'you want to include',
+        }
+    },
+    component:'your-custom-component-tag',
+})
+.then(function(result) {
+    //The result if the component.close() was called
+})
+.catch(function(err) {
+    //If the component called the dismiss() method or an error occurred
+})
+
+```
+
+
+
 # **UI Components**
 
 ## Page Preloader
@@ -1452,7 +1614,7 @@ var field = {
     maximum:3,
     type:'string',
     directive:'select',
-    defaultValues:[]
+    defaultValues:[],
     allowedValues:[],
     options:[{
         name:'Option 1',

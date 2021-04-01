@@ -17,7 +17,7 @@
 // export default FluroVue;
 
 
-console.log('fluro-vue 2.0.95');
+console.log('fluro-vue 2.0.96');
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ const FluroVue = {
                 mutations: {
                     updateField,
                     user(state, payload) {
-                        //console.log('SET USER TO VUEX', typeof state);
+                        // console.log('SET USER TO VUEX', typeof state);
                         state.user = payload;
                     },
                     application(state, payload) {
@@ -177,7 +177,7 @@ const FluroVue = {
                 getters: {
                     getField,
                     user(state, getters) {
-                        //console.log('GET USER FROM VUEX', typeof state);
+                        // console.log('GET USER FROM VUEX', typeof state);
                         return state.user;
                     },
                     application(state, getters) {
