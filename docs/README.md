@@ -657,11 +657,11 @@ div or element
 
 
 ```html
-<!-- Show an extra large avatar for a Fluro global user -->
+<!-- Renders a large preloader fixed to the viewport -->
 <fluro-page-preloader v-if="loading"/>
 
 
-<!-- Show an extra large avatar for a Fluro global user -->
+<!-- Renders a preloader, constrained to the height and width of the (relatively positioned) parent container -->
 <fluro-page-preloader v-if="loading" contain/>
 ```
 
